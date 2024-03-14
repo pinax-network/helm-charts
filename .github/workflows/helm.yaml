@@ -34,6 +34,10 @@ jobs:
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           
+      - name: Copy .tgz file to gh-pages branch root
+        run: |
+          cp ${{ steps.chart_releaser.outputs.chart }} $GITHUB_WORKSPACE
+
       - name: Commit and push changes to gh-pages branch
         uses: EndBug/add-and-commit@v7
         with:
