@@ -34,14 +34,20 @@ jobs:
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           
+      - name: Download release asset
+        run: |
+          RELEASE_URL=$(jq -r '.release.url' $GITHUB_EVENT_PATH)
+          ASSET_URL=$(curl -s $RELEASE_URL | jq -r '.assets[] | select(.name | endswith(".tgz")).browser_download_url')
+          wget $ASSET_URL -O latest_release.tgz
+
       - name: Copy .tgz file to gh-pages branch root
         run: |
-          cp ${{ steps.chart_releaser.outputs.chart }} $GITHUB_WORKSPACE
+          cp latest_release.tgz $GITHUB_WORKSPACE/../
 
       - name: Commit and push changes to gh-pages branch
         uses: EndBug/add-and-commit@v7
         with:
-          add: '*.tgz'
+          add: 'latest_release.tgz'
           message: 'Update charts'
           branch: 'gh-pages'
         env:
