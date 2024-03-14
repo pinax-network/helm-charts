@@ -36,10 +36,7 @@ jobs:
           
       - name: Download release asset
         run: |
-          REPO_OWNER=$(echo "${{ github.repository }}" | cut -d '/' -f 1)
-          REPO_NAME=$(echo "${{ github.repository }}" | cut -d '/' -f 2)
-          RELEASE_ID=$(echo "${{ github.event.release.id }}")
-          RELEASE_URL="https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/releases/${RELEASE_ID}"
+          RELEASE_URL=$(curl -s https://api.github.com/repos/pinax-network/helm-charts/releases/latest | jq -r '.url')
           echo "Release URL: $RELEASE_URL"
           ASSET_URL=$(curl -s $RELEASE_URL | jq -r '.assets[] | select(.name | endswith(".tgz")).browser_download_url')
           echo "Asset URL: $ASSET_URL"
