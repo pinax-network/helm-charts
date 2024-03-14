@@ -1,17 +1,87 @@
-name: Release Charts
+name: Make Chart Release
 
 on:
-  push:
-    branches:
-      - main
+  workflow_call:
+    inputs:
+      tag:
+        type: string
+        required: true
+        description: "What tag to release"
+  workflow_dispatch:
 
 jobs:
-  release:
-    # depending on default permission settings for your org (contents being read-only or read-write for workloads), you will have to add permissions
-    # see: https://docs.github.com/en/actions/security-guides/automatic-token-authentication#modifying-the-permissions-for-the-github_token
-    permissions:
-      contents: write
+  init:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # for creating releases
+    outputs:
+      name: ${{ steps.parse_tag.outputs.name }}
+      version: ${{ steps.parse_tag.outputs.version }}
+      fullversion: ${{ steps.parse_tag.outputs.fullversion }}
+      prerelease: ${{ steps.parse_tag.outputs.prerelease }}
+      tag: ${{ steps.parse_tag.outputs.tag }}
+    steps:
+      - name: Parse tag
+        id: parse_tag
+        run: |
+          echo "tag=${{ inputs.tag }}" >> $GITHUB_OUTPUT
+          name=$(echo "${{ inputs.tag }}" | sed -r 's/^(.*)-([v]?[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+)(-canary\.)?([[:digit:]]+)?$/\1/g')
+          echo "name=$name" >> $GITHUB_OUTPUT
+          version=$(echo "${{ inputs.tag }}" | sed -r 's/^(.*)-([v]?[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+)(-canary\.)?([[:digit:]]+)?$/\2/g')
+          fullversion=$(echo "${{ inputs.tag }}" | sed -r 's/^(.*)-([v]?[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+(-canary\.[[:digit:]]+)?)/\2/g')
+          echo "fullversion=$fullversion" >> $GITHUB_OUTPUT
+          echo "version=$version" >> $GITHUB_OUTPUT
+          prerelease=$(echo "${{ inputs.tag }}" | sed -r 's/^(.*)-([v]?[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+)(-canary\.)?([[:digit:]]+)?$/\4/g')
+          echo "prerelease=$prerelease" >> $GITHUB_OUTPUT
+
+  release-notes:
+    needs: init
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup node
+        uses: actions/setup-node@v3
+
+      - name: Yarn install
+        run: |
+          set -x -e
+
+          yarn install
+
+      - name: Get chart name
+        id: chart_name
+        run: |
+          name="$(echo ${{ inputs.tag }} | sed -E 's/(.*)-[[:digit:]]+.[[:digit:]]+.[[:digit:]]+.*/\1/g')"
+          echo "name=$name" >> $GITHUB_OUTPUT
+
+      - name: Generate release notes
+        id: release_notes
+        env:
+          CHART: ${{ steps.chart_name.outputs.name }}
+        run: |
+          set -x -e
+
+          export GIT_CLIFF__GIT__TAG_PATTERN="$CHART-*"
+          GIT_CLIFF__GIT__IGNORE_TAGS="$CHART-v?[0-9]+.[0-9]+.[0-9]+-.*"
+
+          yarn git-cliff -c ".cliff.toml" --include-path "charts/$CHART/**" --strip all -l -t "${{ needs.init.outputs.tag }}" -o "RELEASE-NOTES.md"
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: "${{ needs.init.outputs.tag }}.release-notes"
+          path: RELEASE-NOTES.md
+
+  release:
+    needs:
+      - init
+      - release-notes
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # for creating releases
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -20,16 +90,71 @@ jobs:
 
       - name: Configure Git
         run: |
-          git config user.name "$GITHUB_ACTOR"
-          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor}}@users.noreply.github.com"
 
       - name: Install Helm
         uses: azure/setup-helm@v3
-
-      - name: Run chart-releaser
-        uses: helm/chart-releaser-action@v1.6.0
         with:
-          charts_dir: charts
-          config: cr.yaml
+          version: v3.12.0
+
+      - name: Update chart version
+        if: needs.init.outputs.prerelease != ''
+        run: |
+          set -x -e
+          chart_file="charts/${{ needs.init.outputs.name }}/Chart.yaml"
+          sed -E -i 's/^version: [[:digit:]]+.[[:digit:]]+.[[:digit:]]+.*/version: ${{ needs.init.outputs.fullversion }}/' "$chart_file"
+
+      - name: Generate Helm package
+        id: helm_package
+        run: |
+          set -x -e
+
+          chart_file="charts/${{ needs.init.outputs.name }}/Chart.yaml"
+          chart_version="$(grep -Po '(?<=^version: ).+' "${chart_file}")"
+
+          if [[ ! "$chart_version" == ${{ needs.init.outputs.fullversion }} ]]; then
+            echo "Chart version doesn't match release tag, please update"
+          fi
+
+          helm package "charts/${{ needs.init.outputs.name }}"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: "${{ needs.init.outputs.tag }}.helm-package"
+          path: "${{ needs.init.outputs.tag }}.tgz"
+
+      #TODO: finish logic in case release exists
+      - name: Check existing release
+        id: check_release
+        uses: octokit/graphql-action@v2.x
+        with:
+          owner: ${{ github.event.repository.owner.login }}
+          repo: ${{ github.event.repository.name }}
+          tag: ${{ needs.init.outputs.tag }}
+          query: |
+            query releases($owner:String!,$repo:String!,$tag:String!) {
+              repository(owner:$owner,name:$repo) {
+                release(tagName: $tag) {
+                  id
+                }
+              }
+            }
         env:
-          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/download-artifact@v3
+        with:
+          name: "${{ needs.init.outputs.tag }}.release-notes"
+          path: "."
+
+      - name: Create release
+        run: |
+          if [ -z "${{ needs.init.outputs.prerelease }}" ]; then
+            gh release create -t ${{ needs.init.outputs.tag }} --verify-tag --draft --notes-file RELEASE-NOTES.md ${{ needs.init.outputs.tag }} ${{ needs.init.outputs.tag }}.tgz
+          else
+            gh release create -t ${{ needs.init.outputs.tag }} --verify-tag --prerelease -F RELEASE-NOTES.md ${{ needs.init.outputs.tag }} ${{ needs.init.outputs.tag }}.tgz
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
