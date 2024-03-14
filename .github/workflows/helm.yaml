@@ -33,4 +33,24 @@ jobs:
           config: cr.yaml
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+  
+      - name: Get release name
+        id: get_release_name
+        run: echo "::set-output name=release_name::$(basename ${GITHUB_REPOSITORY})"
+
+      - name: Create directory structure for Artifact Hub
+        run: |
+          mkdir -p artifact-hub/${{ steps.get_release_name.outputs.release_name }}
+          mv ${{ steps.chart_releaser.outputs.chart }} artifact-hub/${{ steps.get_release_name.outputs.release_name }}/
+          cp charts/index.yaml artifact-hub/${{ steps.get_release_name.outputs.release_name }}/
+
+      - name: Commit and push changes to gh-pages branch
+        uses: EndBug/add-and-commit@v7
+        with:
+          add: |
+            artifact-hub/
+          message: 'Update charts'
+          branch: 'gh-pages'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
