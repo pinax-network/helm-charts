@@ -1,4 +1,4 @@
-name: Helm Chart Release
+name: Release Charts
 
 on:
   push:
@@ -7,46 +7,26 @@ on:
 
 jobs:
   release:
+    # depending on default permission settings for your org (contents being read-only or read-write for workloads), you will have to add permissions
+    # see: https://docs.github.com/en/actions/security-guides/automatic-token-authentication#modifying-the-permissions-for-the-github_token
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
-    
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-      
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+
       - name: Install Helm
-        uses: azure/setup-helm@v2
-        with:
-          version: 'v3.7.0' # Update with the desired Helm version
-      
-      - name: Generate Index.yaml
-        run: |
-          helm repo index --url https://your-repo-url.com/ .
-      
-      - name: Package Helm Charts
-        run: |
-          cd charts
-          for chart_dir in */; do
-            chart_version=$(helm show chart $chart_dir | grep '^version:' | awk '{print $2}')
-            helm package $chart_dir --version $chart_version
-          done
-      
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        with:
-          tag_name: v${{ github.run_number }}
-          release_name: Release v${{ github.run_number }}
-          body: |
-            Release v${{ github.run_number }}
-          draft: false
-          prerelease: false
+        uses: azure/setup-helm@v3
+
+      - name: Run chart-releaser
+        uses: helm/chart-releaser-action@v1.6.0
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
-      - name: Upload Charts to Release
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./charts/*.tgz
-          asset_name: v${{ github.run_number }}-${{ github.run_number }}.tgz
-          asset_content_type: application/x-compressed-tar
+          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
