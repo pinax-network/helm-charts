@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.chainName }}-sf-blockmeta-server-{{ .Values.blockVersion }}
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.chainName }}-sf-blockmeta-server-{{ .Values.blockVersion }}
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        reloader.stakater.com/auto: "true"
+      labels:
+        app: {{ .Values.chainName }}-sf-blockmeta-server-{{ .Values.blockVersion }}
+    spec:
+      containers:
+        - name: {{ .Values.chainName }}-sf-blockmeta-server-{{ .Values.blockVersion }}
+          image: {{ .Values.blockMetaImage }}
+          args:
+            - "./blockmeta"
+            - "--sink-addr={{ .Values.chainName }}-sf-blockmeta-serve-svc-{{ .Values.blockVersion }}:{{ .Values.servePort }}"
+            - "--grpc-listen-addr=:{{ .Values.serverListenPort }}"
+            - "--auth-url={{ .Values.authUrl }}"
+            - "--metering-url={{ .Values.meterUrl }}?network={{ .Values.chainName }}"
+          ports:
+            - name: grpc
+              containerPort: {{ .Values.serverListenPort }}
+              protocol: TCP

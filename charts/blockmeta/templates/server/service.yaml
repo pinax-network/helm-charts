@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.chainName }}-sf-blockmeta-server-svc-{{ .Values.blockVersion }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ .Values.chainName }}-sf-blockmeta-server-svc-{{ .Values.blockVersion }}
+  annotations:
+    prometheus.io/scrape: "true"
+spec:
+  ipFamilyPolicy: PreferDualStack
+  clusterIP: None
+  selector:
+    app: {{ .Values.chainName }}-sf-blockmeta-server-{{ .Values.blockVersion }}
+  ports:
+    - name: grpc
+      port: {{ .Values.serverListenPort }}
+      protocol: TCP
+      targetPort: grpc
