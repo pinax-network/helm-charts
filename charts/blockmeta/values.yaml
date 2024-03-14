@@ -1,0 +1,38 @@
+
+# -- Namespace creation and Override
+createNamespace: true
+namespace: default
+
+# -- Loadbalancer type; defaults to traefik
+loadBalancer: traefik
+
+# -- Ingress Configuration
+  ## mumbai.substreams.pinax.network
+ingressHost: "..."
+
+# -- Image Control
+blockMetaImage: ghcr.io/streamingfast/blockmeta-service:2f971e0
+sinkImage: ghcr.io/streamingfast/substreams-sink-kv:fd1af77
+
+# -- Chain Configuration
+chainName: mumbai
+blockVersion: v1
+
+# -- Port Configuration
+servePort: 9000
+serverListenPort: 50051
+injectMetricsPort: 9102
+substreamsPort: 9000
+
+# -- Service Configuration
+  ## grpc://pinax-authenticator.network:9000
+authUrl: "..."
+  ## grpc://pinax-metering.network:9000
+meterUrl: "..." 
+  ## tikv://mumbai-pd1.pinax.network:2379/blockmeta_v1?truncate=false&compression=zstd
+tikvUrl: "..." 
+  ## https://github.com/streamingfast/blockmeta-service/releases/download/v0.1.0/blockmeta-service-v0.1.0.spkg
+spkgUrl: "..."
+  ## substreams tier 1 url mumbai.substreams.pinax.network
+substreamsUrl: "..."
+

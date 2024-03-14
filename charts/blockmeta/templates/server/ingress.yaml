@@ -1,0 +1,34 @@
+
+{{- if eq .Values.loadBalancer "traefik" }}
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ .Values.chainName }}-sf-blockmeta-server-ingress-{{ .Values.blockVersion }}
+  namespace: {{ .Values.namespace }}
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`{{ .Values.ingressHost }}`)
+      kind: Rule
+      services:
+        - name: {{ .Values.chainName }}-sf-blockmeta-server-svc-{{ .Values.blockVersion }}
+          port: {{ .Values.ServerServicePort }}
+{{- else }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.chainName }}-sf-blockmeta-server-ingress-{{ .Values.blockVersion }}
+spec:
+  rules:
+    - host: {{ .Values.ingressHost }}
+      http:
+        paths:
+          - pathType: Prefix
+            path: "/"
+            backend:
+              service:
+                name: {{ .Values.chainName }}-sf-blockmeta-server-svc-{{ .Values.blockVersion }}
+                port:
+                  number: {{ .Values.ServerServicePort }}
+{{- end }}

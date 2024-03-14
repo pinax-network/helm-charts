@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.chainName }}-sf-blockmeta-inject-{{ .Values.blockVersion }}
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.chainName }}-sf-blockmeta-inject-{{ .Values.blockVersion }}
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        reloader.stakater.com/auto: "true"
+      labels:
+        app: {{ .Values.chainName }}-sf-blockmeta-inject-{{ .Values.blockVersion }}
+    spec:
+      containers:
+        - name: {{ .Values.chainName }}-sf-blockmeta-inject-{{ .Values.blockVersion }}
+          image: {{ .Values.sinkImage }}
+          args:
+            - "inject"
+            - "{{ .Values.substreamsUrl }}:{{ .Values.substreamsPort }}"
+            - "{{ .Values.tikvUrl }}"
+            - "{{ .Values.spkgUrl }}"
+            - "--metrics-listen-addr=:{{ .Values.injectMetricsPort }}"
+            - "--plaintext"
+          ports:
+            - name: prom
+              containerPort: {{ .Values.injectMetricsPort }}
+              protocol: TCP

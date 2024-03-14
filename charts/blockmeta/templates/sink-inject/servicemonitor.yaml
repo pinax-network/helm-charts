@@ -1,0 +1,15 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ .Values.chainName }}-sf-blockmeta-inject-svc-monitor-{{ .Values.blockVersion }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ .Values.chainName }}-sf-blockmeta-inject-svc-monitor-{{ .Values.blockVersion }}
+spec:
+  jobLabel: {{ .Values.chainName }}-sf-blockmeta-inject-svc-{{ .Values.blockVersion }}
+  selector:
+    matchLabels:
+      app: {{ .Values.chainName }}-sf-blockmeta-inject-svc-{{ .Values.blockVersion }}
+  endpoints:
+  - port: prom
+    path: /metrics
