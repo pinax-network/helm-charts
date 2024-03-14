@@ -33,3 +33,12 @@ jobs:
           config: cr.yaml
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          
+      - name: Commit and push changes to gh-pages branch
+        uses: EndBug/add-and-commit@v7
+        with:
+          add: '*.tgz'
+          message: 'Update charts'
+          branch: 'gh-pages'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
