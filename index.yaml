@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  blockmeta:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2024-03-14T19:10:12.956183784Z"
+    description: A Helm chart for Kubernetes
+    digest: b6818b2f93d3b3c623318ceabd9e76091511c122c237586e45ba69330b0366a9
+    name: blockmeta
+    type: application
+    urls:
+    - https://github.com/pinax-network/helm-charts/releases/download/blockmeta-1.0.0/blockmeta-1.0.0.tgz
+    version: 1.0.0
+generated: "2024-03-14T19:10:12.956194795Z"
