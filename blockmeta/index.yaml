@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  blockmeta:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2024-03-14T08:50:58.164913-07:00"
+    description: A Helm chart for Kubernetes
+    digest: 5a73376f14430b6e81cf0d7f26bbef2ef997a57c511ab66939b45e0caa0709c3
+    name: blockmeta
+    type: application
+    urls:
+    - blockmeta-1.0.0.tgz
+    version: 1.0.0
+generated: "2024-03-14T08:50:58.164537-07:00"
