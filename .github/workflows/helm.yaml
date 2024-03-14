@@ -38,11 +38,14 @@ jobs:
         id: get_release_name
         run: echo "::set-output name=release_name::$(basename ${GITHUB_REPOSITORY})"
 
-      - name: Create directory structure for Artifact Hub
+      - name: Create Artifact Hub Directory Structure
         run: |
+          # Create a directory structure for Artifact Hub
           mkdir -p artifact-hub/${{ steps.get_release_name.outputs.release_name }}
-          mv ${{ steps.chart_releaser.outputs.chart }}* artifact-hub/${{ steps.get_release_name.outputs.release_name }}/
-          cp charts/index.yaml artifact-hub/${{ steps.get_release_name.outputs.release_name }}/
+      
+          # Move the chart package and index file to the appropriate directory
+          mv artifact-hub/* artifact-hub/${{ steps.get_release_name.outputs.release_name }}/
+
 
       - name: Commit and push changes to gh-pages branch
         uses: EndBug/add-and-commit@v7
