@@ -41,10 +41,10 @@ jobs:
       - name: Create Artifact Hub Directory Structure
         run: |
           # Create a directory structure for Artifact Hub
-          mkdir -p artifact-hub/${{ steps.get_release_name.outputs.release_name }}
+          mkdir -p gh-pages/artifact-hub/${{ steps.get_release_name.outputs.release_name }}
       
           # Move the chart package and index file to the appropriate directory
-          mv artifact-hub/* artifact-hub/${{ steps.get_release_name.outputs.release_name }}/
+          mv charts/* gh-pages/artifact-hub/${{ steps.get_release_name.outputs.release_name }}/
 
 
       - name: Commit and push changes to gh-pages branch
