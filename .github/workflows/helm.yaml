@@ -33,3 +33,7 @@ jobs:
           config: cr.yaml
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+      
+      - name: Copy .tgz files to root
+        run: |
+          cp charts/*.tgz .
