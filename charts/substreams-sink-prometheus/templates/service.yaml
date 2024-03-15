@@ -1,8 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Release.Name }}-{{ .Values.chain }}
+  name: {{ .Release.Name }}- {{- .Values.chain }}
   namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Release.Name }}
+    chain: {{ .Values.chain }}
 spec:
   type: {{ .Values.service.type }}
   selector:

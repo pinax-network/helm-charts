@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ .Release.Name }}-{{ .Values.chain }}
+  name: {{ .Release.Name }}- {{- .Values.chain }}
   namespace: {{ .Release.Namespace }}
   labels:
     app: {{ .Release.Name }}
@@ -19,8 +19,8 @@ spec:
         chain: {{ .Values.chain }}
     spec:
       containers:
-      - name: {{ .Release.Name }}-{{ .Values.chain }}
-        image: {{ .Values.image -}} :{{ .Values.tag }}
+      - name: {{ .Release.Name }}- {{- .Values.chain }}
+        image: {{ .Values.image -}} : {{- .Values.tag }}
         args: ["run"]
         ports:
         - containerPort: {{ .Values.env.port }}
@@ -43,5 +43,5 @@ spec:
       volumes:
         - name: cursor-volume
           persistentVolumeClaim:
-            claimName: {{ .Release.Name }}-{{ .Values.chain }}
+            claimName: {{ .Release.Name }}- {{- .Values.chain }}
       {{- end }}

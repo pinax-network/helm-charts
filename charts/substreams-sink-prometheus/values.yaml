@@ -7,14 +7,22 @@ tag: v0.7.11
 
 chain: eth
 
+# env variables, refer to https://github.com/pinax-network/substreams-sink-prometheus?tab=readme-ov-file#docker-environment
 env:
-  hostname: 0.0.0.0
-  port: 9102
   substreams_endpoint: "https://eth.substreams.pinax.network:443"
   manifest: "https://github.com/pinax-network/subtivity-substreams/releases/download/v0.5.0/subtivity-ethereum-v0.5.0.spkg"
   module_name: "prom_out"
-  cursor_path: "/cursor/cursor.lock"
+  start_block: -1
+  stop_block: ""
+  delay_before_start: 0
+  cursor_file: "/cursor/cursor.lock"
+  production_mode: true
+  restart_inactivity_seconds: 60
+  hostname: 0.0.0.0
+  port: 9102
   verbose: true
+
+# secretName is the name of the Secret that contains SUBSTREAMS_API_TOKEN
 secretName: token-secret
 
 service:
