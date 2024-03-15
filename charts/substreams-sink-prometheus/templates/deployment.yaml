@@ -1,13 +1,11 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: substreams-sink-prometheus{{ if .Values.type }}{{ .Values.type }}{{ end }}-{{ .Values.chain }}
-  name: substreams-sink-prometheus{{ if .Values.type }}{{ .Values.type }}{{ end }}-{{ .Values.chain }}
+  name: substreams-sink-prometheus{{ if .Values.sort }}-{{ .Values.sort }}{{ end }}-{{ .Values.chain }}
   namespace: {{ .Release.Namespace }}
   labels:
     app: substreams-sink-prometheus
     chain: {{ .Values.chain }}
-    type: {{ .Values.type }}
 spec:
   selector:
     matchLabels:

@@ -7,7 +7,6 @@ metadata:
   labels:
     app: substreams-sink-prometheus
     chain: {{ .Values.chain }}
-    type: {{ .Values.type }}
 spec:
   storageClassName: {{ .Values.cursorPvc.storageClassName }}
   accessModes:

@@ -6,13 +6,11 @@ metadata:
   labels:
     app: substreams-sink-prometheus
     chain: {{ .Values.chain }}
-    type: {{ .Values.type }}
 spec:
   type: {{ .Values.service.type }}
   selector:
     app: substreams-sink-prometheus
     chain: {{ .Values.chain }}
-    type: {{ .Values.type }}
   ports:
     - protocol: TCP
       port: {{ .Values.env.port }}
