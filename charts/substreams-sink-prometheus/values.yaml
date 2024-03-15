@@ -7,7 +7,7 @@ tag: v0.7.11
 
 env:
   hostname: 0.0.0.0
-  prot: 9102
+  port: 9102
   substreams_endpoint: "https://eth.substreams.pinax.network:443"
   manifest: "https://github.com/pinax-network/subtivity-substreams/releases/download/v0.5.0/subtivity-ethereum-v0.5.0.spkg"
   module_name: "prom_out"

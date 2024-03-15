@@ -20,16 +20,16 @@ spec:
         image: {{ .Values.image -}} : {{- .Values.tag }}
         args: ["run"]
         ports:
-        - containerPort: {{ .Values.env.PORT }}
+        - containerPort: {{ .Values.env.port }}
         envFrom:
         - configMapRef:
-          name: env
+            name: env
         - secretRef:
-          name: {{ .Values.secretName }}
+            name: {{ .Values.secretName }}
         livenessProbe:
           httpGet:
             path: /health
-            port: {{ .Values.env.PORT }}
+            port: {{ .Values.env.port }}
           initialDelaySeconds: 20
           timeoutSeconds: 2
           periodSeconds: 5

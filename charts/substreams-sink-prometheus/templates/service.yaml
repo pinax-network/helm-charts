@@ -9,5 +9,5 @@ spec:
     app: {{ .Release.Name }}
   ports:
     - protocol: TCP
-      port: {{ .Values.env.PORT }}
-      targetPort: {{ .Values.env.PORT }}
+      port: {{ .Values.env.port }}
+      targetPort: {{ .Values.env.port }}
