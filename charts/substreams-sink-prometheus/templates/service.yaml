@@ -1,15 +1,15 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Release.Name }}- {{- .Values.chain }}
+  name: {{ include "substreams-sink-prometheus.fullname" . }}- {{- .Values.chain }}
   namespace: {{ .Release.Namespace }}
   labels:
-    app: {{ .Release.Name }}
+    app: {{ include "substreams-sink-prometheus.fullname" . }}
     chain: {{ .Values.chain }}
 spec:
   type: {{ .Values.service.type }}
   selector:
-    app: {{ .Release.Name }}
+    app: {{ include "substreams-sink-prometheus.fullname" . }}
     chain: {{ .Values.chain }}
   ports:
     - protocol: TCP

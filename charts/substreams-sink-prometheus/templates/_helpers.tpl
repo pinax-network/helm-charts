@@ -47,7 +47,7 @@ Selector labels
 */}}
 {{- define "substreams-sink-prometheus.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "substreams-sink-prometheus.name" . }}
-app.kubernetes.io/instance: {{ .Release.Name }}
+app.kubernetes.io/instance: {{ include "substreams-sink-prometheus.fullname" . }}
 {{- end }}
 
 {{/*

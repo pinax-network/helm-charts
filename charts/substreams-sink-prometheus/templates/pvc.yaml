@@ -2,10 +2,10 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ .Release.Name }}- {{- .Values.chain }}
+  name: {{ include "substreams-sink-prometheus.fullname" . }}- {{- .Values.chain }}
   namespace: {{ .Release.Namespace }}
   labels:
-    app: {{ .Release.Name }}
+    app: {{ include "substreams-sink-prometheus.fullname" . }}
     chain: {{ .Values.chain }}
 spec:
   storageClassName: {{ .Values.cursorPvc.storageClassName }}

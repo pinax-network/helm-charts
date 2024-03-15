@@ -1,25 +1,25 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ .Release.Name }}- {{- .Values.chain }}
+  name: {{ include "substreams-sink-prometheus.fullname" . }}- {{- .Values.chain }}
   namespace: {{ .Release.Namespace }}
   labels:
-    app: {{ .Release.Name }}
+    app: {{ include "substreams-sink-prometheus.fullname" . }}
     chain: {{ .Values.chain }}
 spec:
   selector:
     matchLabels:
-      app: {{ .Release.Name }}
+      app: {{ include "substreams-sink-prometheus.fullname" . }}
       chain: {{ .Values.chain }}
   replicas: 1
   template:
     metadata:
       labels:
-        app: {{ .Release.Name }}
+        app: {{ include "substreams-sink-prometheus.fullname" . }}
         chain: {{ .Values.chain }}
     spec:
       containers:
-      - name: {{ .Release.Name }}- {{- .Values.chain }}
+      - name: {{ include "substreams-sink-prometheus.fullname" . }}- {{- .Values.chain }}
         image: {{ .Values.image -}} : {{- .Values.tag }}
         args: ["run"]
         ports:
@@ -43,5 +43,5 @@ spec:
       volumes:
         - name: cursor-volume
           persistentVolumeClaim:
-            claimName: {{ .Release.Name }}- {{- .Values.chain }}
+            claimName: {{ include "substreams-sink-prometheus.fullname" . }}- {{- .Values.chain }}
       {{- end }}
