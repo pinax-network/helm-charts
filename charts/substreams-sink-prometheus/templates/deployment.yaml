@@ -1,23 +1,26 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
-  name: {{ .Release.Name }}
+  name: {{ .Release.Name }}-{{ .Values.chain }}
   namespace: {{ .Release.Namespace }}
   labels:
     app: {{ .Release.Name }}
+    chain: {{ .Values.chain }}
 spec:
   selector:
     matchLabels:
       app: {{ .Release.Name }}
+      chain: {{ .Values.chain }}
   replicas: 1
   template:
     metadata:
       labels:
         app: {{ .Release.Name }}
+        chain: {{ .Values.chain }}
     spec:
       containers:
-      - name: {{ .Release.Name }}
-        image: {{ .Values.image -}} : {{- .Values.tag }}
+      - name: {{ .Release.Name }}-{{ .Values.chain }}
+        image: {{ .Values.image -}} :{{ .Values.tag }}
         args: ["run"]
         ports:
         - containerPort: {{ .Values.env.port }}
@@ -40,5 +43,5 @@ spec:
       volumes:
         - name: cursor-volume
           persistentVolumeClaim:
-            claimName: {{ .Release.Name }}
+            claimName: {{ .Release.Name }}-{{ .Values.chain }}
       {{- end }}
