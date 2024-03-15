@@ -1,6 +1,6 @@
 apiVersion: v2
 name: substreams-sink-prometheus
-description: A Helm chart for Kubernetes
+description: substreams-sink-prometheus
 
 # A chart can be either an 'application' or a 'library' chart.
 #
