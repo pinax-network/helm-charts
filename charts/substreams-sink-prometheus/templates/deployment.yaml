@@ -26,7 +26,7 @@ spec:
         - containerPort: {{ .Values.env.port }}
         envFrom:
         - configMapRef:
-            name: env
+            name: env-{{ .Values.chain }}
         - secretRef:
             name: {{ .Values.secretName }}
         livenessProbe:
