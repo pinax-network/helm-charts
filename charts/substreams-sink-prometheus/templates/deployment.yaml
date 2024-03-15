@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Release.Name }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      containers:
+      - name: {{ .Release.Name }}
+        image: {{ .Values.image -}} : {{- .Values.tag }}
+        args: ["run"]
+        ports:
+        - containerPort: {{ .Values.env.PORT }}
+        envFrom:
+        - configMapRef:
+          name: env
+        - secretRef:
+          name: {{ .Values.secretName }}
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: {{ .Values.env.PORT }}
+          initialDelaySeconds: 20
+          timeoutSeconds: 2
+          periodSeconds: 5
+        {{- if .Values.cursorPvc.enabled }}
+        volumeMounts:
+            - name: cursor-volume
+              mountPath: /cursor
+      volumes:
+        - name: cursor-volume
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}
+      {{- end }}

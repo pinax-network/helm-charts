@@ -1,0 +1,23 @@
+nameOverride: ""
+fullnameOverride: ""
+
+replicaCount: 1
+image: ghcr.io/pinax-network/substreams-sink-prometheus
+tag: v0.7.10
+
+env:
+  hostname: 0.0.0.0
+  prot: 9102
+  substreams_endpoint: "https://eth.substreams.pinax.network:443"
+  manifest: "https://github.com/pinax-network/subtivity-substreams/releases/download/v0.5.0/subtivity-ethereum-v0.5.0.spkg"
+  module_name: "prom_out"
+  cursor_path: "/cursor/cursor.lock"
+  verbose: true
+secretName: token-secret
+
+service:
+  type: ClusterIP
+
+cursorPvc:
+  enabled: false
+  storageClassName: mayastor-ext4
