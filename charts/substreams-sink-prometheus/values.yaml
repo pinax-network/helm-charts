@@ -6,6 +6,7 @@ image: ghcr.io/pinax-network/substreams-sink-prometheus
 tag: v0.7.11
 
 chain: eth
+type: ""
 
 # env variables, refer to https://github.com/pinax-network/substreams-sink-prometheus?tab=readme-ov-file#docker-environment
 env:
