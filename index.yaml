@@ -11,6 +11,17 @@ entries:
     urls:
     - https://github.com/pinax-network/helm-charts/releases/download/blockmeta-1.0.0/blockmeta-1.0.0.tgz
     version: 1.0.0
+  substreams-sink-clickhouse:
+  - apiVersion: v2
+    appVersion: v0.3.10
+    created: "2024-03-18T15:19:59.62080598Z"
+    description: A Helm chart for Kubernetes
+    digest: d12cbe94d7817d27a645f3f26489e0f7d485a8702787d6b0cee9e275a5ec017b
+    name: substreams-sink-clickhouse
+    type: application
+    urls:
+    - https://github.com/pinax-network/helm-charts/releases/download/substreams-sink-clickhouse-0.1.0/substreams-sink-clickhouse-0.1.0.tgz
+    version: 0.1.0
   substreams-sink-prometheus:
   - apiVersion: v2
     appVersion: v0.7.11
@@ -82,4 +93,4 @@ entries:
     urls:
     - https://github.com/pinax-network/helm-charts/releases/download/substreams-sink-prometheus-1.0.0/substreams-sink-prometheus-1.0.0.tgz
     version: 1.0.0
-generated: "2024-03-15T21:06:27.116395321Z"
+generated: "2024-03-18T15:19:59.620845314Z"
