@@ -1,0 +1,34 @@
+name: Update README with Helm Charts
+
+on:
+  push:
+    branches:
+      - main  # Change this to your default branch if different
+  workflow_dispatch:
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Generate Charts List
+        id: generate-charts-list
+        run: |
+          echo '## Helm Charts' > CHARTS.md
+          echo '' >> CHARTS.md
+          for dir in charts/*; do
+            if [ -d "$dir" ]; then
+              chartName=$(basename "$dir")
+              echo "- [$chartName](https://<your-github-username>.github.io/<repo-name>/$dir)" >> CHARTS.md
+            fi
+          done
+      - name: Update README
+        run: |
+          sed -i '/## Helm Charts/,$d' README.md
+          cat CHARTS.md >> README.md
+      - name: Commit and Push Changes
+        uses: EndBug/add-and-commit@v7
+        with:
+          message: 'Update README with latest Helm charts list'
+          add: 'README.md'
+          default_author: github_actions
