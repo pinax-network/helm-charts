@@ -19,7 +19,7 @@ jobs:
           for dir in charts/*; do
             if [ -d "$dir" ]; then
               chartName=$(basename "$dir")
-              echo "- [$chartName](https://<your-github-username>.github.io/<repo-name>/$dir)" >> CHARTS.md
+              echo "- [$chartName](https://pinax-network.github.io/helm-charts/$dir)" >> CHARTS.md
             fi
           done
       - name: Update README
