@@ -25,12 +25,15 @@ jobs:
 
     - name: Update README.md
       run: |
-        charts=$(helm repo index --flat index.yaml | grep -v 'README.md' | awk '{print $2}')
-        echo "# Helm Charts" > README.md
+        # Remove existing Helm Charts section from README.md
+        sed -i '/# Helm Charts/,/^$/d' README.md
+
+        charts=$(helm repo index --flat index.yaml --merge $GITHUB_WORKSPACE/index.yaml --yaml | yq '.entries[]?.name')
+        echo "# Helm Charts" >> README.md
         echo "" >> README.md
         for chart in $charts; do
-          version=$(helm repo index --flat index.yaml | grep $chart | awk '{print $3}')
-          description=$(helm repo index --flat index.yaml | grep $chart | awk '{print $4}')
+          version=$(helm repo index --flat index.yaml --merge $GITHUB_WORKSPACE/index.yaml --yaml | yq -r ".entries[]? | select(.name == \"$chart\") | .version")
+          description=$(helm repo index --flat index.yaml --merge $GITHUB_WORKSPACE/index.yaml --yaml | yq -r ".entries[]? | select(.name == \"$chart\") | .description")
           echo "## $chart" >> README.md
           echo "" >> README.md
           echo "Version: $version" >> README.md
