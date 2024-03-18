@@ -15,34 +15,28 @@ jobs:
       with:
         ref: gh-pages
 
-    - name: Install yq
-      run: |
-        sudo wget -O /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
-        sudo chmod +x /usr/local/bin/yq
-
     - name: Update README.md
       run: |
         # Remove existing Helm Charts section from README.md
         sed -i '/# Helm Charts/,/^$/d' README.md
 
-        # Get a list of all .tgz files
-        tgz_files=$(ls *.tgz)
-
+        # Write new Helm Charts section
         echo "# Helm Charts" >> README.md
         echo "" >> README.md
 
-        for tgz_file in $tgz_files; do
-          chart_name=$(echo "$tgz_file" | sed 's/\(.*\)-\([^-]*\)\.tgz/\1/')
-          chart_version=$(echo "$tgz_file" | sed 's/\(.*\)-\([^-]*\)\.tgz/\2/')
-          chart_description=$(yq r "$tgz_file" 'description')
+        while IFS= read -r line; do
+          if [[ $line == "  - apiVersion: v2"* ]]; then
+            chart_name=$(echo "$line" | awk -F'name: ' '{print $2}')
+            version=$(echo "$line" | awk -F'version: ' '{print $2}')
+            description=$(echo "$line" | awk -F'description: ' '{print $2}')
 
-          echo "## $chart_name" >> README.md
-          echo "" >> README.md
-          echo "Version: $chart_version" >> README.md
-          echo "" >> README.md
-          echo "$chart_description" >> README.md
-          echo "" >> README.md
-        done
+            echo "## $chart_name" >> README.md
+            echo "" >> README.md
+            echo "### Version $version" >> README.md
+            echo "$description" >> README.md
+            echo "" >> README.md
+          fi
+        done < index.yaml
 
     - name: Commit changes
       run: |
