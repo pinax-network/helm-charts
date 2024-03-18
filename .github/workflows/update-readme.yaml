@@ -3,7 +3,7 @@ name: Update README with Helm Charts
 on:
   push:
     branches:
-      - main  # Change this to your default branch if different
+      - gh-pages  # Change this to your default branch if different
   workflow_dispatch:
 
 jobs:
