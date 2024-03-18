@@ -31,12 +31,12 @@ jobs:
         # Remove existing Helm Charts section from README.md
         sed -i '/# Helm Charts/,/^$/d' README.md
 
-        charts=$(helm repo index --merge $GITHUB_WORKSPACE/index.yaml . --yaml | yq '.entries[]?.name')
+        charts=$(helm repo index --merge $GITHUB_WORKSPACE/index.yaml . | yq '.entries[]?.name')
         echo "# Helm Charts" >> README.md
         echo "" >> README.md
         for chart in $charts; do
-          version=$(helm repo index --merge $GITHUB_WORKSPACE/index.yaml . --yaml | yq -r ".entries[]? | select(.name == \"$chart\") | .version")
-          description=$(helm repo index --merge $GITHUB_WORKSPACE/index.yaml . --yaml | yq -r ".entries[]? | select(.name == \"$chart\") | .description")
+          version=$(helm repo index --merge $GITHUB_WORKSPACE/index.yaml . | yq -r ".entries[]? | select(.name == \"$chart\") | .version")
+          description=$(helm repo index --merge $GITHUB_WORKSPACE/index.yaml . | yq -r ".entries[]? | select(.name == \"$chart\") | .description")
           echo "## $chart" >> README.md
           echo "" >> README.md
           echo "Version: $version" >> README.md
