@@ -23,14 +23,13 @@ jobs:
 
     - name: Update README.md
       run: |
-        #!/usr/bin/env perl
-
+        perl -e '
         use strict;
         use warnings;
         use YAML::Tiny;
 
         # Read the index.yaml file
-        my $yaml = YAML::Tiny->read('index.yaml');
+        my $yaml = YAML::Tiny->read("index.yaml");
 
         # Get the entries
         my %entries = %{$yaml->[0]->{entries}};
@@ -52,11 +51,11 @@ jobs:
         my $latest_url = $latest_entry->{urls}[0];
 
         # Update the README.md file
-        my $readme_file = 'README.md';
+        my $readme_file = "README.md";
         my $readme_content = read_file($readme_file);
 
         # Find the position to insert the new entry
-        my $insert_pos = index($readme_content, '## Latest Release');
+        my $insert_pos = index($readme_content, "## Latest Release");
 
         if ($insert_pos != -1) {
             # Generate the new entry
@@ -71,7 +70,7 @@ jobs:
 
         sub read_file {
             my ($file) = @_;
-            open my $fh, '<', $file or die "Could not open file '$file': $!";
+            open my $fh, "<", $file or die "Could not open file \"$file\": $!";
             local $/;
             my $content = <$fh>;
             close $fh;
@@ -80,10 +79,11 @@ jobs:
 
         sub write_file {
             my ($file, $content) = @_;
-            open my $fh, '>', $file or die "Could not open file '$file': $!";
+            open my $fh, ">", $file or die "Could not open file \"$file\": $!";
             print $fh $content;
             close $fh;
         }
+        '
 
     - name: Commit changes
       run: |
