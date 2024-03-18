@@ -34,39 +34,33 @@ jobs:
         # Get the entries
         my %entries = %{$yaml->[0]->{entries}};
 
-        # Find the latest entry across all keys
-        my ($latest_key, $latest_entry);
-        foreach my $key (keys %entries) {
-            my @sorted_entries = sort { $b->{version} cmp $a->{version} } @{$entries{$key}};
-            my $entry = $sorted_entries[0];
-            if (!defined $latest_entry || $entry->{version} gt $latest_entry->{version}) {
-                $latest_key = $key;
-                $latest_entry = $entry;
-            }
+        # Find the latest entry for each app
+        my %latest_entries;
+        foreach my $app (keys %entries) {
+            my @sorted_entries = sort { $b->{version} cmp $a->{version} } @{$entries{$app}};
+            $latest_entries{$app} = $sorted_entries[0];
         }
-
-        # Extract the latest entry name, version, and URL
-        my $latest_name = $latest_key;
-        my $latest_version = $latest_entry->{version};
-        my $latest_url = $latest_entry->{urls}[0];
 
         # Update the README.md file
         my $readme_file = "README.md";
         my $readme_content = read_file($readme_file);
 
-        # Generate the new entry
-        my $new_entry = "## Latest Release\n\n- Name: $latest_name\n- Version: $latest_version\n- URL: $latest_url\n";
+        # Generate the new content
+        my $new_content = "## Latest Releases\n\n";
+        foreach my $app (sort keys %latest_entries) {
+            my $entry = $latest_entries{$app};
+            $new_content .= "### $app\n";
+            $new_content .= "- Version: $entry->{version}\n";
+            $new_content .= "- URL: $entry->{urls}[0]\n\n";
+        }
 
-        # Check if the "## Latest Release" section exists in the README
-        if (index($readme_content, "## Latest Release") == -1) {
-            # If the section doesn'"'"'t exist, append the new entry to the README
-            $readme_content .= "\n$new_entry";
+        # Check if the "## Latest Releases" section exists in the README
+        if (index($readme_content, "## Latest Releases") == -1) {
+            # If the section doesn'"'"'t exist, append the new content to the README
+            $readme_content .= "\n$new_content";
         } else {
-            # If the section exists, find the position to insert the new entry
-            my $insert_pos = index($readme_content, "## Latest Release");
-
-            # Insert the new entry after the heading
-            substr($readme_content, $insert_pos, 0) = "$new_entry\n";
+            # If the section exists, replace it with the new content
+            $readme_content =~ s/## Latest Releases.*/$new_content/s;
         }
 
         # Write the updated content back to the file
@@ -99,7 +93,7 @@ jobs:
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git add README.md
-        git commit -m "Update README.md with the latest release"
+        git commit -m "Update README.md with the latest releases"
 
     - name: Push changes
       if: steps.update_readme.outputs.changes_made == 'true'
