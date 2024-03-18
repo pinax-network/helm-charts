@@ -1,38 +1,47 @@
-name: Update README with Helm Chart Information
+name: Update README.md
 
 on:
   push:
     branches:
-      - gh-pages  # Adjust this to your branch as needed
+      - gh-pages
 
 jobs:
+
   update-readme:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+    - uses: actions/checkout@v3
+      with:
+        ref: gh-pages
 
-      - name: Install yq (Version 4)
-        run: |
-          sudo wget -O /usr/bin/yq https://github.com/mikefarah/yq/releases/download/v4.27.5/yq_linux_amd64
-          sudo chmod +x /usr/bin/yq
+    - name: Update README.md
+      run: |
+        # Remove existing Helm Charts section from README.md
+        sed -i '/# Helm Charts/,/^$/d' README.md
 
-      - name: Update README.md with Helm Charts
-        run: |
-          # Remove existing Helm Charts section from README.md
-          sed -i '/# Helm Charts/,/^$/d' README.md
+        # Write new Helm Charts section
+        echo "# Helm Charts" >> README.md
+        echo "" >> README.md
 
-          # Write new Helm Charts section
-          echo "# Helm Charts" >> README.md
-          echo "" >> README.md
+        while IFS= read -r line; do
+          if [[ $line == "  - apiVersion: v2"* ]]; then
+            chart_name=$(echo "$line" | awk -F'name: ' '{print $2}')
+            version=$(echo "$line" | awk -F'version: ' '{print $2}')
+            description=$(echo "$line" | awk -F'description: ' '{print $2}')
 
-          # Extract and append chart information to README.md
-          yq e '.entries[] | keys[] as $k | .[$k][] | "## \(.name)\n\n### Version \(.version)\n\(.description)\n"' index.yaml >> README.md
+            echo "## $chart_name" >> README.md
+            echo "" >> README.md
+            echo "### Version $version" >> README.md
+            echo "$description" >> README.md
+            echo "" >> README.md
+          fi
+        done < index.yaml
 
-      - name: Commit and Push Changes
-        run: |
-          git config --global user.name 'GitHub Actions'
-          git config --global user.email 'actions@github.com'
-          git add README.md
-          git commit -m "Update README with Helm Charts information" -a || echo "No changes to commit"
-          git push
+    - name: Commit changes
+      run: |
+        git config --global user.name 'GitHub Actions'
+        git config --global user.email 'actions@github.com'
+        git add README.md
+        git commit -m "Update README.md" || echo "No changes to commit"
+        git push origin gh-pages
