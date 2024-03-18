@@ -28,7 +28,8 @@ jobs:
         echo "# Helm Charts" >> README.md
         echo "" >> README.md
 
-        yq e '.entries | to_entries[] | .key as $key | .value[] | select(.apiVersion == "v2")' index.yaml -j | \
+        # Extract and append chart information to README.md
+        yq e '.entries | to_entries[] | .key as $key | .value[] | select(.apiVersion == "v2")' -o=json index.yaml | \
         jq -r '"## " + .name, "", "### Version " + .version, .description, ""' >> README.md
 
     - name: Commit changes
