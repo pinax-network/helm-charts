@@ -23,6 +23,11 @@ jobs:
         chmod +x get_helm.sh
         ./get_helm.sh
 
+    - name: Install yq
+      run: |
+        sudo wget -O /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+        sudo chmod +x /usr/local/bin/yq
+
     - name: Update README.md
       run: |
         # Remove existing Helm Charts section from README.md
