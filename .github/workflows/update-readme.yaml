@@ -24,15 +24,17 @@ jobs:
         echo "# Helm Charts" >> README.md
         echo "" >> README.md
 
+        current_chart=""
         while IFS= read -r line; do
-          if [[ $line == "  - apiVersion: v2"* ]]; then
-            chart_name=$(echo "$line" | awk -F'name: ' '{print $2}')
-            version=$(echo "$line" | awk -F'version: ' '{print $2}')
-            description=$(echo "$line" | awk -F'description: ' '{print $2}')
-
-            echo "## $chart_name" >> README.md
+          if [[ $line == *"name:"* ]]; then
+            current_chart=$(echo "$line" | sed -e 's/^.*name: //')
+            echo "## $current_chart" >> README.md
             echo "" >> README.md
+          elif [[ $line == *"version:"* ]]; then
+            version=$(echo "$line" | sed -e 's/^.*version: //')
             echo "### Version $version" >> README.md
+          elif [[ $line == *"description:"* ]]; then
+            description=$(echo "$line" | sed -e 's/^.*description: //')
             echo "$description" >> README.md
             echo "" >> README.md
           fi
