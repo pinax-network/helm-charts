@@ -15,12 +15,6 @@ jobs:
       with:
         ref: gh-pages
 
-    - name: Install Helm
-      run: |
-        curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
-        chmod +x get_helm.sh
-        ./get_helm.sh
-
     - name: Install yq
       run: |
         sudo wget -O /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
@@ -31,17 +25,22 @@ jobs:
         # Remove existing Helm Charts section from README.md
         sed -i '/# Helm Charts/,/^$/d' README.md
 
-        charts=$(helm repo index --merge $GITHUB_WORKSPACE/index.yaml . | yq '.entries[]?.name')
+        # Get a list of all .tgz files
+        tgz_files=$(ls *.tgz)
+
         echo "# Helm Charts" >> README.md
         echo "" >> README.md
-        for chart in $charts; do
-          version=$(helm repo index --merge $GITHUB_WORKSPACE/index.yaml . | yq -r ".entries[]? | select(.name == \"$chart\") | .version")
-          description=$(helm repo index --merge $GITHUB_WORKSPACE/index.yaml . | yq -r ".entries[]? | select(.name == \"$chart\") | .description")
-          echo "## $chart" >> README.md
+
+        for tgz_file in $tgz_files; do
+          chart_name=$(echo "$tgz_file" | sed 's/\(.*\)-\([^-]*\)\.tgz/\1/')
+          chart_version=$(echo "$tgz_file" | sed 's/\(.*\)-\([^-]*\)\.tgz/\2/')
+          chart_description=$(yq r "$tgz_file" 'description')
+
+          echo "## $chart_name" >> README.md
           echo "" >> README.md
-          echo "Version: $version" >> README.md
+          echo "Version: $chart_version" >> README.md
           echo "" >> README.md
-          echo "$description" >> README.md
+          echo "$chart_description" >> README.md
           echo "" >> README.md
         done
 
