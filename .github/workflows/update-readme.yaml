@@ -11,16 +11,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Install Yq
+        run: sudo snap install yq
       - name: Generate Charts List
         id: generate-charts-list
         run: |
           echo '## Helm Charts' > CHARTS.md
           echo '' >> CHARTS.md
-          for dir in charts/*; do
-            if [ -d "$dir" ]; then
-              chartName=$(basename "$dir")
-              echo "- [$chartName](https://pinax-network.github.io/helm-charts/$dir)" >> CHARTS.md
-            fi
+          yq e '.entries | keys | .[]' index.yaml -j | jq -r .[] | sort -u | while read chartName; do
+            echo "- [$chartName](https://pinax-network.github.io/helm-charts/$chartName)" >> CHARTS.md
           done
       - name: Update README
         run: |
