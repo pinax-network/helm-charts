@@ -1,4 +1,4 @@
-name: Update README.md
+name: Update README
 
 on:
   push:
@@ -6,56 +6,94 @@ on:
       - gh-pages
 
 jobs:
-
-  update-readme:
+  update_readme:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-      with:
-        ref: gh-pages
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
+    - name: Set up Perl
+      uses: shogo82148/actions-setup-perl@v1
       with:
-        python-version: '3.9'
+        perl-version: '5.32'
 
     - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install PyYAML
+      run: cpanm YAML::Tiny
 
     - name: Update README.md
       run: |
-        import yaml
+        #!/usr/bin/env perl
 
-        # Load index.yaml
-        with open("index.yaml", "r") as f:
-            index = yaml.safe_load(f)
+        use strict;
+        use warnings;
+        use YAML::Tiny;
 
-        # Generate README.md content
-        readme_content = "# Helm Charts\n\n"
-        included_charts = set()
+        # Read the index.yaml file
+        my $yaml = YAML::Tiny->read('index.yaml');
 
-        for chart_name, chart_versions in index["entries"].items():
-            if chart_name not in included_charts:
-                included_charts.add(chart_name)
+        # Get the entries
+        my %entries = %{$yaml->[0]->{entries}};
 
-                latest_version = max(chart_versions, key=lambda v: v["version"])
+        # Find the latest entry across all keys
+        my ($latest_key, $latest_entry);
+        foreach my $key (keys %entries) {
+            my @sorted_entries = sort { $b->{version} cmp $a->{version} } @{$entries{$key}};
+            my $entry = $sorted_entries[0];
+            if (!defined $latest_entry || $entry->{version} gt $latest_entry->{version}) {
+                $latest_key = $key;
+                $latest_entry = $entry;
+            }
+        }
 
-                readme_content += f"## {chart_name}\n\n"
-                readme_content += f"### Version {latest_version['version']}\n"
-                readme_content += f"{latest_version['description']}\n\n"
-                readme_content += f"URL: {latest_version['urls'][0]}\n\n"
+        # Extract the latest entry name, version, and URL
+        my $latest_name = $latest_key;
+        my $latest_version = $latest_entry->{version};
+        my $latest_url = $latest_entry->{urls}[0];
 
-        # Write README.md
-        with open("README.md", "w") as f:
-            f.write(readme_content)
+        # Update the README.md file
+        my $readme_file = 'README.md';
+        my $readme_content = read_file($readme_file);
+
+        # Find the position to insert the new entry
+        my $insert_pos = index($readme_content, '## Latest Release');
+
+        if ($insert_pos != -1) {
+            # Generate the new entry
+            my $new_entry = "- Name: $latest_name\n- Version: $latest_version\n- URL: $latest_url\n";
+
+            # Insert the new entry after the heading
+            substr($readme_content, $insert_pos, 0) = "## Latest Release\n\n$new_entry\n";
+
+            # Write the updated content back to the file
+            write_file($readme_file, $readme_content);
+        }
+
+        sub read_file {
+            my ($file) = @_;
+            open my $fh, '<', $file or die "Could not open file '$file': $!";
+            local $/;
+            my $content = <$fh>;
+            close $fh;
+            return $content;
+        }
+
+        sub write_file {
+            my ($file, $content) = @_;
+            open my $fh, '>', $file or die "Could not open file '$file': $!";
+            print $fh $content;
+            close $fh;
+        }
 
     - name: Commit changes
       run: |
-        git config --global user.name 'GitHub Actions'
-        git config --global user.email 'actions@github.com'
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
         git add README.md
-        git commit -m "Update README.md" || echo "No changes to commit"
-        git push origin gh-pages
+        git commit -m "Update README.md with the latest release"
+
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: gh-pages
