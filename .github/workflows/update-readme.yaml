@@ -37,6 +37,10 @@ jobs:
             description=$(echo "$line" | sed -e 's/^.*description: //')
             echo "$description" >> README.md
             echo "" >> README.md
+          elif [[ $line == *"urls:"* ]]; then
+            url=$(echo "$line" | sed -e 's/^.*- //')
+            echo "URL: $url" >> README.md
+            echo "" >> README.md
           fi
         done < index.yaml
 
