@@ -1,5 +1,4 @@
 
-Helm charts for Kubernetes
 
 ## blockmeta
 
