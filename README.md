@@ -1,4 +1,4 @@
 
 ## Helm Charts
 
-- [blockmeta](https://<your-github-username>.github.io/<repo-name>/charts/blockmeta)
+- [blockmeta](https://pinax-network.github.io/helm-charts/charts/blockmeta)
