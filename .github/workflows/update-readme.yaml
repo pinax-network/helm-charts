@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - gh-pages
-#    paths:
-#      - 'index.yaml'
 
 jobs:
 
@@ -17,35 +15,52 @@ jobs:
       with:
         ref: gh-pages
 
-    - name: Install Helm
-      run: |
-        curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
-        chmod +x get_helm.sh
-        ./get_helm.sh
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
 
-    - name: Install yq
+    - name: Install dependencies
       run: |
-        sudo wget -O /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
-        sudo chmod +x /usr/local/bin/yq
+        python -m pip install --upgrade pip
+        pip install PyYAML
 
     - name: Update README.md
       run: |
-        # Remove existing Helm Charts section from README.md
-        sed -i '/# Helm Charts/,/^$/d' README.md
+        import yaml
+        import os
 
-        charts=$(helm repo index --flat index.yaml --merge $GITHUB_WORKSPACE/index.yaml --yaml | yq '.entries[]?.name')
-        echo "# Helm Charts" >> README.md
-        echo "" >> README.md
-        for chart in $charts; do
-          version=$(helm repo index --flat index.yaml --merge $GITHUB_WORKSPACE/index.yaml --yaml | yq -r ".entries[]? | select(.name == \"$chart\") | .version")
-          description=$(helm repo index --flat index.yaml --merge $GITHUB_WORKSPACE/index.yaml --yaml | yq -r ".entries[]? | select(.name == \"$chart\") | .description")
-          echo "## $chart" >> README.md
-          echo "" >> README.md
-          echo "Version: $version" >> README.md
-          echo "" >> README.md
-          echo "$description" >> README.md
-          echo "" >> README.md
-        done
+        # Load index.yaml
+        with open("index.yaml", "r") as f:
+            index = yaml.safe_load(f)
+
+        # Remove existing Helm Charts section from README.md
+        with open("README.md", "r") as f:
+            lines = f.readlines()
+
+        start = None
+        end = None
+        for i, line in enumerate(lines):
+            if line.strip() == "# Helm Charts":
+                start = i
+            elif start is not None and line.strip() == "":
+                end = i
+                break
+
+        if start is not None and end is not None:
+            lines = lines[:start] + lines[end+1:]
+
+        # Write new Helm Charts section
+        with open("README.md", "w") as f:
+            f.writelines(lines)
+            f.write("# Helm Charts\n\n")
+            for entry in index["entries"].values():
+                name = entry["name"]
+                version = entry["version"]
+                description = entry["description"]
+                f.write(f"## {name}\n\n")
+                f.write(f"Version: {version}\n\n")
+                f.write(f"{description}\n\n")
 
     - name: Commit changes
       run: |
