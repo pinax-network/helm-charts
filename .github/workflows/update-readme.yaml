@@ -6,7 +6,6 @@ on:
       - gh-pages
 
 jobs:
-
   update-readme:
     runs-on: ubuntu-latest
 
@@ -15,34 +14,60 @@ jobs:
       with:
         ref: gh-pages
 
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install PyYAML
+
     - name: Update README.md
       run: |
-        # Remove existing Helm Charts section from README.md
-        sed -i '/# Helm Charts/,/^$/d' README.md
+        import yaml
 
-        # Write new Helm Charts section
-        echo "# Helm Charts" >> README.md
-        echo "" >> README.md
+        def load_index_yaml(file_path):
+            """Load index.yaml file and return the parsed data."""
+            with open(file_path, "r") as f:
+                return yaml.safe_load(f)
 
-        current_chart=""
-        while IFS= read -r line; do
-          if [[ $line == *"name:"* ]]; then
-            current_chart=$(echo "$line" | sed -e 's/^.*name: //')
-            echo "## $current_chart" >> README.md
-            echo "" >> README.md
-          elif [[ $line == *"version:"* ]]; then
-            version=$(echo "$line" | sed -e 's/^.*version: //')
-            echo "### Version $version" >> README.md
-          elif [[ $line == *"description:"* ]]; then
-            description=$(echo "$line" | sed -e 's/^.*description: //')
-            echo "$description" >> README.md
-            echo "" >> README.md
-          elif [[ $line == *"urls:"* ]]; then
-            url=$(echo "$line" | sed -e 's/^.*- //')
-            echo "URL: $url" >> README.md
-            echo "" >> README.md
-          fi
-        done < index.yaml
+        def get_latest_version(chart_versions):
+            """Get the latest version from a list of chart versions."""
+            return max(chart_versions, key=lambda v: v["version"])
+
+        def generate_readme_content(index_data):
+            """Generate the content for README.md file."""
+            readme_content = "# Helm Charts\n\n"
+            included_charts = set()
+
+            for chart_name, chart_versions in index_data["entries"].items():
+                if chart_name not in included_charts:
+                    included_charts.add(chart_name)
+
+                    latest_version = get_latest_version(chart_versions)
+
+                    readme_content += f"## {chart_name}\n\n"
+                    readme_content += f"### Version {latest_version['version']}\n"
+                    readme_content += f"{latest_version['description']}\n\n"
+                    readme_content += f"URL: {latest_version['urls'][0]}\n\n"
+
+            return readme_content
+
+        def write_readme_file(file_path, content):
+            """Write the content to the README.md file."""
+            with open(file_path, "w") as f:
+                f.write(content)
+
+        def main():
+            """Main function to update the README.md file."""
+            index_data = load_index_yaml("index.yaml")
+            readme_content = generate_readme_content(index_data)
+            write_readme_file("README.md", readme_content)
+
+        if __name__ == "__main__":
+            main()
 
     - name: Commit changes
       run: |
