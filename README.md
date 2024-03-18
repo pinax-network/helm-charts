@@ -128,8 +128,6 @@ substreams-sink-prometheus
 ## substreams-sink-prometheus
 
 ### Version 1.0.0
-# Helm Charts
-
 A Helm chart for Kubernetes
 
 ## blockmeta
@@ -193,5 +191,98 @@ substreams-sink-prometheus
 substreams-sink-prometheus
 
 ## substreams-sink-prometheus
+
+### Version 1.0.0
+# Helm Charts
+
+A Helm chart for Kubernetes
+
+## blockmeta
+
+URL:     urls:
+
+### Version 1.0.1
+A Helm chart for Kubernetes
+
+## blockmeta
+
+URL:     urls:
+
+### Version 1.0.0
+A Helm chart for Kubernetes
+
+## substreams-sink-clickhouse
+
+URL:     urls:
+
+### Version 1.0.0
+A Helm chart for Kubernetes
+
+## substreams-sink-clickhouse
+
+URL:     urls:
+
+### Version 0.1.0
+substreams-sink-prometheus
+
+## substreams-sink-prometheus
+
+URL:     urls:
+
+### Version 1.0.8
+substreams-sink-prometheus
+
+## substreams-sink-prometheus
+
+URL:     urls:
+
+### Version 1.0.7
+substreams-sink-prometheus
+
+## substreams-sink-prometheus
+
+URL:     urls:
+
+### Version 1.0.6
+substreams-sink-prometheus
+
+## substreams-sink-prometheus
+
+URL:     urls:
+
+### Version 1.0.5
+substreams-sink-prometheus
+
+## substreams-sink-prometheus
+
+URL:     urls:
+
+### Version 1.0.4
+substreams-sink-prometheus
+
+## substreams-sink-prometheus
+
+URL:     urls:
+
+### Version 1.0.3
+substreams-sink-prometheus
+
+## substreams-sink-prometheus
+
+URL:     urls:
+
+### Version 1.0.2
+substreams-sink-prometheus
+
+## substreams-sink-prometheus
+
+URL:     urls:
+
+### Version 1.0.1
+substreams-sink-prometheus
+
+## substreams-sink-prometheus
+
+URL:     urls:
 
 ### Version 1.0.0
