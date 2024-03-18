@@ -3,7 +3,7 @@ name: Update README with Helm Charts
 on:
   push:
     branches:
-      - gh-pages  # Change this to your default branch if different
+      - gh-pages  # Adjust this to your default branch if different
   workflow_dispatch:
 
 jobs:
@@ -13,21 +13,18 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install Yq
         run: |
-          sudo wget -O /usr/bin/yq https://github.com/mikefarah/yq/releases/download/v4.6.1/yq_linux_amd64
+          sudo wget -O /usr/bin/yq https://github.com/mikefarah/yq/releases/download/v4.6.3/yq_linux_amd64
           sudo chmod +x /usr/bin/yq
       - name: Update README with Helm Charts
         run: |
           # Remove existing Helm Charts section
           sed -i '/## Helm Charts/,$d' README.md
-          
           # Add Helm Charts header
           echo '## Helm Charts' >> README.md
           echo '' >> README.md
-          
           # Generate and append the list of charts
-          yq e '.entries | keys | .[]' index.yaml -j | jq -r .[] | sort -u | while read chartName; do
-            echo "- [$chartName](https://pinax-network.github.io/helm-charts/$chartName)" >> README.md
-          done
+          yq e '.entries | to_entries | .[] | .value[0]' index.yaml -j | \
+          jq -r '["- [" + .name + "](" + .urls[0] + ")"] | .[]' >> README.md
       - name: Commit and Push Changes
         uses: EndBug/add-and-commit@v7
         with:
