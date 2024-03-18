@@ -54,19 +54,26 @@ jobs:
         my $readme_file = "README.md";
         my $readme_content = read_file($readme_file);
 
-        # Find the position to insert the new entry
-        my $insert_pos = index($readme_content, "## Latest Release");
+        # Generate the new entry
+        my $new_entry = "## Latest Release\n\n- Name: $latest_name\n- Version: $latest_version\n- URL: $latest_url\n";
 
-        if ($insert_pos != -1) {
-            # Generate the new entry
-            my $new_entry = "- Name: $latest_name\n- Version: $latest_version\n- URL: $latest_url\n";
+        # Check if the "## Latest Release" section exists in the README
+        if (index($readme_content, "## Latest Release") == -1) {
+            # If the section doesn'"'"'t exist, append the new entry to the README
+            $readme_content .= "\n$new_entry";
+        } else {
+            # If the section exists, find the position to insert the new entry
+            my $insert_pos = index($readme_content, "## Latest Release");
 
             # Insert the new entry after the heading
-            substr($readme_content, $insert_pos, 0) = "## Latest Release\n\n$new_entry\n";
-
-            # Write the updated content back to the file
-            write_file($readme_file, $readme_content);
+            substr($readme_content, $insert_pos, 0) = "$new_entry\n";
         }
+
+        # Write the updated content back to the file
+        write_file($readme_file, $readme_content);
+
+        # Set the flag to indicate changes were made
+        print "::set-output name=changes_made::true\n";
 
         sub read_file {
             my ($file) = @_;
@@ -84,8 +91,10 @@ jobs:
             close $fh;
         }
         '
+      id: update_readme
 
     - name: Commit changes
+      if: steps.update_readme.outputs.changes_made == 'true'
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
@@ -93,6 +102,7 @@ jobs:
         git commit -m "Update README.md with the latest release"
 
     - name: Push changes
+      if: steps.update_readme.outputs.changes_made == 'true'
       uses: ad-m/github-push-action@master
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
