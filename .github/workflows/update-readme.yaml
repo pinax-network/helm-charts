@@ -6,7 +6,6 @@ on:
       - gh-pages
 
 jobs:
-
   update-readme:
     runs-on: ubuntu-latest
 
@@ -14,6 +13,11 @@ jobs:
     - uses: actions/checkout@v3
       with:
         ref: gh-pages
+
+    - name: Install yq
+      run: |
+        sudo wget -O /usr/bin/yq https://github.com/mikefarah/yq/releases/download/v4.27.5/yq_linux_amd64
+        sudo chmod +x /usr/bin/yq
 
     - name: Update README.md
       run: |
@@ -24,24 +28,13 @@ jobs:
         echo "# Helm Charts" >> README.md
         echo "" >> README.md
 
-        while IFS= read -r line; do
-          if [[ $line == "  - apiVersion: v2"* ]]; then
-            chart_name=$(echo "$line" | awk -F'name: ' '{print $2}')
-            version=$(echo "$line" | awk -F'version: ' '{print $2}')
-            description=$(echo "$line" | awk -F'description: ' '{print $2}')
-
-            echo "## $chart_name" >> README.md
-            echo "" >> README.md
-            echo "### Version $version" >> README.md
-            echo "$description" >> README.md
-            echo "" >> README.md
-          fi
-        done < index.yaml
+        yq e '.entries | to_entries[] | .key as $key | .value[] | select(.apiVersion == "v2")' index.yaml -j | \
+        jq -r '"## " + .name, "", "### Version " + .version, .description, ""' >> README.md
 
     - name: Commit changes
       run: |
         git config --global user.name 'GitHub Actions'
         git config --global user.email 'actions@github.com'
         git add README.md
-        git commit -m "Update README.md" || echo "No changes to commit"
+        git commit -m "Update README.md" -a || echo "No changes to commit"
         git push origin gh-pages
