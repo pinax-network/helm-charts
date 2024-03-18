@@ -1,39 +1,48 @@
-name: Update README with Helm Charts
+name: Update README.md
 
 on:
   push:
     branches:
-      - gh-pages  # Adjust this to your default branch if different
-  workflow_dispatch:
+      - gh-pages
+    paths:
+      - 'index.yaml'
 
 jobs:
+
   update-readme:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
+      with:
+        ref: gh-pages
 
-      - name: Install Yq
-        run: |
-          sudo wget -O /usr/bin/yq https://github.com/mikefarah/yq/releases/download/v4.27.2/yq_linux_amd64
-          sudo chmod +x /usr/bin/yq
+    - name: Install Helm
+      run: |
+        curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+        chmod +x get_helm.sh
+        ./get_helm.sh
 
-      - name: Update README with Helm Charts
-        run: |
-          # Remove existing Helm Charts section from README.md
-          sed -i '/## Helm Charts/,$d' README.md
-          # Add Helm Charts header
-          echo '## Helm Charts' >> README.md
-          echo '' >> README.md
-          # Generate and append the list of charts from index.yaml
-          yq e '.entries | keys | .[]' index.yaml -j | jq -r .[] | while read chartName; do
-            chartVersion=$(yq e ".entries[\"$chartName\"][0].version" index.yaml)
-            chartUrl=$(yq e ".entries[\"$chartName\"][0].urls[0]" index.yaml)
-            echo "- [$chartName $chartVersion]($chartUrl)" >> README.md
-          done
+    - name: Update README.md
+      run: |
+        charts=$(helm repo index --flat index.yaml | grep -v 'README.md' | awk '{print $2}')
+        echo "# Helm Charts" > README.md
+        echo "" >> README.md
+        for chart in $charts; do
+          version=$(helm repo index --flat index.yaml | grep $chart | awk '{print $3}')
+          description=$(helm repo index --flat index.yaml | grep $chart | awk '{print $4}')
+          echo "## $chart" >> README.md
+          echo "" >> README.md
+          echo "Version: $version" >> README.md
+          echo "" >> README.md
+          echo "$description" >> README.md
+          echo "" >> README.md
+        done
 
-      - name: Commit and Push Changes
-        uses: EndBug/add-and-commit@v7
-        with:
-          message: 'Update README with latest Helm charts list'
-          add: 'README.md'
-          default_author: github_actions
+    - name: Commit changes
+      run: |
+        git config --global user.name 'GitHub Actions'
+        git config --global user.email 'actions@github.com'
+        git add README.md
+        git commit -m "Update README.md" || echo "No changes to commit"
+        git push origin gh-pages
