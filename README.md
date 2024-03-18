@@ -1,4 +1,3 @@
-,
 
 ## Latest Release
 
