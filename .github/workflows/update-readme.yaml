@@ -3,7 +3,7 @@ name: Update README with Helm Chart Information
 on:
   push:
     branches:
-      - main  # Adjust this to your branch as needed
+      - gh-pages  # Adjust this to your branch as needed
 
 jobs:
   update-readme:
