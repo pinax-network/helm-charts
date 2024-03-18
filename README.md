@@ -1,72 +1,7 @@
-.
-## 
-
-### Version 
-
-
-## 
-
-### Version 
-
-
-## 
-
-### Version 
-
-
-## 
-
-### Version 
-
-
-## 
-
-### Version 
-
-
-## 
-
-### Version 
-
-
-## 
-
-### Version 
-
-
-## 
-
-### Version 
-
-
-## 
-
-### Version 
-
-
-## 
-
-### Version 
-
-
-## 
-
-### Version 
-
-
-## 
-
-### Version 
-
-
-## 
-
-### Version 
-
 
 # Helm Charts
 
-A Helm chart for Kubernetes
+Helm charts for Kubernetes
 
 ## blockmeta
 
