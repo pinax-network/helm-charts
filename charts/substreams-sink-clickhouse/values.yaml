@@ -1,0 +1,21 @@
+nameOverride: ""
+fullnameOverride: ""
+
+replicaCount: 1
+image: ghcr.io/pinax-network/substreams-sink-clickhouse
+tag: v0.3.10
+
+env:
+  # PUBLIC_KEY: ""
+  hostname: 0.0.0.0
+  port: 3000
+  host: http://clickhouse:8123
+  database: antelope
+  username: default
+  password: ""
+  table: ""
+  max_limit: 500
+  verbose: true
+
+service:
+  type: ClusterIP
