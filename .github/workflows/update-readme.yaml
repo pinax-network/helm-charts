@@ -11,20 +11,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+
       - name: Install Yq
         run: |
-          sudo wget -O /usr/bin/yq https://github.com/mikefarah/yq/releases/download/v4.6.3/yq_linux_amd64
+          sudo wget -O /usr/bin/yq https://github.com/mikefarah/yq/releases/download/v4.27.2/yq_linux_amd64
           sudo chmod +x /usr/bin/yq
+
       - name: Update README with Helm Charts
         run: |
-          # Remove existing Helm Charts section
+          # Remove existing Helm Charts section from README.md
           sed -i '/## Helm Charts/,$d' README.md
           # Add Helm Charts header
           echo '## Helm Charts' >> README.md
           echo '' >> README.md
-          # Generate and append the list of charts
-          yq e '.entries | to_entries | .[] | .value[0]' index.yaml -j | \
-          jq -r '["- [" + .name + "](" + .urls[0] + ")"] | .[]' >> README.md
+          # Generate and append the list of charts from index.yaml
+          yq e '.entries | keys | .[]' index.yaml -j | jq -r .[] | while read chartName; do
+            chartVersion=$(yq e ".entries[\"$chartName\"][0].version" index.yaml)
+            chartUrl=$(yq e ".entries[\"$chartName\"][0].urls[0]" index.yaml)
+            echo "- [$chartName $chartVersion]($chartUrl)" >> README.md
+          done
+
       - name: Commit and Push Changes
         uses: EndBug/add-and-commit@v7
         with:
