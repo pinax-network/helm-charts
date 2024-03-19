@@ -14,7 +14,7 @@ If release name contains chart name it will be used as a full name.
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else if .Values.nameOverride }}
-{{- $baseName := default .Chart.Name .Values.nameOverride }}
+{{- $name := default .Chart.Name .Values.nameOverride }}
 {{- else }}
 {{- $name := .Release.Name }}
 {{- if and .Values.sinkType (not .Values.fullnameOverride) }}
