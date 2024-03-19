@@ -21,6 +21,17 @@ entries:
     urls:
     - https://github.com/pinax-network/helm-charts/releases/download/blockmeta-1.0.0/blockmeta-1.0.0.tgz
     version: 1.0.0
+  substreams-sink:
+  - apiVersion: v2
+    appVersion: v0.0.0
+    created: "2024-03-19T16:11:52.962673856Z"
+    description: substreams-sink
+    digest: 5ed96f1b04018831e0d3c1e16a388868b9530565a3fa276c56e0f1a1955a4b52
+    name: substreams-sink
+    type: application
+    urls:
+    - https://github.com/pinax-network/helm-charts/releases/download/substreams-sink-1.0.0/substreams-sink-1.0.0.tgz
+    version: 1.0.0
   substreams-sink-clickhouse:
   - apiVersion: v2
     appVersion: v0.3.10
@@ -133,4 +144,4 @@ entries:
     urls:
     - https://github.com/pinax-network/helm-charts/releases/download/substreams-sink-prometheus-1.0.0/substreams-sink-prometheus-1.0.0.tgz
     version: 1.0.0
-generated: "2024-03-18T18:36:03.149709134Z"
+generated: "2024-03-19T16:11:52.96270295Z"
