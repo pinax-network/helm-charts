@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: {{ if .Values.cursorPvc.enabled }}StatefulSet{{ else }}Deployment{{ end }}
+metadata:
+  name: {{ include "substreams-sink.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "substreams-sink.common-labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "substreams-sink.common-labels" . | nindent 6 }}
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        {{- include "substreams-sink.common-labels" . | nindent 8 }}
+    spec:
+      containers:
+      - name: {{ include "substreams-sink.fullname" . }}
+        image: {{ .Values.image -}} :{{ .Values.tag }}
+        {{- if .Values.args }}
+        args: {{ .Values.args }}
+        {{- end }}
+        ports:
+        - containerPort: {{ .Values.env.port }}
+        envFrom:
+        - configMapRef:
+            name: env-{{ include "substreams-sink.fullname" . }}
+        {{- if .Values.secretName }}
+        - secretRef:
+            name: {{ .Values.secretName }}
+        {{- end }}
+        {{- if .Values.livenessProbe.enabled }}
+        livenessProbe:
+          httpGet:
+            path: {{ .Values.livenessProbe.path }}
+            port: {{ .Values.env.port }}
+          initialDelaySeconds: 20
+          timeoutSeconds: 2
+          periodSeconds: 5
+        {{- end }}
+        {{- if .Values.cursorPvc.enabled }}
+        volumeMounts:
+            - name: cursor-volume
+              mountPath: /cursor
+      volumes:
+        - name: cursor-volume
+          persistentVolumeClaim:
+            claimName: pvc-{{ include "substreams-sink.fullname" . }}
+      {{- end }}

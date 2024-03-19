@@ -1,0 +1,16 @@
+{{- if .Values.cursorPvc.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-{{ include "substreams-sink.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "substreams-sink.common-labels" . | nindent 4 }}
+spec:
+  storageClassName: {{ .Values.cursorPvc.storageClassName }}
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+{{- end }}
