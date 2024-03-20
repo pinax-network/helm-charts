@@ -1,10 +1,10 @@
 apiVersion: apps/v1
 kind: {{ if .Values.cursorPvc.enabled }}StatefulSet{{ else }}Deployment{{ end }}
 metadata:
-  name: {{ .Release.Name }}
+  name: sink
   namespace: {{ .Release.Namespace }}
   labels:
-    release: {{ .Release.Name }}
+    release: sink
     chart: {{ .Chart.Name }}
     name: {{ include "substreams-sink.name" . }}
     fullName: {{ include "substreams-sink.fullname" . }}
@@ -20,7 +20,7 @@ spec:
         {{- include "substreams-sink.common-labels" . | nindent 8 }}
     spec:
       containers:
-      - name: {{ .Release.Name }}
+      - name: sink
         image: {{ .Values.image -}} :{{ .Values.tag }}
         {{- if .Values.args }}
         args: {{ .Values.args }}
@@ -29,7 +29,7 @@ spec:
         - containerPort: {{ .Values.env.port }}
         envFrom:
         - configMapRef:
-            name: env-{{ .Release.Name }}
+            name: env-sink
         {{- if .Values.secretName }}
         - secretRef:
             name: {{ .Values.secretName }}
@@ -50,5 +50,5 @@ spec:
       volumes:
         - name: cursor-volume
           persistentVolumeClaim:
-            claimName: pvc-{{ .Release.Name }}
+            claimName: pvc-sink
       {{- end }}

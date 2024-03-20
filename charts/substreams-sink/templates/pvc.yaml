@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: pvc-{{ .Release.Name }}
+  name: pvc-sink
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "substreams-sink.common-labels" . | nindent 4 }}
