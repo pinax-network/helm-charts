@@ -34,7 +34,7 @@ Create chart name and version as used by the chart label.
 Create common lablels.
 */}}
 {{- define "substreams-sink.common-labels" -}}
-app: sink
+app: {{ .Release.Name }}
 {{- if .Values.sinkType }}
 sinkType: {{ .Values.sinkType }}
 {{- end }}
@@ -60,7 +60,7 @@ Selector labels
 */}}
 {{- define "substreams-sink.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "substreams-sink.name" . }}
-app.kubernetes.io/instance: sink
+app.kubernetes.io/instance: {{ include "substreams-sink.fullname" . }}
 {{- end }}
 
 {{/*
