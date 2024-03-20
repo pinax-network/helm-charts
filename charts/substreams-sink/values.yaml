@@ -5,7 +5,6 @@ replicaCount: 1
 image: ghcr.io/pinax-network/substreams-sink-prometheus
 tag: v0.7.11
 args: ""
-# args: ["run"]
 
 sinkType: ""
 chain: ""
@@ -16,7 +15,7 @@ env:
   module_name: ""
   start_block: ""
   stop_block: ""
-  # cursor_file: "/cursor/cursor.lock"
+  cursor_file: "/cursor/cursor.lock"
   # production_mode: true
   # hostname: 0.0.0.0
   # port: 9102

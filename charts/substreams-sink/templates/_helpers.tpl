@@ -13,21 +13,13 @@ If release name contains chart name it will be used as a full name.
 {{- define "substreams-sink.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
-{{/*
-{{- else if .Values.nameOverride }}
-{{- $name := default .Chart.Name .Values.nameOverride }}
-{{- else }}
-{{- $name := .Release.Name }}
-{{- if and .Values.sinkType (not .Values.fullnameOverride) }}
-{{- $name = printf "%s-%s" $name .Values.sinkType -}}
-{{- end }}
-{{- if and .Values.chain (not .Values.fullnameOverride) }}
-{{- $name = printf "%s-%s" $name .Values.chain -}}
-{{- end }}
-*/}}
 {{- else }}
 {{- $name := default .Chart.Name .Values.nameOverride }}
-{{- $name | trunc 63 | trimSuffix "-" }}
+{{- if contains $name .Release.Name }}
+{{- .Release.Name | trunc 63 | trimSuffix "-" }}
+{{- else }}
+{{- .Release.Name | trunc 63 | trimSuffix "-" }}
+{{- end }}
 {{- end }}
 {{- end }}
 
