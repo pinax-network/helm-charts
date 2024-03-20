@@ -18,7 +18,7 @@ If release name contains chart name it will be used as a full name.
 {{- if contains $name .Release.Name }}
 {{- .Release.Name | trunc 63 | trimSuffix "-" }}
 {{- else }}
-{{- .Release.Name | trunc 63 | trimSuffix "-" }}
+{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}
 {{- end }}
 {{- end }}
 {{- end }}
@@ -34,7 +34,7 @@ Create chart name and version as used by the chart label.
 Create common lablels.
 */}}
 {{- define "substreams-sink.common-labels" -}}
-app: {{ include "substreams-sink.fullname" . }}
+app: {{ .Release.Name }}
 {{- if .Values.sinkType }}
 sinkType: {{ .Values.sinkType }}
 {{- end }}
@@ -60,7 +60,7 @@ Selector labels
 */}}
 {{- define "substreams-sink.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "substreams-sink.name" . }}
-app.kubernetes.io/instance: {{ include "substreams-sink.fullname" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
@@ -68,7 +68,7 @@ Create the name of the service account to use
 */}}
 {{- define "substreams-sink.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "substreams-sink.fullname" .) .Values.serviceAccount.name }}
+{{- default (.Release.Name) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
