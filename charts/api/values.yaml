@@ -1,0 +1,40 @@
+nameOverride: ""
+fullnameOverride: ""
+
+replicaCount: 1
+image: ghcr.io/pinax-network/antelope-token-api
+tag: v1.0.0
+
+initContainer:
+  enabled: true
+  clickhouseSink: substreams-sink-clickhouse-service:3000
+  schemaUrl: https://raw.githubusercontent.com/pinax-network/substreams-antelope-tokens/main/schema.sql
+
+env:
+  port: 8080
+  hostname: 0.0.0.0
+  host: http://clickhouse:8123
+  database: default
+  username: default
+  password: ""
+  table: ""
+  max_limit: 100000
+  verbose: true
+
+secret:
+  # secretName is the name of the sealed secret to use
+  secretName: ""
+  # enable to create the secret and fill it with following values
+  enabled: false
+  # each of these values should come from a sealed secret and be encrypted
+  # database: ""
+  # username: ""
+  # password: ""
+
+service:
+  type: ClusterIP
+
+ingress:
+  enabled: false
+  entryPoints: web
+  match: Path(`/`)

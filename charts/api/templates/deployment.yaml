@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "api.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ include "api.fullname" . }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "api.fullname" . }}
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: {{ include "api.fullname" . }}
+    spec:
+      {{- if .Values.initContainer.enabled }}
+      initContainers:
+        - name: schema-init
+          image: curlimages/curl:8.6.0
+          command: ["/bin/sh", "-c", "/scripts/schema-init.sh"]
+          volumeMounts:
+          - name: script-volume
+            mountPath: /scripts
+      {{- end }}
+      containers:
+      - name: {{ include "api.fullname" . }}
+        image: {{ .Values.image }}:{{ .Values.tag }}
+        ports:
+        - containerPort: {{ .Values.env.port }}
+        envFrom:
+        - configMapRef:
+            name: env-{{ include "api.fullname" . }}
+      {{- if .Values.initContainer.enabled }}
+      volumes:
+      - name: script-volume
+        configMap:
+          name: schema-init-{{ include "api.fullname" . }}
+          defaultMode: 0777
+      {{- end }}

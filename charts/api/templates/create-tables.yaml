@@ -1,0 +1,17 @@
+{{- if .Values.initContainer.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: schema-init-{{ include "api.fullname" . }}
+data:
+{{- with .Values.initContainer }}
+  schema-init.sh: |
+    #!/bin/sh
+    until curl --location --request PUT {{ .clickhouseSink }}/schema/sql?schema-url={{ .schemaUrl }}; do
+      echo "Waiting for substreams-sink-clickhouse..."
+      sleep 5
+    done
+    echo "Tables created successfully"
+    exit 0
+{{- end }}
+{{- end }}
