@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: {{ if .Values.cursorPvc.enabled }}StatefulSet{{ else }}Deployment{{ end }}
 metadata:
-  name: {{ .Release.Name }}
+  name: {{ include "substreams-sink.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "substreams-sink.common-labels" . | nindent 4 }}
@@ -25,7 +25,7 @@ spec:
         - containerPort: {{ .Values.env.port }}
         envFrom:
         - configMapRef:
-            name: env-{{ .Release.Name }}
+            name: env-{{ include "substreams-sink.fullname" . }}
         {{- if .Values.secretName }}
         - secretRef:
             name: {{ .Values.secretName }}

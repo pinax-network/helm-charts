@@ -9,8 +9,7 @@ Expand the name of the chart.
 Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
-*/}}
-{{- define "substreams-sink.fullname" -}}
+*/}}{{- define "substreams-sink.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else if .Values.nameOverride }}
@@ -31,7 +30,7 @@ Create chart name and version as used by the chart label.
 Create common lablels.
 */}}
 {{- define "substreams-sink.common-labels" -}}
-app: {{ .Release.Name }}
+app: {{ include "substreams-sink.fullname" . }}
 {{- if .Values.sinkType }}
 sinkType: {{ .Values.sinkType }}
 {{- end }}
@@ -65,7 +64,7 @@ Create the name of the service account to use
 */}}
 {{- define "substreams-sink.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (.Release.Name) .Values.serviceAccount.name }}
+{{- default (include "substreams-sink.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
