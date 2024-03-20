@@ -4,6 +4,10 @@ metadata:
   name: {{ .Release.Name }}
   namespace: {{ .Release.Namespace }}
   labels:
+    release: {{ .Release.Name }}
+    chart: {{ .Chart.Name }}
+    name: {{ include "substreams-sink.name" . }}
+    fullName: {{ include "substreams-sink.fullname" . }}
     {{- include "substreams-sink.common-labels" . | nindent 4 }}
 spec:
   selector:
