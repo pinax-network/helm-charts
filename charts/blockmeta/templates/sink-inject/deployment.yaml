@@ -1,31 +1,53 @@
+{{- $values := $.Values.blockmeta_sink_inject }}
+{{- $componentName := "blockmeta-sink-inject" }}
+{{- $componentLabel := include "blockmeta_sink_inject.componentLabelFor" $componentName }}
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.chainName }}-sf-blockmeta-inject-{{ .Values.blockVersion }}
-  namespace: {{ .Values.namespace }}
+  name: {{ .Values.chain.network}}-{{ include "blockmeta_sink_inject.fullname" . }}-{{ $componentName }}-{{ .Values.chain.version}}
+  labels: 
+    {{- include "blockmeta_sink_inject.labels" . | nindent 4 }}
+    {{- $componentLabel | nindent 4 }}
 spec:
+  replicas: {{ include "blockmeta_sink_inject.replicas" $values }}
   selector:
     matchLabels:
-      app: {{ .Values.chainName }}-sf-blockmeta-inject-{{ .Values.blockVersion }}
-  replicas: 1
+      {{- $componentLabel | nindent 6 }}
+      {{- include "blockmeta_sink_inject.selectorLabels" . | nindent 6 }}
   template:
     metadata:
+      {{- with $values.podAnnotations }}
       annotations:
-        reloader.stakater.com/auto: "true"
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       labels:
-        app: {{ .Values.chainName }}-sf-blockmeta-inject-{{ .Values.blockVersion }}
+        {{- include "blockmeta_sink_inject.selectorLabels" . | nindent 8 }}
+        {{- $componentLabel | nindent 8 }}
+        {{- with $values.extraLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
     spec:
+      {{- with $values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      terminationGracePeriodSeconds: {{ $values.terminationGracePeriodSeconds | default "60" }}
       containers:
-        - name: {{ .Values.chainName }}-sf-blockmeta-inject-{{ .Values.blockVersion }}
-          image: {{ .Values.sinkImage }}
+        - name: {{ $componentName }}
+          image: "{{ .Values.blockmeta.sink.inject.image.repository }}:{{ .Values.blockmeta.sink.inject.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.blockmeta.sink.inject.image.pullPolicy }}
           args:
             - "inject"
-            - "{{ .Values.substreamsUrl }}:{{ .Values.substreamsPort }}"
-            - "{{ .Values.tikvUrl }}"
-            - "{{ .Values.spkgUrl }}"
-            - "--metrics-listen-addr=:{{ .Values.injectMetricsPort }}"
+            - "{{ .Values.substreams_tier1.url }}"
+            - "{{ .Values.tikv.url }}"
+            - "{{ .Values.spkg.url }}"
+            - "--metrics-listen-addr=:{{ .Values.blockmeta.sink.inject.service.ports.prom }}"
             - "--plaintext"
           ports:
             - name: prom
-              containerPort: {{ .Values.injectMetricsPort }}
+              containerPort: {{ .Values.blockmeta.sink.inject.service.ports.prom }}
               protocol: TCP
+
+
+

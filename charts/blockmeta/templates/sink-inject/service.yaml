@@ -1,19 +1,22 @@
+{{- $values := $.Values.blockmeta_sink_inject }}
+{{- $componentName := "blockmeta-sink-inject" }}
+{{- $componentLabel := include "blockmeta_sink_inject.componentLabelFor" $componentName }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Values.chainName }}-sf-blockmeta-inject-svc-{{ .Values.blockVersion }}
-  namespace: {{ .Values.namespace }}
+  name: {{ .Values.chain.network}}-{{ include "blockmeta_sink_inject.fullname" . }}-{{ $componentName }}-{{ .Values.chain.version }}-svc
   labels:
-    app: {{ .Values.chainName }}-sf-blockmeta-inject-svc-{{ .Values.blockVersion }}
-  annotations:
-    prometheus.io/scrape: "true"
+    {{- include "blockmeta_sink_inject.labels" . | nindent 4 }}
+    {{- $componentLabel | nindent 4 }}
 spec:
-  ipFamilyPolicy: PreferDualStack
-  clusterIP: None
-  selector:
-    app: {{ .Values.chainName }}-sf-blockmeta-inject-{{ .Values.blockVersion }}
+  clusterIP: None # Headless service
   ports:
-    - name: prom
-      port: {{ .Values.injectMetricsPort }}
+  {{- range $portName, $portNumber := $.Values.blockmeta.sink.inject.service.ports }}
+    - port: {{ $portNumber }} # the port we expose on the Service, user configurable
+      targetPort: {{ $portName }} # the name of the port on the container that we are routing to
       protocol: TCP
-      targetPort: prom
+      name: {{ $portName }}
+  {{- end }}
+  selector:
+    {{- include "blockmeta_sink_inject.selectorLabels" . | nindent 4 }}
+    {{- $componentLabel | nindent 4 }}

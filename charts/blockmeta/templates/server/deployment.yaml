@@ -1,30 +1,52 @@
+{{- $values := $.Values.blockmeta_server }}
+{{- $componentName := "blockmeta-server" }}
+{{- $componentLabel := include "blockmeta_server.componentLabelFor" $componentName }}
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.chainName }}-sf-blockmeta-server-{{ .Values.blockVersion }}
-  namespace: {{ .Values.namespace }}
+  name: {{ .Values.chain.network}}-{{ include "blockmeta_server.fullname" . }}-{{ $componentName }}-{{ .Values.chain.version}}
+  labels: 
+    {{- include "blockmeta_server.labels" . | nindent 4 }}
+    {{- $componentLabel | nindent 4 }}
 spec:
+  replicas: {{ include "blockmeta_server.replicas" $values }}
   selector:
     matchLabels:
-      app: {{ .Values.chainName }}-sf-blockmeta-server-{{ .Values.blockVersion }}
-  replicas: 1
+      {{- $componentLabel | nindent 6 }}
+      {{- include "blockmeta_server.selectorLabels" . | nindent 6 }}
   template:
     metadata:
+      {{- with $values.podAnnotations }}
       annotations:
-        reloader.stakater.com/auto: "true"
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       labels:
-        app: {{ .Values.chainName }}-sf-blockmeta-server-{{ .Values.blockVersion }}
+        {{- include "blockmeta_server.selectorLabels" . | nindent 8 }}
+        {{- $componentLabel | nindent 8 }}
+        {{- with $values.extraLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
     spec:
+      {{- with $values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      terminationGracePeriodSeconds: {{ $values.terminationGracePeriodSeconds | default "60" }}
       containers:
-        - name: {{ .Values.chainName }}-sf-blockmeta-server-{{ .Values.blockVersion }}
-          image: {{ .Values.blockMetaImage }}
+        - name: {{ $componentName }}
+          image: "{{ .Values.blockmeta.server.image.repository }}:{{ .Values.blockmeta.server.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.blockmeta.server.image.pullPolicy }}
           args:
             - "./blockmeta"
-            - "--sink-addr={{ .Values.chainName }}-sf-blockmeta-serve-svc-{{ .Values.blockVersion }}:{{ .Values.servePort }}"
-            - "--grpc-listen-addr=:{{ .Values.serverListenPort }}"
-            - "--auth-url={{ .Values.authUrl }}"
-            - "--metering-url={{ .Values.meterUrl }}?network={{ .Values.chainName }}"
+            - "--sink-addr={{ include "blockmeta_sink_serve.fullname" . }}-{{ include "blockmeta_sink_serve.componentName" . }}-{{ .Values.chain.version }}-svc"
+            - "--grpc-listen-addr=:{{ .Values.blockmeta.server.service.ports.grpc }}"
+            - "--auth-url={{ .Values.auth.url }}"
+            - "--metering-url={{ .Values.metering.url }}"
           ports:
             - name: grpc
-              containerPort: {{ .Values.serverListenPort }}
+              containerPort: {{ .Values.blockmeta.server.service.ports.grpc }}
               protocol: TCP
+
+
+

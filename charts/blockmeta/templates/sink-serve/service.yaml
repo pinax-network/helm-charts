@@ -1,19 +1,22 @@
+{{- $values := $.Values.blockmeta_sink_serve }}
+{{- $componentName := "blockmeta-sink-serve" }}
+{{- $componentLabel := include "blockmeta_sink_serve.componentLabelFor" $componentName }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Values.chainName }}-sf-blockmeta-serve-svc-{{ .Values.blockVersion }}
-  namespace: {{ .Values.namespace }}
+  name: {{ .Values.chain.network}}-{{ include "blockmeta_sink_serve.fullname" . }}-{{ $componentName }}-{{ .Values.chain.version }}-svc
   labels:
-    app: {{ .Values.chainName }}-sf-blockmeta-serve-svc-{{ .Values.blockVersion }}
-  annotations:
-    prometheus.io/scrape: "true"
+    {{- include "blockmeta_sink_serve.labels" . | nindent 4 }}
+    {{- $componentLabel | nindent 4 }}
 spec:
-  ipFamilyPolicy: PreferDualStack
-  clusterIP: None
-  selector:
-    app: {{ .Values.chainName }}-sf-blockmeta-serve-{{ .Values.blockVersion }}
+  clusterIP: None # Headless service
   ports:
-    - name: grpc
-      port: {{ .Values.servePort }}
+  {{- range $portName, $portNumber := $.Values.blockmeta.sink.serve.service.ports }}
+    - port: {{ $portNumber }} # the port we expose on the Service, user configurable
+      targetPort: {{ $portName }} # the name of the port on the container that we are routing to
       protocol: TCP
-      targetPort: grpc
+      name: {{ $portName }}
+  {{- end }}
+  selector:
+    {{- include "blockmeta_sink_serve.selectorLabels" . | nindent 4 }}
+    {{- $componentLabel | nindent 4 }}

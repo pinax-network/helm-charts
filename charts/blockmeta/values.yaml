@@ -1,38 +1,179 @@
+# Default values for blockmeta deployment
+# This is a YAML-formatted file.
 
-# -- Namespace creation and Override
-createNamespace: true
-namespace: default
+nameOverride: ""
+fullnameOverride: ""
 
-# -- Loadbalancer type; defaults to traefik
-loadBalancer: traefik
+chain:
+  network: "goerli"
+  version: "v1"
 
-# -- Ingress Configuration
-  ## mumbai.substreams.pinax.network
-ingressHost: "..."
+auth:
+  url: "grpc://auth:9000"
+metering:
+  url: "grpc://metering:9000?network=ethereum"
+tikv:
+  url: "tikv://tikv-1,tik2-2,tikv3:2379/blockmeta_v1?truncate=false&compression=zstd"
+spkg:
+  url: "https://github.com/streamingfast/blockmeta-service/releases/download/v0.1.0/blockmeta-service-v0.1.0.spkg"
+substreams_tier1:
+  url: "substreams-tier-1:9000"
 
-# -- Image Control
-blockMetaImage: ghcr.io/streamingfast/blockmeta-service:2f971e0
-sinkImage: ghcr.io/streamingfast/substreams-sink-kv:fd1af77
 
-# -- Chain Configuration
-chainName: mumbai
-blockVersion: v1
+blockmeta:
 
-# -- Port Configuration
-servePort: 9000
-serverListenPort: 50051
-injectMetricsPort: 9102
-substreamsPort: 9000
+# -- Blockmeta Server
+  server: 
+    service:
+      type: ClusterIP
+      ports:
+        grpc: 50051
+    serviceAccount:
+      # -- Specifies whether a service account should be created
+      create: true
+      # -- Annotations to add to the service account
+      annotations: {}
+      # -- The name of the service account to use.
+      # If not set and create is true, a name is generated using the fullname template
+      name: ""
+    image:
+      # -- Image for the blockmeta service
+      repository: ghcr.io/streamingfast/blockmeta-service
+      pullPolicy: IfNotPresent
+      # -- Pull secrets required to fetch the Image
+      imagePullSecrets: []
+      # -- Overrides the image tag
+      # @default -- Chart.appVersion
+      tag: "2f971e0"
+    # -- Annotations for the `Pod`
+    podAnnotations: {}
+    # -- Extra labels to attach to the Pod for matching against
+    extraLabels: {}
+    resources: {}
+      # We usually recommend not to specify default resources and to leave this as a conscious
+      # choice for the user. This also increases chances charts run on environments with little
+      # resources, such as Minikube. If you do want to specify resources, uncomment the following
+      # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+      # limits:
+      #   cpu: 100m
+      #   memory: 128Mi
+      #   ephemeral-storage: 100Mi
+      # requests:
+      #   cpu: 100m
+      #   memory: 128Mi
+      #   ephemeral-storage: 100Mi
+      # Increasing the grace termination period prevents Kubernetes
+      # from killing the node process prematurely. Premature shutdown
+      # can lead to data integrity issues
+      # -- Amount of time to wait before force-killing the container
+    terminationGracePeriodSeconds: 60
+    ingress:
+      enabled: false
+      annotations: {}
+        # kubernetes.io/ingress.class: nginx
+        # kubernetes.io/tls-acme: "true"
+      hosts:
+        - host: chart-example.local
+          paths:
+            - path: /
+              pathType: Prefix
+      tls: []
+      #  - secretName: chart-example-tls
+      #    hosts:
+      #      - chart-example.local
 
-# -- Service Configuration
-  ## grpc://pinax-authenticator.network:9000
-authUrl: "..."
-  ## grpc://pinax-metering.network:9000
-meterUrl: "..." 
-  ## tikv://mumbai-pd1.pinax.network:2379/blockmeta_v1?truncate=false&compression=zstd
-tikvUrl: "..." 
-  ## https://github.com/streamingfast/blockmeta-service/releases/download/v0.1.0/blockmeta-service-v0.1.0.spkg
-spkgUrl: "..."
-  ## substreams tier 1 url mumbai.substreams.pinax.network
-substreamsUrl: "..."
+  sink:
 
+# -- Blockmeta Sink Serve
+    serve:
+      service:
+        type: ClusterIP
+        ports:
+          grpc: 9000
+      serviceAccount:
+        # -- Specifies whether a service account should be created
+        create: true
+        # -- Annotations to add to the service account
+        annotations: {}
+        # -- The name of the service account to use.
+        # If not set and create is true, a name is generated using the fullname template
+        name: ""
+      image:
+        # -- Image for the blockmeta service
+        repository: ghcr.io/streamingfast/substreams-sink-kv
+        pullPolicy: IfNotPresent
+        # -- Pull secrets required to fetch the Image
+        imagePullSecrets: []
+        # -- Overrides the image tag
+        # @default -- Chart.appVersion
+        tag: "435682b"
+      # -- Annotations for the `Pod`
+      podAnnotations: {}
+      # -- Extra labels to attach to the Pod for matching against
+      extraLabels: {}
+      resources: {}
+      # We usually recommend not to specify default resources and to leave this as a conscious
+      # choice for the user. This also increases chances charts run on environments with little
+      # resources, such as Minikube. If you do want to specify resources, uncomment the following
+      # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+      # limits:
+      #   cpu: 100m
+      #   memory: 128Mi
+      #   ephemeral-storage: 100Mi
+      # requests:
+      #   cpu: 100m
+      #   memory: 128Mi
+      #   ephemeral-storage: 100Mi
+      # Increasing the grace termination period prevents Kubernetes
+      # from killing the node process prematurely. Premature shutdown
+      # can lead to data integrity issues
+      # -- Amount of time to wait before force-killing the container
+      terminationGracePeriodSeconds: 60
+    
+
+
+# -- Blockmeta Sink Inject
+    inject:
+      service:
+        type: ClusterIP
+        ports:
+          prom: 9102
+      serviceAccount:
+        # -- Specifies whether a service account should be created
+        create: true
+        # -- Annotations to add to the service account
+        annotations: {}
+        # -- The name of the service account to use.
+        # If not set and create is true, a name is generated using the fullname template
+        name: ""
+      image:
+        # -- Image for the blockmeta service
+        repository: ghcr.io/streamingfast/substreams-sink-kv
+        pullPolicy: IfNotPresent
+        # -- Pull secrets required to fetch the Image
+        imagePullSecrets: []
+        # -- Overrides the image tag
+        # @default -- Chart.appVersion
+        tag: "435682b"
+      # -- Annotations for the `Pod`
+      podAnnotations: {}
+      # -- Extra labels to attach to the Pod for matching against
+      extraLabels: {}
+      resources: {}
+      # We usually recommend not to specify default resources and to leave this as a conscious
+      # choice for the user. This also increases chances charts run on environments with little
+      # resources, such as Minikube. If you do want to specify resources, uncomment the following
+      # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+      # limits:
+      #   cpu: 100m
+      #   memory: 128Mi
+      #   ephemeral-storage: 100Mi
+      # requests:
+      #   cpu: 100m
+      #   memory: 128Mi
+      #   ephemeral-storage: 100Mi
+      # Increasing the grace termination period prevents Kubernetes
+      # from killing the node process prematurely. Premature shutdown
+      # can lead to data integrity issues
+      # -- Amount of time to wait before force-killing the container
+      terminationGracePeriodSeconds: 60

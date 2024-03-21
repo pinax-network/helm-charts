@@ -1,34 +1,42 @@
-
-{{- if eq .Values.loadBalancer "traefik" }}
-apiVersion: traefik.containo.us/v1alpha1
-kind: IngressRoute
-metadata:
-  name: {{ .Values.chainName }}-sf-blockmeta-server-ingress-{{ .Values.blockVersion }}
-  namespace: {{ .Values.namespace }}
-spec:
-  entryPoints:
-    - web
-  routes:
-    - match: Host(`{{ .Values.ingressHost }}`)
-      kind: Rule
-      services:
-        - name: {{ .Values.chainName }}-sf-blockmeta-server-svc-{{ .Values.blockVersion }}
-          port: {{ .Values.ServerServicePort }}
-{{- else }}
+{{- $values := $.Values.blockmeta_server }}
+{{- $componentName := "blockmeta-server" }}
+{{- $componentLabel := include "blockmeta_server.componentLabelFor" $componentName }}
+{{- if $values.ingress.enabled }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ .Values.chainName }}-sf-blockmeta-server-ingress-{{ .Values.blockVersion }}
+  name: {{ .Values.chain.network}}-{{ include "blockmeta_server.fullname" . }}-{{ $componentName }}-{{ .Values.chain.version }}-ingress
+  labels:
+    {{- include "blockmeta_server.labels" . | nindent 4 }}
+    {{- $componentLabel | nindent 4 }}
+  {{- with $values.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
+  {{- if $values.ingress.tls }}
+  tls:
+    {{- range $values.ingress.tls }}
+    - hosts:
+        {{- range .hosts }}
+        - {{ . | quote }}
+        {{- end }}
+      secretName: {{ .secretName }}
+    {{- end }}
+  {{- end }}
   rules:
-    - host: {{ .Values.ingressHost }}
+    {{- range $values.ingress.hosts }}
+    - host: {{ .host | quote }}
       http:
         paths:
-          - pathType: Prefix
-            path: "/"
+          {{- range .paths }}
+          - path: {{ .path }}
+            pathType: {{ .pathType }}
             backend:
               service:
-                name: {{ .Values.chainName }}-sf-blockmeta-server-svc-{{ .Values.blockVersion }}
-                port:
-                  number: {{ .Values.ServerServicePort }}
+                name: {{ include "blockmeta_server.fullname" $ }}-{{ $componentName }}-{{ $.Values.chain.version }}-svc
+                port: 
+                  number: {{ $values.service.ports.grpc }}
+          {{- end }}
+    {{- end }}
 {{- end }}
