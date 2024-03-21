@@ -1,13 +1,17 @@
 
 ## Latest Releases
 
+### api
+- Version: 1.0.0
+- URL: https://github.com/pinax-network/helm-charts/releases/download/api-1.0.0/api-1.0.0.tgz
+
 ### blockmeta
-- Version: 1.0.1
-- URL: https://github.com/pinax-network/helm-charts/releases/download/blockmeta-1.0.1/blockmeta-1.0.1.tgz
+- Version: 2.0.0
+- URL: https://github.com/pinax-network/helm-charts/releases/download/blockmeta-2.0.0/blockmeta-2.0.0.tgz
 
 ### substreams-sink
-- Version: 1.0.2
-- URL: https://github.com/pinax-network/helm-charts/releases/download/substreams-sink-1.0.2/substreams-sink-1.0.2.tgz
+- Version: 1.0.9
+- URL: https://github.com/pinax-network/helm-charts/releases/download/substreams-sink-1.0.9/substreams-sink-1.0.9.tgz
 
 ### substreams-sink-clickhouse
 - Version: 1.0.0
