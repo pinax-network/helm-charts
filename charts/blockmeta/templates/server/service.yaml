@@ -9,7 +9,8 @@ metadata:
     {{- include "blockmeta_server.labels" . | nindent 4 }}
     {{- $componentLabel | nindent 4 }}
 spec:
-  clusterIP: None # Headless service
+  ipFamilyPolicy: PreferDualStack
+  clusterIP: None
   ports:
   {{- range $portName, $portNumber := $.Values.blockmeta.server.service.ports }}
     - port: {{ $portNumber }} # the port we expose on the Service, user configurable
