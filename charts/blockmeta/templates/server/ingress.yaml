@@ -1,4 +1,4 @@
-{{- $values := $.Values.blockmeta_server }}
+{{- $values := $.Values.blockmeta }}
 {{- $componentName := "blockmeta-server" }}
 {{- $componentLabel := include "blockmeta_server.componentLabelFor" $componentName }}
 {{- if $values.server.ingress.enabled }}
@@ -34,9 +34,9 @@ spec:
             pathType: {{ .pathType }}
             backend:
               service:
-                name: {{ include "blockmeta_server.fullname" $ }}-{{ $componentName }}-{{ $.Values.chain.version }}-svc
+                name: {{ $.Values.chain.network }}-{{ include "blockmeta_server.fullname" $ }}-{{ $componentName }}-{{ $.Values.chain.version }}-svc
                 port:
-                  number: {{ $values.server.service.ports.grpc }}
+                  number: {{ $.Values.blockmeta.server.service.ports.grpc }}
           {{- end }}
     {{- end }}
 {{- end }}
