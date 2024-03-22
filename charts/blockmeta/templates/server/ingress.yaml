@@ -1,22 +1,22 @@
-{{- $values := $.Values.blockmeta_server }}
+{{- $values := $.Values.blockmeta }}
 {{- $componentName := "blockmeta-server" }}
 {{- $componentLabel := include "blockmeta_server.componentLabelFor" $componentName }}
-{{- if $values.ingress.enabled }}
+{{- if $values.server.ingress.enabled }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ .Values.chain.network}}-{{ include "blockmeta_server.fullname" . }}-{{ $componentName }}-{{ .Values.chain.version }}-ingress
+  name: {{ .Values.chain.network }}-{{ include "blockmeta_server.fullname" . }}-{{ $componentName }}-{{ .Values.chain.version }}-ingress
   labels:
     {{- include "blockmeta_server.labels" . | nindent 4 }}
     {{- $componentLabel | nindent 4 }}
-  {{- with $values.ingress.annotations }}
+  {{- with $values.server.ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  {{- if $values.ingress.tls }}
+  {{- if $values.server.ingress.tls }}
   tls:
-    {{- range $values.ingress.tls }}
+    {{- range $values.server.ingress.tls }}
     - hosts:
         {{- range .hosts }}
         - {{ . | quote }}
@@ -25,7 +25,7 @@ spec:
     {{- end }}
   {{- end }}
   rules:
-    {{- range $values.ingress.hosts }}
+    {{- range $values.server.ingress.hosts }}
     - host: {{ .host | quote }}
       http:
         paths:
@@ -35,8 +35,8 @@ spec:
             backend:
               service:
                 name: {{ include "blockmeta_server.fullname" $ }}-{{ $componentName }}-{{ $.Values.chain.version }}-svc
-                port: 
-                  number: {{ $values.service.ports.grpc }}
+                port:
+                  number: {{ $values.server.service.ports.grpc }}
           {{- end }}
     {{- end }}
 {{- end }}
