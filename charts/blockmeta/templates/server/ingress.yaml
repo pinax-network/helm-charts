@@ -1,4 +1,4 @@
-{{- $values := $.Values.blockmeta }}
+{{- $values := $.Values.blockmeta_server }}
 {{- $componentName := "blockmeta-server" }}
 {{- $componentLabel := include "blockmeta_server.componentLabelFor" $componentName }}
 {{- if $values.server.ingress.enabled }}
