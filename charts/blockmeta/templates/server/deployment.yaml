@@ -39,7 +39,7 @@ spec:
           imagePullPolicy: {{ .Values.blockmeta.server.image.pullPolicy }}
           args:
             - "./blockmeta"
-            - "--sink-addr={{ include "blockmeta_sink_serve.fullname" . }}-{{ include "blockmeta_sink_serve.componentName" . }}-{{ .Values.chain.version }}-svc"
+            - "--sink-addr={{ include "blockmeta_sink_serve.fullname" . }}-{{ include "blockmeta_sink_serve.componentName" . }}-{{ .Values.chain.version }}-svc:{{ .Values.blockmeta.serve.service.ports.grpc }}"
             - "--grpc-listen-addr=:{{ .Values.blockmeta.server.service.ports.grpc }}"
             - "--auth-url={{ .Values.auth.url }}"
             - "--metering-url={{ .Values.metering.url }}"
