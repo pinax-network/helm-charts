@@ -1,0 +1,67 @@
+{{- $values := $.Values.tier_1 }}
+{{- $componentName := "tier-1" }}
+{{- $componentLabel := include "substreams.componentLabelFor" $componentName }}
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.chain.network }}-{{ include "substreams.fullname" . }}-{{ $componentName }}-{{ .Values.chain.blocksVersion }}
+  labels:
+    {{- include "substreams.labels" . | nindent 4 }}
+    {{- $componentLabel | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "substreams.selectorLabels" . | nindent 6 }}
+      {{- $componentLabel | nindent 6 }}
+  serviceName: {{ .Values.chain.network }}-{{ include "substreams.fullname" . }}-{{ .Values.chain.blocksVersion }}-headless
+  replicas: 1
+  template:
+    metadata:
+      {{- with $values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "substreams.selectorLabels" . | nindent 8 }}
+        {{- $componentLabel | nindent 8 }}
+    spec:
+      {{- with $values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "substreams.serviceAccountName" . }}
+      {{- with $values.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      terminationGracePeriodSeconds: {{ $values.terminationGracePeriodSeconds | default "60" }}
+      containers:
+        - name: {{ .Values.chain.network }}-{{ include "substreams.fullname" . }}-{{ .Values.chain.blocksVersion }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          securityContext:
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          args:
+            - "start"
+            - "-c"
+            - "/config/config.yaml"
+          ports:
+            - name: grpc
+              containerPort: {{ $values.service.ports.tier_1_grpc }}
+              protocol: TCP
+            - name: prom
+              containerPort: {{ $values.service.ports.tier_1_metrics }}
+              protocol: TCP
+          volumeMounts:
+            - name: config
+              mountPath: /config
+      volumes:
+        - name: config
+          configMap:
+            name: {{ .Values.chain.network }}-{{ include "substreams.fullname" . }}-{{ $componentName }}-{{ .Values.chain.blocksVersion }}-config
+            
+{{/* END Deployment */}}

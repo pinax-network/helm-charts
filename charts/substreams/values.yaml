@@ -1,0 +1,181 @@
+chain:
+  network: eth
+  blocksVersion: v1
+
+image:
+  repository: ghcr.io/streamingfast/firehose-ethereum
+  tag: v2.3.5
+  pullPolicy: IfNotPresent
+
+
+
+
+serviceAccount:
+  # -- Specifies whether a service account should be created
+  create: true
+  # -- Annotations to add to the service account
+  annotations: {}
+  # -- The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+rbac:
+  # -- Specifies whether RBAC resources are to be created
+  create: true
+  # -- Required ClusterRole rules
+  # @default -- See `values.yaml`
+  clusterRules:
+     # Required to obtain the nodes external IP
+    - apiGroups: [""]
+      resources:
+      - "nodes"
+      verbs:
+      - "get"
+      - "list"
+      - "watch"
+  # -- Required ClusterRole rules
+  # @default -- See `values.yaml`
+  rules:
+    # Required to get information about the serices nodePort.
+    - apiGroups: [""]
+      resources:
+      - "services"
+      verbs:
+      - "get"
+      - "list"
+      - "watch"
+
+
+tier_1:
+  nameOverride: ""
+  fullnameOverride: ""
+
+  # -- Pull secrets required to fetch the Image
+  imagePullSecrets: []
+
+  serviceAccount:
+    # -- Specifies whether a service account should be created
+    create: true
+    # -- Annotations to add to the service account
+    annotations: {}
+    # -- The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: ""
+
+  service:
+    topologyAwareRouting:
+      enabled: false
+    type: ClusterIP
+    ports:
+      tier_1_grpc: 9000
+      tier_1_metrics: 9102
+
+  p2pNodePort:
+    # -- Expose P2P port via NodePort
+    enabled: false
+    # -- NodePort to be used. Must be unique.
+    port: 32310
+
+  # -- Set custom aliases for preconfigured commands in your environment
+  aliases: {}
+
+  # -- Additional CLI arguments to pass to `indexer-agent`
+  extraArgs: []
+
+  # Increasing the grace termination period prevents Kubernetes
+  # from killing the node process prematurely. Premature shutdown
+  # can lead to data integrity issues
+  # -- Amount of time to wait before force-killing the process
+  terminationGracePeriodSeconds: 10
+
+  # -- Annotations for the `Pod`
+  podAnnotations: {}
+
+  # -- Pod-wide security context
+  podSecurityContext: {}
+
+  nodeSelector: {}
+
+  tolerations: []
+
+  affinity: {}
+
+  config: |
+      common-auth-plugin: []
+      common-metering-plugin: []
+      common-live-blocks-addr: []
+      common-merged-blocks-store-url: []
+      common-one-block-store-url: []
+      common-forked-blocks-store-url: []
+      common-system-shutdown-signal-delay: 10s
+      substreams-rpc-endpoints: []
+      substreams-state-store-url: []
+      substreams-tier1-grpc-listen-addr: 9000
+    # -- substreams-tier1-subrequests-endpoint: Not needed, it's automatically set by the Helm chart
+
+tier_2:
+  nameOverride: ""
+  fullnameOverride: ""
+
+  # -- Pull secrets required to fetch the Image
+  imagePullSecrets: []
+
+  serviceAccount:
+    # -- Specifies whether a service account should be created
+    create: true
+    # -- Annotations to add to the service account
+    annotations: {}
+    # -- The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: ""
+
+  service:
+    topologyAwareRouting:
+      enabled: false
+    type: ClusterIP
+    ports:
+      tier_2_grpc: 9000
+      tier_2_metrics: 9102
+
+  p2pNodePort:
+    # -- Expose P2P port via NodePort
+    enabled: false
+    # -- NodePort to be used. Must be unique.
+    port: 32311
+
+  # -- Set custom aliases for preconfigured commands in your environment
+  aliases: {}
+
+  # -- Additional CLI arguments to pass to `indexer-agent`
+  extraArgs: []
+
+  # Increasing the grace termination period prevents Kubernetes
+  # from killing the node process prematurely. Premature shutdown
+  # can lead to data integrity issues
+  # -- Amount of time to wait before force-killing the process
+  terminationGracePeriodSeconds: 10
+
+  # -- Annotations for the `Pod`
+  podAnnotations: {}
+
+  # -- Pod-wide security context
+  podSecurityContext: {}
+
+  nodeSelector: {}
+
+  tolerations: []
+
+  affinity: {}
+
+  config: |
+    flags:
+      common-metering-plugin: []
+      common-live-blocks-addr: []
+      common-merged-blocks-store-url: []
+      common-one-block-store-url: []
+      common-forked-blocks-store-url: []
+      common-system-shutdown-signal-delay: 10s
+      substreams-rpc-endpoints: []
+      substreams-state-store-url: []
+      substreams-rpc-cache-store-url: []
+      substreams-tier2-grpc-listen-addr: :9000
