@@ -50,16 +50,7 @@ app.kubernetes.io/name: {{ include "substreams.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
-{{/*
-Create the name of the service account to use
-*/}}
-{{- define "substreams.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create }}
-{{- default (include "substreams.fullname" .) .Values.serviceAccount.name }}
-{{- else }}
-{{- default "default" .Values.serviceAccount.name }}
-{{- end }}
-{{- end }}
+
 
 {{- define "substreams.componentLabelFor" -}}
 app.kubernetes.io/component: {{ . }}
