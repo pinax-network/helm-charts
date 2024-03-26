@@ -1,7 +1,7 @@
 {{- $values := $.Values.tier_2 }}
 {{- $componentName := "tier-2" }}
 {{- $componentLabel := include "substreams.componentLabelFor" $componentName }}
----
+
 apiVersion: v1
 kind: Service
 metadata:
