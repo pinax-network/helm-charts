@@ -1,0 +1,14 @@
+{{- $componentName := "tier-2" }}
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.chain.network }}-{{ include "substreams.fullname" . }}-{{ $componentName }}-{{ .Values.chain.blocksVersion }}-config
+data:
+  config.yaml: |
+    start:
+      args:
+        - substreams-tier2
+      flags:
+      {{ .Values.tier_2.config | nindent 6 }}
+      

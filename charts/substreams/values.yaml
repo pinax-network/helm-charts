@@ -168,7 +168,6 @@ tier_2:
   affinity: {}
 
   config: |
-    flags:
       common-metering-plugin: []
       common-live-blocks-addr: []
       common-merged-blocks-store-url: []
