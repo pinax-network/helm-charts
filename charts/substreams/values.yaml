@@ -67,8 +67,8 @@ tier_1:
       enabled: false
     type: ClusterIP
     ports:
-      tier-1-grpc: 9000
-      tier-1-metrics: 9102
+      grpc: 9000
+      metrics: 9102
 
   p2pNodePort:
     # -- Expose P2P port via NodePort
@@ -134,8 +134,8 @@ tier_2:
       enabled: false
     type: ClusterIP
     ports:
-      tier-2-grpc: 9000
-      tier-2-metrics: 9102
+      grpc: 9000
+      metrics: 9102
 
   p2pNodePort:
     # -- Expose P2P port via NodePort
