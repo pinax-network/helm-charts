@@ -4,7 +4,7 @@ chain:
 
 image:
   repository: ghcr.io/streamingfast/firehose-ethereum
-  tag: v2.3.5
+  tag: v2.3.7
   pullPolicy: IfNotPresent
 
 
@@ -67,8 +67,8 @@ tier_1:
       enabled: false
     type: ClusterIP
     ports:
-      tier_1_grpc: 9000
-      tier_1_metrics: 9102
+      tier-1-grpc: 9000
+      tier-1-metrics: 9102
 
   p2pNodePort:
     # -- Expose P2P port via NodePort
@@ -134,8 +134,8 @@ tier_2:
       enabled: false
     type: ClusterIP
     ports:
-      tier_2_grpc: 9000
-      tier_2_metrics: 9102
+      tier-2-grpc: 9000
+      tier-2-metrics: 9102
 
   p2pNodePort:
     # -- Expose P2P port via NodePort
