@@ -10,8 +10,8 @@
 - URL: https://github.com/pinax-network/helm-charts/releases/download/blockmeta-2.2.0/blockmeta-2.2.0.tgz
 
 ### substreams
-- Version: 1.0.0
-- URL: https://github.com/pinax-network/helm-charts/releases/download/substreams-1.0.0/substreams-1.0.0.tgz
+- Version: 2.3.7
+- URL: https://github.com/pinax-network/helm-charts/releases/download/substreams-2.3.7/substreams-2.3.7.tgz
 
 ### substreams-sink
 - Version: 1.0.9
