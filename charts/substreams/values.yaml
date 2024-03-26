@@ -18,9 +18,9 @@ tier_1:
 
 
   service:
-    topologyAwareRouting:
-      enabled: false
     type: ClusterIP
+    ipFamilyPolicy: []
+    clusterIP: []
     ports:
       grpc: 9000
       metrics: 9102
@@ -76,12 +76,13 @@ tier_2:
   imagePullSecrets: []
 
   service:
-    topologyAwareRouting:
-      enabled: false
     type: ClusterIP
+    ipFamilyPolicy: []
+    clusterIP: []
     ports:
       grpc: 9000
       metrics: 9102
+    
 
   p2pNodePort:
     # -- Expose P2P port via NodePort
