@@ -39,6 +39,23 @@ spec:
             - "start"
             - "-c"
             - "/config/config.yaml"
+          {{- with $values.env }}
+          env:
+            {{- range $key, $val := . }}
+            - name: {{ $key | quote }}
+              value: {{ $val | quote }}
+            {{- end }}
+          {{- end }}
+          {{- with $values.secretEnv }}
+            {{- range $key, $val := . }}
+            - name: {{ $key | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $val.secretName | quote }}
+                  key: {{ $val.key | quote }}
+                  optional: false
+            {{- end }}
+          {{- end }}
           ports:
             - name: grpc
               containerPort: {{ $values.service.ports.grpc }}
