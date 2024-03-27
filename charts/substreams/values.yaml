@@ -14,18 +14,18 @@ tier_1:
   nameOverride: ""
   fullnameOverride: ""
 
-  env:
-    ENV_VAR_1: value1
-    ENV_VAR_2: value2
-    # ... additional environment variables ...
-  
-  secretEnv:
-    SECRET_VAR_1:
-      secretName: secret-name-1
-      key: key-1
-    SECRET_VAR_2:
-      secretName: secret-name-2
-      key: key-2
+#  env:
+#    ENV_VAR_1: value1
+#    ENV_VAR_2: value2
+#    # ... additional environment variables ...
+#  
+#  secretEnv:
+#    SECRET_VAR_1:
+#      secretName: secret-name-1
+#      key: key-1
+#    SECRET_VAR_2:
+#      secretName: secret-name-2
+#      key: key-2
 
   # -- Pull secrets required to fetch the Image
   imagePullSecrets: []
@@ -80,18 +80,18 @@ tier_2:
   nameOverride: ""
   fullnameOverride: ""
 
-  env:
-    ENV_VAR_1: value1
-    ENV_VAR_2: value2
-    # ... additional environment variables ...
-  
-  secretEnv:
-    SECRET_VAR_1:
-      secretName: secret-name-1
-      key: key-1
-    SECRET_VAR_2:
-      secretName: secret-name-2
-      key: key-2
+#  env:
+#    ENV_VAR_1: value1
+#    ENV_VAR_2: value2
+#    # ... additional environment variables ...
+#  
+#  secretEnv:
+#    SECRET_VAR_1:
+#      secretName: secret-name-1
+#      key: key-1
+#    SECRET_VAR_2:
+#      secretName: secret-name-2
+#      key: key-2
 
 
   # -- Pull secrets required to fetch the Image
