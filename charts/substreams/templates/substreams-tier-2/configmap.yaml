@@ -10,5 +10,5 @@ data:
       args:
         - substreams-tier2
       flags:
-      {{ .Values.tier_2.config | nindent 6 }}
+      {{- toYaml (fromYaml (printf "%s" .Values.tier_2.config)) | nindent 8 }}
       
