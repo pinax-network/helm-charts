@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: {{ if .Values.cursorPvc.enabled }}StatefulSet{{ else }}Deployment{{ end }}
+kind: {{ if .Values.pvc.enabled }}StatefulSet{{ else }}Deployment{{ end }}
 metadata:
   name: {{ include "substreams-sink.fullname" . }}
   namespace: {{ .Release.Namespace }}
@@ -8,43 +8,46 @@ metadata:
 spec:
   selector:
     matchLabels:
-      {{- include "substreams-sink.common-labels" . | nindent 6 }}
+      {{- include "substreams-sink.selectorLabels" . | nindent 6 }}
   replicas: 1
   template:
     metadata:
       labels:
         {{- include "substreams-sink.common-labels" . | nindent 8 }}
+        {{- include "substreams-sink.labels" . | nindent 8 }}
     spec:
       containers:
       - name: {{ include "substreams-sink.fullname" . }}
-        image: {{ .Values.image -}} :{{ .Values.tag }}
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
         {{- if .Values.args }}
         args: {{ .Values.args }}
         {{- end }}
         ports:
-        - containerPort: {{ .Values.env.port }}
+        - containerPort: {{ if hasKey .Values.env "port" }}{{ .Values.env.port | default .Values.service.port }}{{ else }}{{ .Values.service.port }}{{ end }}
         envFrom:
         - configMapRef:
             name: env-{{ include "substreams-sink.fullname" . }}
-        {{- if .Values.secretName }}
+        {{- if .Values.secret.secretName }}
         - secretRef:
-            name: {{ .Values.secretName }}
+            name: {{ .Values.secret.secretName }}
         {{- end }}
         {{- if .Values.livenessProbe.enabled }}
         livenessProbe:
           httpGet:
             path: {{ .Values.livenessProbe.path }}
-            port: {{ .Values.env.port }}
-          initialDelaySeconds: 20
-          timeoutSeconds: 2
-          periodSeconds: 5
+            port: {{ if hasKey .Values.env "port" }}{{ .Values.env.port | default .Values.service.port }}{{ else }}{{ .Values.service.port }}{{ end }}
+            {{- with .Values.livenessProbe }}
+            initialDelaySeconds: {{ .initialDelaySeconds }}
+            timeoutSeconds: {{ .timeoutSeconds }}
+            periodSeconds: {{ .periodSeconds }}
+            {{- end }}
         {{- end }}
-        {{- if .Values.cursorPvc.enabled }}
+        {{- if .Values.pvc.enabled }}
         volumeMounts:
             - name: cursor-volume
-              mountPath: /cursor
+              mountPath: {{ .Values.volumeMountPath }}
       volumes:
         - name: cursor-volume
           persistentVolumeClaim:
-            claimName: pvc-{{ .Release.Name }}
+            claimName: pvc-{{ include "substreams-sink.fullname" . }}
       {{- end }}

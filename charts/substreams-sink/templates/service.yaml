@@ -8,8 +8,8 @@ metadata:
 spec:
   type: {{ .Values.service.type }}
   selector:
-    {{- include "substreams-sink.common-labels" . | nindent 4 }}
+    {{- include "substreams-sink.selectorLabels" . | nindent 4 }}
   ports:
     - protocol: TCP
-      port: {{ .Values.env.port }}
-      targetPort: {{ .Values.env.port }}
+      port: {{ .Values.service.port }}
+      targetPort: {{ if hasKey .Values.env "port" }}{{ .Values.env.port | default .Values.service.port }}{{ else }}{{ .Values.service.port }}{{ end }}

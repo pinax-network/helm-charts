@@ -1,37 +1,80 @@
 nameOverride: ""
 fullnameOverride: ""
 
-replicaCount: 1
-image: ghcr.io/pinax-network/substreams-sink-prometheus
-tag: v0.7.11
-args: ""
+podAnnotations: {}
+podLabels: {}
+nodeSelector: {}
+resources: {}
+
+image:
+  repository: ""
+  tag: ""
 
 sinkType: ""
 chain: ""
 
+# We usually recommend not to specify default resources and to leave this as a conscious
+# choice for the user. This also increases chances charts run on environments with little
+# resources, such as Minikube. If you do want to specify resources, uncomment the following
+# lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+# limits:
+#   cpu: 100m
+#   memory: 128Mi
+# requests:
+#   cpu: 100m
+#   memory: 128Mi
+
+# Command to run at the start of the container
+args: ""
+
+# Environment variables to be use by the applications <key>: <value>
 env:
-  substreams_endpoint: ""
-  manifest: ""
-  module_name: ""
-  start_block: ""
-  stop_block: ""
-  cursor_file: "/cursor/cursor.lock"
-  # production_mode: true
-  # hostname: 0.0.0.0
-  # port: 9102
-  # verbose: true
+  port: 3000
+  # substreams_endpoint: ""
+  # manifest: ""
+  # module_name: ""
+  # start_block: ""
+  # stop_block: ""
+  # cursor_file: "/cursor/cursor.lock"
 
 # SUBSTREAMS_API_KEY
-secretName: token-secret
+secret:
+  # secretName is the name of the sealed secret to use. Leave empty to use no secret
+  secretName: ""
+  # true to create the secret and fill it with following values
+  # false if the secret is created elsewhere
+  enabled: false
+  # each of these values should come from a sealed secret and be encrypted
+  secrets:
+    # substreams_api_key: ""
+    # database: ""
+    # username: ""
+    # password: ""
+
+# Path to mount the pvc as a volume if the pvc is enabled. Adjust the cursor_file env variable accordingly
+volumeMountPath: /cursor
+
+initContainer:
+  enabled: false
+  image: ""
+  tag: ""
+  script: |
 
 livenessProbe:
   enabled: false
   path: /health
+  initialDelaySeconds: 20
+  timeoutSeconds: 2
+  periodSeconds: 5
 
 service:
   type: ClusterIP
+  port: 3000
 
-cursorPvc:
-  # if true, set cursor_file: "/cursor/cursor.lock"
+# pvc is used to persist the cursor.lock file
+pvc:
+  # if true, make sure the volumeMountPath and the cursor_file match
   enabled: false
   storageClassName: mayastor-ext4
+  accessModes: [ReadWriteOnce]
+  storage: 1Gi
