@@ -51,7 +51,7 @@ substreams-sink:
   # secretName is the name of the Secret that contains SUBSTREAMS_API_TOKEN
   secret:
     # secretName is the name of the sealed secret to use. Leave empty to use no secret
-    secretName: "token-secret"
+    secretName: ""
     # true to create the secret and fill it with following values
     # false if the secret is created elsewhere
     create: false
