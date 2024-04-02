@@ -308,6 +308,16 @@ entries:
   substreams-sink-prometheus:
   - apiVersion: v2
     appVersion: v0.7.11
+    created: "2024-04-02T13:05:34.861087379Z"
+    description: substreams-sink-prometheus
+    digest: 7f77264a517be564a7e7b862eebdaf78015da1e46165706eaee755e914480681
+    name: substreams-sink-prometheus
+    type: application
+    urls:
+    - https://github.com/pinax-network/helm-charts/releases/download/substreams-sink-prometheus-1.1.2/substreams-sink-prometheus-1.1.2.tgz
+    version: 1.1.2
+  - apiVersion: v2
+    appVersion: v0.7.11
     created: "2024-03-18T18:36:03.149652529Z"
     description: substreams-sink-prometheus
     digest: df754e40692c3813e9412faba6bcb983fe3beea9e59357ef653b3eac6edc24e4
@@ -396,4 +406,4 @@ entries:
     urls:
     - https://github.com/pinax-network/helm-charts/releases/download/substreams-sink-prometheus-1.0.0/substreams-sink-prometheus-1.0.0.tgz
     version: 1.0.0
-generated: "2024-04-02T13:02:02.247464638Z"
+generated: "2024-04-02T13:05:34.86124375Z"
