@@ -43,8 +43,10 @@ spec:
             periodSeconds: {{ .periodSeconds }}
             {{- end }}
         {{- end }}
+        {{- with .Values.resources }}
         resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
         {{- if .Values.pvc.enabled }}
         volumeMounts:
             - name: cursor-volume
