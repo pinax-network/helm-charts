@@ -1,0 +1,75 @@
+nameOverride: ""
+fullnameOverride: ""
+
+substreams-sink:
+
+  # chain and type of substreams-sink
+  chain: "eth"
+  sinkType: "webhook"
+  
+  replicaCount: 1
+
+  image:
+    repository: "ghcr.io/pinax-network/substreams-sink-webhook"
+    tag: "v0.9.2"
+
+  # pull secrets required to fetch the image
+  imagePullSecrets: []
+
+  # resources used by the pod(s)
+  resources: {}
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+
+  # environment variables to be use by the applications <key>: <value>
+  # refer to https://github.com/pinax-network/substreams-sink-webhook?tab=readme-ov-file#env-environment-variables
+  env:
+    port: 9102
+    webhook_url: "http://substreams-sink-clickhouse:3000/webhook"
+    manifest: "https://github.com/pinax-network/substreams-antelope-tokens/releases/download/v0.3.1/antelope-tokens-v0.3.1.spkg"
+    module_name: "graph_out"
+    start_block: -1
+    cursor_path: "/cursor/cursor.lock"
+    production_mode: false
+    maximum_attempts: 100
+    verbose: true
+
+  # secretName is the name of the Secret that contains SUBSTREAMS_API_KEY, PRIVATE_KEY
+  secret:
+    # secretName is the name of the sealed secret to use. Leave empty to use no secret
+    secretName: ""
+    # true to create the secret and fill it with following values
+    # false if the secret is created elsewhere
+    create: false
+    # each of these values should come from a sealed secret and be encrypted
+    secrets:
+      substreams_api_key: ""
+      private_key: "" # optional
+
+  # path to mount the pvc as a volume if the pvc is enabled. Adjust the cursor_file env variable accordingly
+  volumeMountPath: /cursor
+
+  livenessProbe:
+    enabled: false
+    path: /health
+    initialDelaySeconds: 20
+    timeoutSeconds: 2
+    periodSeconds: 5
+
+  service:
+    type: ClusterIP
+    port: 9102
+
+  # pvc is used to persist the cursor.lock file
+  pvc:
+    # if true, make sure the volumeMountPath and the env.cursor_file match
+    enabled: false
+    # name of the storageClass to use
+    storageClassName: ""
+    accessModes: [ReadWriteOnce]
+    storage: 1Gi
