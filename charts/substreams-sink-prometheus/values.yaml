@@ -1,34 +1,83 @@
 nameOverride: ""
 fullnameOverride: ""
 
-replicaCount: 1
-image: ghcr.io/pinax-network/substreams-sink-prometheus
-tag: v0.7.11
+substreams-sink:
 
-chain: eth
-sort: ""
+  # chain and type of substreams-sink
+  chain: "eth"
+  sinkType: "prometheus"
+  
+  replicaCount: 1
 
-# env variables, refer to https://github.com/pinax-network/substreams-sink-prometheus?tab=readme-ov-file#docker-environment
-env:
-  substreams_endpoint: "https://eth.substreams.pinax.network:443"
-  manifest: "https://github.com/pinax-network/subtivity-substreams/releases/download/v0.5.0/subtivity-ethereum-v0.5.0.spkg"
-  module_name: "prom_out"
-  start_block: -1
-  stop_block: ""
-  delay_before_start: 0
-  cursor_file: "/cursor/cursor.lock"
-  production_mode: true
-  restart_inactivity_seconds: 60
-  hostname: 0.0.0.0
-  port: 9102
-  verbose: true
+  image:
+    repository: "ghcr.io/pinax-network/substreams-sink-prometheus"
+    tag: "v0.7.11"
 
-# secretName is the name of the Secret that contains SUBSTREAMS_API_TOKEN
-secretName: token-secret
+  # pull secrets required to fetch the image
+  imagePullSecrets: []
 
-service:
-  type: ClusterIP
+  # arguments to the command to run at the start of the container
+  args: ["run"]
 
-cursorPvc:
-  enabled: false
-  storageClassName: mayastor-ext4
+  # resources used by the pod(s)
+  resources: {}
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+
+  # environment variables to be use by the applications <key>: <value>
+  # refer to https://github.com/pinax-network/substreams-sink-prometheus?tab=readme-ov-file#docker-environment
+  env:
+    substreams_endpoint: "https://eth.substreams.pinax.network:443"
+    manifest: "https://github.com/pinax-network/subtivity-substreams/releases/download/v0.5.0/subtivity-ethereum-v0.5.0.spkg"
+    module_name: "prom_out"
+    start_block: -1
+    stop_block: ""
+    params: ""
+    delay_before_start: 0
+    cursor_file: "/cursor/cursor.lock"
+    production_mode: true
+    restart_inactivity_seconds: 60
+    hostname: 0.0.0.0
+    port: 9102
+    metrics_labels: ""
+    collect_default_metrics: false
+    verbose: true
+
+  # secretName is the name of the Secret that contains SUBSTREAMS_API_TOKEN
+  secret:
+    # secretName is the name of the sealed secret to use. Leave empty to use no secret
+    secretName: "token-secret"
+    # true to create the secret and fill it with following values
+    # false if the secret is created elsewhere
+    create: false
+    # each of these values should come from a sealed secret and be encrypted
+    secrets:
+      substreams_api_token: ""
+
+  # path to mount the pvc as a volume if the pvc is enabled. Adjust the cursor_file env variable accordingly
+  volumeMountPath: /cursor
+
+  livenessProbe:
+    enabled: false
+    path: /health
+    initialDelaySeconds: 20
+    timeoutSeconds: 2
+    periodSeconds: 5
+
+  service:
+    type: ClusterIP
+    port: 9102
+
+  # pvc is used to persist the cursor.lock file
+  pvc:
+    # if true, make sure the volumeMountPath and the env.cursor_file match
+    enabled: false
+    # name of the storageClass to use
+    storageClassName: ""
+    accessModes: [ReadWriteOnce]
+    storage: 1Gi
