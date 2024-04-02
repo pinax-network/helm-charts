@@ -297,6 +297,20 @@ entries:
   substreams-sink-clickhouse:
   - apiVersion: v2
     appVersion: v0.3.10
+    created: "2024-04-02T17:13:31.099561763Z"
+    dependencies:
+    - name: substreams-sink
+      repository: https://pinax-network.github.io/helm-charts
+      version: 1.1.3
+    description: substreams-sink-clickhouse
+    digest: 35ad6df6be0cbedc906c48078a9c4e8681162f2e13719151e9c4c67eed54bf64
+    name: substreams-sink-clickhouse
+    type: application
+    urls:
+    - https://github.com/pinax-network/helm-charts/releases/download/substreams-sink-clickhouse-1.0.3/substreams-sink-clickhouse-1.0.3.tgz
+    version: 1.0.3
+  - apiVersion: v2
+    appVersion: v0.3.10
     created: "2024-03-18T15:25:13.429683327Z"
     description: A Helm chart for Kubernetes
     digest: 539e17a509e9451b31d9b9ebb4fbb58ddec4d95602b0ba3ee3b517d2fe0d72c4
@@ -430,4 +444,4 @@ entries:
     urls:
     - https://github.com/pinax-network/helm-charts/releases/download/substreams-sink-prometheus-1.0.0/substreams-sink-prometheus-1.0.0.tgz
     version: 1.0.0
-generated: "2024-04-02T17:08:05.541072891Z"
+generated: "2024-04-02T17:13:31.099652963Z"
