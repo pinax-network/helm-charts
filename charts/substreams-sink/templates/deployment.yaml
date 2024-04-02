@@ -5,11 +5,12 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "substreams-sink.common-labels" . | nindent 4 }}
+    {{- include "substreams-sink.labels" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
       {{- include "substreams-sink.selectorLabels" . | nindent 6 }}
-  replicas: 1
+  replicas: {{ .Values.replicaCount }}
   template:
     metadata:
       labels:
@@ -42,6 +43,8 @@ spec:
             periodSeconds: {{ .periodSeconds }}
             {{- end }}
         {{- end }}
+        resources:
+            {{- toYaml .Values.resources | nindent 12 }}
         {{- if .Values.pvc.enabled }}
         volumeMounts:
             - name: cursor-volume

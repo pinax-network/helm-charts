@@ -1,22 +1,25 @@
 nameOverride: ""
 fullnameOverride: ""
 
-podAnnotations: {}
-podLabels: {}
-nodeSelector: {}
-resources: {}
+# chain and type of substreams-sink
+sinkType: ""
+chain: ""
+
+replicaCount: 1
 
 image:
   repository: ""
   tag: ""
+  pullPolicy: IfNotPresent
 
-sinkType: ""
-chain: ""
+# pull secrets required to fetch the image
+imagePullSecrets: []
 
-# We usually recommend not to specify default resources and to leave this as a conscious
-# choice for the user. This also increases chances charts run on environments with little
-# resources, such as Minikube. If you do want to specify resources, uncomment the following
-# lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+# arguments to the command to run at the start of the container
+args: []
+
+# resources used by the pod(s)
+resources: {}
 # limits:
 #   cpu: 100m
 #   memory: 128Mi
@@ -24,10 +27,8 @@ chain: ""
 #   cpu: 100m
 #   memory: 128Mi
 
-# Command to run at the start of the container
-args: ""
 
-# Environment variables to be use by the applications <key>: <value>
+# environment variables to be use by the applications <key>: <value>
 env:
   port: 3000
   # substreams_endpoint: ""
@@ -37,22 +38,19 @@ env:
   # stop_block: ""
   # cursor_file: "/cursor/cursor.lock"
 
-# SUBSTREAMS_API_KEY
+# secret to use or create
 secret:
-  # secretName is the name of the sealed secret to use. Leave empty to use no secret
+  # secretName is the name of the secret to use. Leave empty to use no secret
   secretName: ""
   # true to create the secret and fill it with following values
-  # false if the secret is created elsewhere
-  enabled: false
+  # false if the secret to use is created elsewhere
+  create: false
   # each of these values should come from a sealed secret and be encrypted
   secrets:
     # substreams_api_key: ""
     # database: ""
     # username: ""
     # password: ""
-
-# Path to mount the pvc as a volume if the pvc is enabled. Adjust the cursor_file env variable accordingly
-volumeMountPath: /cursor
 
 initContainer:
   enabled: false
@@ -71,10 +69,21 @@ service:
   type: ClusterIP
   port: 3000
 
+serviceMonitors:
+  # enable monitoring by creating `ServiceMonitor` CRDs ([prometheus-operator](https://github.com/prometheus-operator/prometheus-operator))
+  enabled: false
+  labels: {}
+  interval:
+  scrapeTimeout:
+  relabelings: []
+
+# path to mount the pvc as a volume if the pvc is enabled. Adjust the cursor_file env variable accordingly
+volumeMountPath: /cursor
+
 # pvc is used to persist the cursor.lock file
 pvc:
   # if true, make sure the volumeMountPath and the cursor_file match
   enabled: false
-  storageClassName: mayastor-ext4
+  storageClassName: ""
   accessModes: [ReadWriteOnce]
   storage: 1Gi

@@ -1,0 +1,27 @@
+{{- if $.Values.serviceMonitors.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "substreams-sink.fullname" . }}
+  labels:
+    {{- include "substreams-sink.common-labels" . | nindent 4 }}
+    {{- include "substreams-sink.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "substreams-sink.selectorLabels" . | nindent 6 }}
+  endpoints:
+    - port: http
+      path: /metrics
+      {{- with .Values.serviceMonitors.interval }}
+      interval: {{ . }}
+      {{- end }}
+      {{- with .Values.serviceMonitors.scrapeTimeout }}
+      scrapeTimeout: {{ . }}
+      {{- end }}
+      honorLabels: true
+      {{- if .Values.serviceMonitors.relabelings }}
+      relabelings:
+      {{- toYaml .Values.serviceMonitors.relabelings | nindent 8 }}
+      {{- end }}
+{{- end }}

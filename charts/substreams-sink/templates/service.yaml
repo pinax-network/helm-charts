@@ -5,11 +5,13 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "substreams-sink.common-labels" . | nindent 4 }}
+    {{- include "substreams-sink.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   selector:
     {{- include "substreams-sink.selectorLabels" . | nindent 4 }}
   ports:
-    - protocol: TCP
+    - name: http
+      protocol: TCP
       port: {{ .Values.service.port }}
       targetPort: {{ if hasKey .Values.env "port" }}{{ .Values.env.port | default .Values.service.port }}{{ else }}{{ .Values.service.port }}{{ end }}
