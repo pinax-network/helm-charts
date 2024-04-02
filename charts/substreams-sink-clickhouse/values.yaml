@@ -1,21 +1,54 @@
 nameOverride: ""
 fullnameOverride: ""
 
-replicaCount: 1
-image: ghcr.io/pinax-network/substreams-sink-clickhouse
-tag: v0.3.10
+substreams-sink:
 
-env:
-  # PUBLIC_KEY: ""
-  hostname: 0.0.0.0
-  port: 3000
-  host: http://clickhouse:8123
-  database: antelope
-  username: default
-  password: ""
-  table: ""
-  max_limit: 500
-  verbose: true
+  # type of substreams-sink
+  sinkType: "clickhouse"
 
-service:
-  type: ClusterIP
+  image:
+    repository: "ghcr.io/pinax-network/substreams-sink-clickhouse"
+    tag: "v0.3.10"
+
+  # pull secrets required to fetch the image
+  imagePullSecrets: []
+
+  # resources used by the pod(s)
+  resources: {}
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+
+
+  # environment variables to be use by the applications <key>: <value>
+  # refer to https://github.com/pinax-network/substreams-sink-clickhouse?tab=readme-ov-file#environment
+  env:
+    database: default
+    host: http://clickhouse:8123    # clickhouse db
+    public_key: ""
+    port: 3000
+    hostname: 0.0.0.0
+    verbose: true
+
+  # secretName is the name of the Secret that contains database USERNAME and PASSWORD
+  secret:
+    # secretName is the name of the sealed secret to use. Leave empty to use no secret
+    secretName: "db-secret"
+    # true to create the secret and fill it with following values
+    # false if the secret is created elsewhere
+    create: false
+    # each of these values should come from a sealed secret and be encrypted
+    secrets:
+      username: ""
+      password: ""
+
+  livenessProbe:
+    enabled: false
+    path: /health
+
+  service:
+    type: ClusterIP
+    port: 9102

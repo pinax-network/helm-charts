@@ -1,0 +1,6 @@
+dependencies:
+- name: substreams-sink
+  repository: https://pinax-network.github.io/helm-charts
+  version: 1.1.2
+digest: sha256:4eb5901606ca8de04dcdc9a0b998bb8a70c30b9a6c27199d4d199a660b4c975f
+generated: "2024-04-02T10:30:06.481471298-04:00"
