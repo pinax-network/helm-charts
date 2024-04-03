@@ -19,7 +19,7 @@ spec:
         {{- if .Values.apitype }}
         app: {{ .Values.apitype }}
         {{- end }}
-        {{- include "api.labels" . | nindent 4 }}
+        {{- include "api.labels" . | nindent 8 }}
     spec:
       {{- if .Values.initContainer.enabled }}
       initContainers:

@@ -69,7 +69,7 @@ serviceMonitors:
 # ingress to expose the api endpoint
 ingress:
   enabled: false
-  # traefik is the only controller supported for now
+  # traefik is the only ingress controller supported for now
   controller: traefik
   entryPoints: web
   match: Path(`/`)
