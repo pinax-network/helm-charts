@@ -4,16 +4,22 @@ metadata:
   name: {{ include "api.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
-    app: {{ include "api.fullname" . }}
+    {{- if .Values.apitype }}
+    app: {{ .Values.apitype }}
+    {{- end }}
+    {{- include "api.labels" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
-      app: {{ include "api.fullname" . }}
-  replicas: 1
+      {{- include "api.selectorLabels" . | nindent 6 }}
+  replicas: {{ .Values.replicaCount }}
   template:
     metadata:
       labels:
-        app: {{ include "api.fullname" . }}
+        {{- if .Values.apitype }}
+        app: {{ .Values.apitype }}
+        {{- end }}
+        {{- include "api.labels" . | nindent 4 }}
     spec:
       {{- if .Values.initContainer.enabled }}
       initContainers:
@@ -26,12 +32,31 @@ spec:
       {{- end }}
       containers:
       - name: {{ include "api.fullname" . }}
-        image: {{ .Values.image }}:{{ .Values.tag }}
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
         ports:
         - containerPort: {{ .Values.env.port }}
         envFrom:
         - configMapRef:
             name: env-{{ include "api.fullname" . }}
+        {{- if .Values.secret.secretName }}
+        - secretRef:
+            name: {{ .Values.secret.secretName }}
+        {{- end }}
+        {{- if .Values.livenessProbe.enabled }}
+        livenessProbe:
+          httpGet:
+            path: {{ .Values.livenessProbe.path }}
+            port: {{ if hasKey .Values.env "port" }}{{ .Values.env.port | default .Values.service.port }}{{ else }}{{ .Values.service.port }}{{ end }}
+            {{- with .Values.livenessProbe }}
+            initialDelaySeconds: {{ .initialDelaySeconds }}
+            timeoutSeconds: {{ .timeoutSeconds }}
+            periodSeconds: {{ .periodSeconds }}
+            {{- end }}
+        {{- end }}
+        {{- with .Values.resources }}
+        resources:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
       {{- if .Values.initContainer.enabled }}
       volumes:
       - name: script-volume

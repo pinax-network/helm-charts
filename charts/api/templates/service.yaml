@@ -2,10 +2,18 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ include "api.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- if .Values.apitype }}
+    app: {{ .Values.apitype }}
+    {{- end }}
+    {{- include "api.labels" . | nindent 4 }}
 spec:
+  type: {{ .Values.service.type }}
   selector:
-    app: {{ include "api.fullname" . }}
+    {{- include "api.selectorLabels" . | nindent 4 }}
   ports:
-    - protocol: TCP
-      port: {{ .Values.env.port }}
+    - name: http
+      protocol: TCP
+      port: {{ .Values.service.port }}
       targetPort: {{ .Values.env.port }}

@@ -60,25 +60,3 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
-
-{{/*
-Convert camelCase to snake_case
-*/}}
-{{- define "api.camelToSnakeCase" -}}
-{{- $result := "" -}}
-{{- $prevLower := false -}}
-{{- range $i, $r := . -}}
-  {{- $current := printf "%c" $r -}}
-  {{- if and (ne $i 0) (eq ($current | upper) $current) -}}
-    {{- if $prevLower -}}
-      {{- $result = print $result "_" | lower -}}
-    {{- end -}}
-    {{- $result = print $result $current | lower -}}
-    {{- $prevLower = false -}}
-  {{- else -}}
-    {{- $result = print $result $current -}}
-    {{- $prevLower = true -}}
-  {{- end -}}
-{{- end -}}
-{{- $result -}}
-{{- end -}}

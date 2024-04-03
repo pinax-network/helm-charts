@@ -10,4 +10,4 @@ spec:
       kind: Rule
       services:
         - name: {{ include "api.fullname" . }}
-          port: {{ .Values.env.port }}
+          port: {{ .Values.service.port }}

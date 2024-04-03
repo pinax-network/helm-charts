@@ -1,10 +1,27 @@
 nameOverride: ""
 fullnameOverride: ""
 
-replicaCount: 1
-image: ghcr.io/pinax-network/antelope-token-api
-tag: v1.0.0
+apitype: ""
 
+replicaCount: 1
+
+image:
+  repository: "ghcr.io/pinax-network/antelope-token-api"
+  tag: "v1.0.0"
+
+# pull secrets required to fetch the image
+imagePullSecrets: []
+
+# resources used by the pod(s)
+resources: {}
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+# initContainer to initiate the clickhouse database schemas
 initContainer:
   enabled: true
   clickhouseSink: substreams-sink-clickhouse-service:3000
@@ -15,26 +32,44 @@ env:
   hostname: 0.0.0.0
   host: http://clickhouse:8123
   database: default
-  username: default
-  password: ""
   table: ""
   max_limit: 100000
   verbose: true
 
+# secret that contains USERNAME and PASSWORD for the database
 secret:
-  # secretName is the name of the sealed secret to use
+  # secretName is the name of the sealed secret to use. Leave empty to use no secret
   secretName: ""
   # enable to create the secret and fill it with following values
-  enabled: false
+  create: false
   # each of these values should come from a sealed secret and be encrypted
-  # database: ""
-  # username: ""
-  # password: ""
+  secrets:
+    username: ""
+    password: ""
+
+livenessProbe:
+  enabled: false
+  path: /health
+  initialDelaySeconds: 20
+  timeoutSeconds: 2
+  periodSeconds: 5
 
 service:
   type: ClusterIP
+  port: 8080
 
+serviceMonitors:
+  # enable monitoring by creating `ServiceMonitor` CRDs ([prometheus-operator](https://github.com/prometheus-operator/prometheus-operator))
+  enabled: false
+  labels: {}
+  interval:
+  scrapeTimeout:
+  relabelings: []
+
+# ingress to expose the api endpoint
 ingress:
   enabled: false
+  # traefik is the only controller supported for now
+  controller: traefik
   entryPoints: web
   match: Path(`/`)
