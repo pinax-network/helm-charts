@@ -29,6 +29,7 @@ substreams-sink:
   # environment variables to be use by the applications <key>: <value>
   # refer to https://github.com/pinax-network/substreams-sink-webhook?tab=readme-ov-file#env-environment-variables
   env:
+    substreams_endpoint: "https://eth.substreams.pinax.network:443"
     port: 9102
     webhook_url: "http://substreams-sink-clickhouse:3000/webhook"
     manifest: "https://github.com/pinax-network/substreams-antelope-tokens/releases/download/v0.3.1/antelope-tokens-v0.3.1.spkg"
