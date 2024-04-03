@@ -3,6 +3,16 @@ entries:
   api:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2024-04-03T13:34:26.78123821Z"
+    description: api
+    digest: 8f796f7c2f83054a3aced439df42faca4abff20f5334d252ae885949aee4ca7f
+    name: api
+    type: application
+    urls:
+    - https://github.com/pinax-network/helm-charts/releases/download/api-1.0.2/api-1.0.2.tgz
+    version: 1.0.2
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2024-04-03T01:14:17.500781771Z"
     description: api
     digest: 1cfd79ab3c8a58dfd8e6fb4244e9daaa73ff13baf42c8170e0b89207680d0fa0
@@ -539,4 +549,4 @@ entries:
     urls:
     - https://github.com/pinax-network/helm-charts/releases/download/substreams-sink-webhook-1.0.0/substreams-sink-webhook-1.0.0.tgz
     version: 1.0.0
-generated: "2024-04-03T01:18:55.841715949Z"
+generated: "2024-04-03T13:34:26.911884869Z"
