@@ -32,7 +32,7 @@ substreams-sink:
     substreams_endpoint: "https://eth.substreams.pinax.network:443"
     port: 9102
     webhook_url: "http://substreams-sink-clickhouse:3000/webhook"
-    manifest: "https://github.com/pinax-network/substreams-antelope-tokens/releases/download/v0.3.1/antelope-tokens-v0.3.1.spkg"
+    manifest: "https://github.com/pinax-network/substreams-antelope-tokens/releases/download/v0.3.9/antelope-tokens-v0.3.9.spkg"
     module_name: "graph_out"
     start_block: -1
     cursor_path: "/cursor/cursor.lock"
