@@ -52,3 +52,11 @@ substreams-sink:
   service:
     type: ClusterIP
     port: 3000
+
+  serviceMonitors:
+    # enable monitoring by creating `ServiceMonitor` CRDs ([prometheus-operator](https://github.com/prometheus-operator/prometheus-operator))
+    enabled: false
+    labels: {}
+    interval:
+    scrapeTimeout:
+    relabelings: []

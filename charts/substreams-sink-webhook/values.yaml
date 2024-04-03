@@ -65,6 +65,14 @@ substreams-sink:
     type: ClusterIP
     port: 9102
 
+  serviceMonitors:
+    # enable monitoring by creating `ServiceMonitor` CRDs ([prometheus-operator](https://github.com/prometheus-operator/prometheus-operator))
+    enabled: false
+    labels: {}
+    interval:
+    scrapeTimeout:
+    relabelings: []
+
   # pvc is used to persist the cursor.lock file
   pvc:
     # if true, make sure the volumeMountPath and the env.cursor_file match
