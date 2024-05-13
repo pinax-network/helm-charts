@@ -577,4 +577,15 @@ entries:
     urls:
     - https://github.com/pinax-network/helm-charts/releases/download/substreams-sink-webhook-1.0.0/substreams-sink-webhook-1.0.0.tgz
     version: 1.0.0
-generated: "2024-04-03T14:28:20.652491071Z"
+  substreams-tier-2:
+  - apiVersion: v2
+    appVersion: v2.5.1
+    created: "2024-05-13T20:50:32.838749474Z"
+    description: A Helm chart for Kubernetes
+    digest: c135272026d19e74cf27fc0038e7d7581fb043838892089b15195ff71f4026e3
+    name: substreams-tier-2
+    type: application
+    urls:
+    - https://github.com/pinax-network/helm-charts/releases/download/substreams-tier-2-1.0.0/substreams-tier-2-1.0.0.tgz
+    version: 1.0.0
+generated: "2024-05-13T20:50:32.838886991Z"
