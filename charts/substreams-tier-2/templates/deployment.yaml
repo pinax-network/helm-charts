@@ -1,0 +1,102 @@
+{{- $values := $.Values.substreams }}
+{{- $componentName := "tier-2" }}
+{{- $componentLabel := include "substreams.componentLabelFor" $componentName }}
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: substreams-tier-2
+  labels:
+    {{- include "substreams.labels" . | nindent 4 }}
+    {{- $componentLabel | nindent 4 }}
+
+spec:
+  selector:
+    matchLabels:
+      {{- include "substreams.selectorLabels" . | nindent 6 }}
+      {{- $componentLabel | nindent 6 }}
+  template:
+    metadata:
+      {{- with $values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "substreams.selectorLabels" . | nindent 8 }}
+        {{- $componentLabel | nindent 8 }}
+    spec:
+      {{- with $values.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with $values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "substreams.serviceAccountName" . }}
+      terminationGracePeriodSeconds: {{ $values.terminationGracePeriodSeconds | default "60" }}
+      containers:
+        - name: {{ $componentName }}
+          image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ $.Values.image.pullPolicy }}
+          args:
+            - "start"
+            - "-c"
+            - "/config/config.yaml"
+            {{- range $arg := $.Values.substreams.extraArgs }}
+            - {{ $arg }}
+            {{- end }}
+          ports:
+            - name: grpc
+              containerPort: {{ index $values.service.ports "grpc" }}
+              protocol: UDP
+            - name: metrics
+              containerPort: {{ index $values.service.ports "metrics" }}
+              protocol: TCP
+          volumeMounts:
+            - name: config-volume
+              mountPath: /config
+          {{- if $.Values.resources }}
+          resources:
+            {{- if $.Values.resources.requests }}
+            requests:
+              {{- if $.Values.resources.requests.cpu }}
+              cpu: {{ $.Values.resources.requests.cpu }}
+              {{- end }}
+              {{- if $.Values.resources.requests.memory }}
+              memory: {{ $.Values.resources.requests.memory }}
+              {{- end }}
+            {{- end }}
+            {{- if $.Values.resources.limits }}
+            limits:
+              {{- if $.Values.resources.limits.cpu }}
+              cpu: {{ $.Values.resources.limits.cpu }}
+              {{- end }}
+              {{- if $.Values.resources.limits.memory }}
+              memory: {{ $.Values.resources.limits.memory }}
+              {{- end }}
+            {{- end }}
+          {{- end }}
+          env:
+            {{- with $.Values.substreams.aliases }}
+            {{- range $key, $value := . }}
+            - name: {{ $key }}
+              value: "{{ $value }}"
+            {{- end }}
+            {{- end }}
+      {{- if $.Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml $.Values.nodeSelector | nindent 8 }}
+      {{- end }}
+      {{- if $.Values.tolerations }}
+      tolerations:
+        {{- toYaml $.Values.tolerations | nindent 8 }}
+      {{- end }}
+      {{- if $.Values.affinity }}
+      affinity:
+        {{- toYaml $.Values.affinity | nindent 8 }}
+      {{- end }}
+      volumes:
+        - name: config-volume
+          configMap:
+            name: substreams-tier-2-config

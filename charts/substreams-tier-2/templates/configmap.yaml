@@ -1,0 +1,18 @@
+{{- $componentName := "tier-2" }}
+{{- $values := $.Values.substreams }}
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name:  substreams-tier-2-config
+data:
+  config.yaml: |
+    start:
+      args:
+        - substreams-tier2
+      flags:
+        log-verbosity: 0
+        log-to-file: false
+        common-auto-mem-limit-percent: 90
+        substreams-tier2-grpc-listen-addr: :{{ index $values.service.ports "grpc" }}
+        substreams-tier2-max-concurrent-requests: 50

@@ -1,0 +1,33 @@
+{{- $values := $.Values.substreams }}
+{{- $componentName := "tier-2" }}
+{{- $componentLabel := include "substreams.componentLabelFor" $componentName }}
+
+apiVersion: v1
+kind: Service
+metadata:
+  name:  substreams-tier-2-svc
+  labels:
+    {{- include "substreams.labels" . | nindent 4 }}
+    {{- $componentLabel | nindent 4 }}
+spec:
+  {{- with $values.service.type }}
+  type: {{ . }}
+  {{- else }}
+  type: ClusterIP
+  {{- end }}
+  {{- with $values.service.ipFamilyPolicy }}
+  ipFamilyPolicy: {{ . }}
+  {{- end }}
+  {{- with $values.service.clusterIP }}
+  clusterIP: {{ . }}
+  {{- end }}
+  ports:
+  {{- range $portName, $portNumber := $values.service.ports }}
+    - port: {{ $portNumber }} # the port we expose on the Service, user configurable
+      targetPort: {{ $portName }} # the name of the port on the container that we are routing to
+      protocol: TCP
+      name: {{ $portName }}
+  {{- end }}
+  selector:
+    {{- include "substreams.selectorLabels" . | nindent 4 }}
+    {{- $componentLabel | nindent 4 }}
