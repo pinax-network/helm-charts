@@ -1,7 +1,7 @@
 {{- if $.Values.substreams.autoscaling.enabled }}
 {{- $values := $.Values.substreams }}
 
-apiVersion: autoscaling/v2beta2
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: substreams-tier-2-hpa
