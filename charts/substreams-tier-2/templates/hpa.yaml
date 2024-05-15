@@ -1,7 +1,7 @@
 {{- if $.Values.substreams.autoscaling.enabled }}
 {{- $values := $.Values.substreams }}
 
-apiVersion: autoscaling/v2beta1
+apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:
   name: substreams-tier-2-hpa
@@ -17,12 +17,16 @@ spec:
     - type: Resource
       resource:
         name: cpu
-        targetAverageUtilization: {{ $values.autoscaling.targetCPUUtilizationPercentage }}
+        target:
+          type: Utilization
+          averageUtilization: {{ $values.autoscaling.targetCPUUtilizationPercentage }}
     {{- end }}
     {{- if $values.autoscaling.targetMemoryUtilizationPercentage }}
     - type: Resource
       resource:
         name: memory
-        targetAverageUtilization: {{ $values.autoscaling.targetMemoryUtilizationPercentage }}
+        target:
+          type: Utilization
+          averageUtilization: {{ $values.autoscaling.targetMemoryUtilizationPercentage }}
     {{- end }}
 {{- end }}
