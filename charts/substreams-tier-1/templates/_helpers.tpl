@@ -37,11 +37,10 @@ Common labels
 This template includes the chart label and version, selector labels, app version if available, and managed-by label.
 */}}
 {{- define "substreams.labels" -}}
+app.kubernetes.io/name: {{ include "substreams.fullname" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
-{{- if .Values.component }}
-app.kubernetes.io/component: {{ .Values.component }}
-{{- end }}
 {{- end }}
 
 {{/*
@@ -59,4 +58,13 @@ This selects the service account name based on the blockchain network and chain 
 */}}
 {{- define "substreams.serviceAccountName" -}}
 {{- printf "%s-substreams-tier-1" .Values.blockChain.network | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
+
+{{/*
+Create a label for a component
+This template is used to add a component label to Kubernetes resources.
+*/}}
+{{- define "substreams.componentLabelFor" -}}
+app.kubernetes.io/component: {{ . }}
 {{- end }}
