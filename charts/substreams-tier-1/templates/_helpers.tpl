@@ -37,8 +37,6 @@ Common labels
 This template includes the chart label and version, selector labels, app version if available, and managed-by label.
 */}}
 {{- define "substreams.labels" -}}
-app.kubernetes.io/name: {{ include "substreams.fullname" . }}
-app.kubernetes.io/instance: {{ .Release.Name }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- if .Values.component }}
