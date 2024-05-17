@@ -1,0 +1,86 @@
+{{- $values := $.Values.substreams }}
+{{- $componentName := "tier-1" }}
+{{- $componentLabel := include "substreams.componentLabelFor" $componentName | default "" }}
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "substreams.uniqueName" . }}
+  labels:
+    {{- include "substreams.labels" . | nindent 4 }}
+    {{- if $componentLabel }}
+    {{- $componentLabel | nindent 4 }}
+    {{- end }}
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "substreams.uniqueName" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      {{- with $values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app.kubernetes.io/name: {{ include "substreams.uniqueName" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      {{- with $values.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with $values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if $values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml $values.nodeSelector | nindent 8 }}
+      {{- end }}
+      {{- if $.Values.serviceAccount.create }}
+      serviceAccountName: {{ include "substreams.serviceAccountName" . }}
+      {{- end }}
+      terminationGracePeriodSeconds: {{ $values.terminationGracePeriodSeconds | default 60 }}
+      containers:
+        - name: {{ $componentName }}
+          image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ $.Values.image.pullPolicy }}
+          args:
+            - "start"
+            - "-c"
+            - "/config/config.yaml"
+            {{- range $arg := $values.extraArgs }}
+            - {{ $arg }}
+            {{- end }}
+          ports:
+            - name: grpc
+              containerPort: {{ index $values.service.ports "grpc" }}
+              protocol: TCP
+            - name: metrics
+              containerPort: {{ index $values.service.ports "metrics" }}
+              protocol: TCP
+          volumeMounts:
+            - name: config-volume
+              mountPath: /config
+          env:
+            {{- if and (hasKey $.Values.substreams "env") $.Values.substreams.env.enabled }}
+            {{- range $.Values.substreams.env.variables }}
+            - name: {{ .name }}
+              {{- if .valueFrom }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .valueFrom.secretKeyRef.name }}
+                  key: {{ .valueFrom.secretKeyRef.key }}
+              {{- else }}
+              value: "{{ .value }}"
+              {{- end }}
+            {{- end }}
+            {{- end }}
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ include "substreams.uniqueName" . }}-config
+            items:
+              - key: config.yaml
+                path: config.yaml

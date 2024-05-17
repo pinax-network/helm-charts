@@ -1,0 +1,14 @@
+{{- $componentName := "tier-1" }}
+{{- $values := $.Values.substreams }}
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name:  {{ include "substreams.uniqueName" . }}-config
+data:
+  config.yaml: |
+    start:
+      args:
+        - substreams-tier1
+      flags:
+      {{- toYaml (fromYaml (printf "%s" .Values.substreams.config)) | nindent 8 }}
