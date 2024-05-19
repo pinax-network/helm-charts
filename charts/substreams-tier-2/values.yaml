@@ -107,6 +107,12 @@ substreams:
   # This allows you to create shorthand commands for frequently used operations,
   # enhancing efficiency and reducing the need for repetitive typing.
   aliases: {}
+
+  # -- Define custom aliases for preconfigured commands in your environment.
+  # This allows you to create shorthand commands for frequently used operations,
+  # enhancing efficiency and reducing the need for repetitive typing.
+  env: {}
+
   
   # -- Specify additional command-line arguments to pass to the `tier-2` component.
   # These arguments can be used to override default settings or provide additional
