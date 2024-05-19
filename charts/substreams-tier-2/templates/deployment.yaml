@@ -78,10 +78,17 @@ spec:
             {{- end }}
           {{- end }}
           env:
-            {{- with $.Values.substreams.aliases }}
-            {{- range $key, $value := . }}
-            - name: {{ $key }}
-              value: "{{ $value }}"
+            {{- if and (hasKey $.Values.substreams "env") $.Values.substreams.env.enabled }}
+            {{- range $.Values.substreams.env.variables }}
+            - name: {{ .name }}
+              {{- if .valueFrom }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .valueFrom.secretKeyRef.name }}
+                  key: {{ .valueFrom.secretKeyRef.key }}
+              {{- else }}
+              value: "{{ .value }}"
+              {{- end }}
             {{- end }}
             {{- end }}
       {{- if $.Values.nodeSelector }}
