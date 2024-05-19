@@ -34,6 +34,6 @@
 - URL: https://github.com/pinax-network/helm-charts/releases/download/substreams-tier-1-1.0.3/substreams-tier-1-1.0.3.tgz
 
 ### substreams-tier-2
-- Version: 1.0.3
-- URL: https://github.com/pinax-network/helm-charts/releases/download/substreams-tier-2-1.0.3/substreams-tier-2-1.0.3.tgz
+- Version: 1.0.5
+- URL: https://github.com/pinax-network/helm-charts/releases/download/substreams-tier-2-1.0.5/substreams-tier-2-1.0.5.tgz
 
