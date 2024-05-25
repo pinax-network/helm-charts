@@ -96,7 +96,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "substreams.uniqueName" . }}-svc
+      app: {{ include "substreams.uniqueName" . }}-svc
   endpoints:
     - port: metrics
       path: /metrics
