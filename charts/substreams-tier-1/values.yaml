@@ -109,6 +109,15 @@ substreams:
     # -- Endpoint for Substreams Tier 1 subrequests.
     substreams-tier1-subrequests-endpoint: {}
 
+  # Configuration for the service monitor
+  serviceMonitor:
+    # -- Enable or disable the service monitor
+    enabled: true # 
+    # -- Interval at which Prometheus scrapes metrics
+    interval: 30s 
+    # -- Timeout for the scrape request
+    scrapeTimeout: 10s 
+
   # -- Pull secrets required to fetch the Image
   imagePullSecrets: []
 
