@@ -85,26 +85,3 @@ spec:
               - key: config.yaml
                 path: config.yaml
 
----
-{{- if .Values.substreams.serviceMonitor.enabled }}
-apiVersion: monitoring.coreos.com/v1
-kind: ServiceMonitor
-metadata:
-  name: {{ include "substreams.uniqueName" . }}
-  labels:
-    release: {{ $.Release.Name }}
-spec:
-  endpoints:
-    - honorLabels: true
-      interval: {{ .Values.substreams.serviceMonitor.interval | default "30s" }}
-      scrapeTimeout: {{ .Values.substreams.serviceMonitor.scrapeTimeout | default "10s" }}
-      port: metrics
-      path: /metrics
-  namespaceSelector:
-    matchNames:
-      - {{ .Release.Namespace }}
-  selector:
-    matchLabels:
-      {{- include "substreams.labels" . | nindent 4 }}
-      {{- $componentLabel | nindent 4 }}
-{{- end }}
