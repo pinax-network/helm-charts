@@ -36,7 +36,7 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: {{ include "substreams.uniqueName" . }}
+  name: {{ include "substreams.uniqueName" . }}-monitor
   labels:
     release: {{ $.Release.Name }}
 spec:
@@ -50,5 +50,6 @@ spec:
     matchNames:
       - {{ .Release.Namespace }}
   selector:
-    app.kubernetes.io/name: {{ include "substreams.uniqueName" . }}-svc
+    matchLabels:
+      app.kubernetes.io/name: {{ include "substreams.uniqueName" . }}
 {{- end }}
