@@ -46,9 +46,6 @@ spec:
       scrapeTimeout: {{ .Values.substreams.serviceMonitor.scrapeTimeout | default "10s" }}
       port: metrics
       path: /metrics
-  namespaceSelector:
-    matchNames:
-      - {{ .Release.Namespace }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "substreams.uniqueName" . }}
