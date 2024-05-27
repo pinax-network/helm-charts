@@ -105,5 +105,6 @@ spec:
       - {{ .Release.Namespace }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "substreams.uniqueName" . }}-substreams-tier-1
+      {{- include "substreams.labels" . | nindent 4 }}
+      {{- $componentLabel | nindent 4 }}
 {{- end }}
