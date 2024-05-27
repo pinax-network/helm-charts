@@ -29,8 +29,7 @@ spec:
       name: {{ $portName }}
   {{- end }}
   selector:
-    {{- include "substreams.labels" . | nindent 4 }}
-    {{- $componentLabel | nindent 4 }}
+    app.kubernetes.io/name: {{ include "substreams.uniqueName" . }}
 
 ---
 {{- if .Values.substreams.serviceMonitor.enabled }}
@@ -51,7 +50,5 @@ spec:
     matchNames:
       - {{ .Release.Namespace }}
   selector:
-    matchLabels:
-      {{- include "substreams.labels" . | nindent 4 }}
-      {{- $componentLabel | nindent 4 }}
+    app.kubernetes.io/name: {{ include "substreams.uniqueName" . }}-svc
 {{- end }}
