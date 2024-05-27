@@ -38,7 +38,7 @@ kind: ServiceMonitor
 metadata:
   name: {{ include "substreams.uniqueName" . }}-monitor
   labels:
-    release: {{ $.Release.Name }}
+    {{- include "substreams.labels" . | nindent 4 }}
 spec:
   endpoints:
     - honorLabels: true
@@ -50,3 +50,4 @@ spec:
     matchLabels:
       app.kubernetes.io/name: {{ include "substreams.uniqueName" . }}
 {{- end }}
+
