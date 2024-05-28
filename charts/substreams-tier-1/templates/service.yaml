@@ -7,8 +7,7 @@ kind: Service
 metadata:
   name: {{ include "substreams.uniqueName" . }}-svc
   labels:
-    {{- include "substreams.labels" . | nindent 4 }}
-    {{- $componentLabel | nindent 4 }}
+    {{ include "substreams.uniqueName" . }}-svc
 spec:
   {{- with $values.service.type }}
   type: {{ . }}
@@ -48,6 +47,6 @@ spec:
       path: /metrics
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "substreams.uniqueName" . }}
+      app.kubernetes.io/name: {{ include "substreams.uniqueName" . }}-svc
 {{- end }}
 
