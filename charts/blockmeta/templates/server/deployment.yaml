@@ -2,7 +2,6 @@
 {{- $componentName := "server" }}
 {{- $componentLabel := include "blockmeta.componentLabelFor" $componentName | default "" }}
 
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -48,8 +47,8 @@ spec:
             - "./blockmeta"
             - "--sink-addr={{ include "sink.uniqueName" . }}-svc"
             - "--grpc-listen-addr=:{{ index $values.service.ports "grpc" }}"
-            - "--auth-url={{ .Values.authUrl }}"
-            - "--metering-url={{ .Values.meteringUrl }}"
+            - "--auth-url={{ .Values.auth.url }}"
+            - "--metering-url={{ .Values.metering.url }}"
             {{- range $arg := $values.extraArgs }}
             - {{ $arg }}
             {{- end }}

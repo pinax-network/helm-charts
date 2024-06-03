@@ -1,0 +1,31 @@
+{{- $values := $.Values.sink }}
+{{- $componentName := "sink" }}
+{{- $componentLabel := include "blockmeta.componentLabelFor" $componentName }}
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "sink.uniqueName" . }}-svc
+  labels:
+    app.kubernetes.io/name: {{ include "sink.uniqueName" . }}-svc
+spec:
+  {{- with $values.service.type }}
+  type: {{ . }}
+  {{- else }}
+  type: ClusterIP
+  {{- end }}
+  {{- with $values.service.ipFamilyPolicy }}
+  ipFamilyPolicy: {{ . }}
+  {{- end }}
+  {{- with $values.service.clusterIP }}
+  clusterIP: {{ . }}
+  {{- end }}
+  ports:
+  {{- range $portName, $portNumber := $values.service.ports }}
+    - port: {{ $portNumber }} # the port we expose on the Service, user configurable
+      targetPort: {{ $portName }} # the name of the port on the container that we are routing to
+      protocol: TCP
+      name: {{ $portName }}
+  {{- end }}
+  selector:
+    app.kubernetes.io/name: {{ include "sink.uniqueName" . }}
