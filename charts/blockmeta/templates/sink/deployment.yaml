@@ -1,18 +1,18 @@
-{{- $values := $.Values.server }}
-{{- $componentName := "server" }}
+{{- $values := $.Values.sink }}
+{{- $componentName := "sink" }}
 {{- $componentLabel := include "blockmeta.componentLabelFor" $componentName | default "" }}
 
 
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "server.uniqueName" . }}
+  name: {{ include "sink.uniqueName" . }}
   labels:
-    app.kubernetes.io/name: {{ include "server.uniqueName" . }}
+    app.kubernetes.io/name: {{ include "sink.uniqueName" . }}
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "server.uniqueName" . }}
+      app.kubernetes.io/name: {{ include "sink.uniqueName" . }}
       app.kubernetes.io/instance: {{ .Release.Name }}
   template:
     metadata:
@@ -21,7 +21,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        app.kubernetes.io/name: {{ include "server.uniqueName" . }}
+        app.kubernetes.io/name: {{ include "sink.uniqueName" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
       {{- with $values.podSecurityContext }}
@@ -37,19 +37,18 @@ spec:
         {{- toYaml $values.nodeSelector | nindent 8 }}
       {{- end }}
       {{- if $values.serviceAccount.create }}
-      serviceAccountName: {{ include "server.serviceAccountName" . }}
+      serviceAccountName: {{ include "sink.serviceAccountName" . }}
       {{- end }}
       terminationGracePeriodSeconds: {{ $values.terminationGracePeriodSeconds | default 60 }}
       containers:
         - name: {{ $componentName }}
-          image: "{{ $.Values.image.service.repository }}:{{ $.Values.image.service.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ $.Values.image.service.pullPolicy }}
+          image: "{{ $.Values.image.sink.repository }}:{{ $.Values.image.sink.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ $.Values.image.sink.pullPolicy }}
           args:
-            - "./blockmeta"
-            - "--sink-addr={{ include "sink.uniqueName" . }}-svc"
-            - "--grpc-listen-addr=:{{ index $values.service.ports "grpc" }}"
-            - "--auth-url={{ .Values.authUrl }}"
-            - "--metering-url={{ .Values.meteringUrl }}"
+            - "serve"
+            - "{{ .Values.tikv.url}}"
+            - "{{ .Values.spkg.url }}"
+            - "--listen-addr=:{{ index $values.service.ports "grpc" }}"
             {{- range $arg := $values.extraArgs }}
             - {{ $arg }}
             {{- end }}

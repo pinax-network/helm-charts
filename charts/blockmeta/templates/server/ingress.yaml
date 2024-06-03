@@ -1,42 +1,40 @@
-{{- $values := $.Values.blockmeta }}
-{{- $componentName := "blockmeta-server" }}
-{{- $componentLabel := include "blockmeta_server.componentLabelFor" $componentName }}
-{{- if $values.server.ingress.enabled }}
+{{- $values := $.Values.server }}
+{{- $componentName := "server" }}
+{{- $componentLabel := include "blockmeta.componentLabelFor" $componentName }}
+
+{{- if $values.ingress.enabled }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ .Values.chain.network }}-{{ include "blockmeta_server.fullname" . }}-{{ $componentName }}-{{ .Values.chain.version }}-ingress
+  name: {{ include "server.uniqueName" . }}-ingress
   labels:
-    {{- include "blockmeta_server.labels" . | nindent 4 }}
-    {{- $componentLabel | nindent 4 }}
-  {{- with $values.server.ingress.annotations }}
+    app.kubernetes.io/name: {{ include "server.uniqueName" . }}-ingress
   annotations:
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
-spec:
-  {{- if $values.server.ingress.tls }}
-  tls:
-    {{- range $values.server.ingress.tls }}
-    - hosts:
-        {{- range .hosts }}
-        - {{ . | quote }}
-        {{- end }}
-      secretName: {{ .secretName }}
+    {{- range $key, $value := $values.ingress.annotations }}
+    {{ $key }}: {{ $value | quote }}
     {{- end }}
+spec:
+  {{- if $values.ingress.tls }}
+  tls:
+    - hosts:
+        {{- range $host := $values.ingress.hosts }}
+        - {{ $host }}
+        {{- end }}
+      secretName: {{ $values.ingress.tls.secretName }}
   {{- end }}
   rules:
-    {{- range $values.server.ingress.hosts }}
-    - host: {{ .host | quote }}
+    {{- range $host := $values.ingress.hosts }}
+    - host: {{ $host }}
       http:
         paths:
-          {{- range .paths }}
-          - path: {{ .path }}
-            pathType: {{ .pathType }}
+          {{- range $path := $values.ingress.paths }}
+          - path: {{ $path.path }}
+            pathType: {{ $path.pathType | default "ImplementationSpecific" }}
             backend:
               service:
-                name: {{ $.Values.chain.network }}-{{ include "blockmeta_server.fullname" $ }}-{{ $componentName }}-{{ $.Values.chain.version }}-svc
+                name: {{ include "server.uniqueName" . }}-svc
                 port:
-                  number: {{ $.Values.blockmeta.server.service.ports.grpc }}
+                  number: {{ $path.port }}
           {{- end }}
     {{- end }}
 {{- end }}

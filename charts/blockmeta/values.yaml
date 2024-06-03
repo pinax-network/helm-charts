@@ -1,179 +1,515 @@
-# Default values for blockmeta deployment
+# Default values for blockmeta chart.
 # This is a YAML-formatted file.
 
-nameOverride: ""
-fullnameOverride: ""
-
-chain:
-  network: "goerli"
-  version: "v1"
 
 auth:
-  url: "grpc://auth:9000"
+  url: ""
 metering:
-  url: "grpc://metering:9000?network=ethereum"
+  url: ""
 tikv:
-  url: "tikv://tikv-1,tik2-2,tikv3:2379/blockmeta_v1?truncate=false&compression=zstd"
+  url: ""
 spkg:
-  url: "https://github.com/streamingfast/blockmeta-service/releases/download/v0.1.0/blockmeta-service-v0.1.0.spkg"
+  url: ""
 substreams_tier1:
-  url: "substreams-tier-1:9000"
+  url: ""
 
-
-blockmeta:
-
-# -- Blockmeta Server
-  server: 
-    service:
-      type: ClusterIP
-      ports:
-        grpc: 50051
-    serviceAccount:
-      # -- Specifies whether a service account should be created
-      create: true
-      # -- Annotations to add to the service account
-      annotations: {}
-      # -- The name of the service account to use.
-      # If not set and create is true, a name is generated using the fullname template
-      name: ""
-    image:
-      # -- Image for the blockmeta service
-      repository: ghcr.io/streamingfast/blockmeta-service
-      pullPolicy: IfNotPresent
-      # -- Pull secrets required to fetch the Image
-      imagePullSecrets: []
-      # -- Overrides the image tag
-      # @default -- Chart.appVersion
-      tag: "2f971e0"
-    # -- Annotations for the `Pod`
-    podAnnotations: {}
-    # -- Extra labels to attach to the Pod for matching against
-    extraLabels: {}
-    resources: {}
-      # We usually recommend not to specify default resources and to leave this as a conscious
-      # choice for the user. This also increases chances charts run on environments with little
-      # resources, such as Minikube. If you do want to specify resources, uncomment the following
-      # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-      # limits:
-      #   cpu: 100m
-      #   memory: 128Mi
-      #   ephemeral-storage: 100Mi
-      # requests:
-      #   cpu: 100m
-      #   memory: 128Mi
-      #   ephemeral-storage: 100Mi
-      # Increasing the grace termination period prevents Kubernetes
-      # from killing the node process prematurely. Premature shutdown
-      # can lead to data integrity issues
-      # -- Amount of time to wait before force-killing the container
-    terminationGracePeriodSeconds: 60
-    ingress:
-      enabled: false
-      annotations: {}
-        # kubernetes.io/ingress.class: nginx
-        # kubernetes.io/tls-acme: "true"
-      hosts:
-        - host: chart-example.local
-          paths:
-            - path: /
-              pathType: Prefix
-      tls: []
-      #  - secretName: chart-example-tls
-      #    hosts:
-      #      - chart-example.local
-
+image:
+  service:
+    # -- The repository where the Docker image is located.
+    repository: ghcr.io/streamingfast/blockmeta-service
+    # -- The pull policy for the Docker image.
+    # Valid options are "Always", "IfNotPresent", and "Never".
+    pullPolicy: IfNotPresent
+    # -- The tag for the Docker image. If not set, the default tag will be used.
+    tag: "2f971e0"
+  
   sink:
+    # -- The repository where the Docker image is located.
+    repository: ghcr.io/streamingfast/substreams-sink-kv
+    # -- The pull policy for the Docker image.
+    # Valid options are "Always", "IfNotPresent", and "Never".
+    pullPolicy: IfNotPresent
+    # -- The tag for the Docker image. If not set, the default tag will be used.
+    tag: "0205920"
 
-# -- Blockmeta Sink Serve
-    serve:
-      service:
-        type: ClusterIP
-        ports:
-          grpc: 9000
-      serviceAccount:
-        # -- Specifies whether a service account should be created
-        create: true
-        # -- Annotations to add to the service account
-        annotations: {}
-        # -- The name of the service account to use.
-        # If not set and create is true, a name is generated using the fullname template
-        name: ""
-      image:
-        # -- Image for the blockmeta service
-        repository: ghcr.io/streamingfast/substreams-sink-kv
-        pullPolicy: IfNotPresent
-        # -- Pull secrets required to fetch the Image
-        imagePullSecrets: []
-        # -- Overrides the image tag
-        # @default -- Chart.appVersion
-        tag: "435682b"
-      # -- Annotations for the `Pod`
-      podAnnotations: {}
-      # -- Extra labels to attach to the Pod for matching against
-      extraLabels: {}
-      resources: {}
-      # We usually recommend not to specify default resources and to leave this as a conscious
-      # choice for the user. This also increases chances charts run on environments with little
-      # resources, such as Minikube. If you do want to specify resources, uncomment the following
-      # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-      # limits:
-      #   cpu: 100m
-      #   memory: 128Mi
-      #   ephemeral-storage: 100Mi
-      # requests:
-      #   cpu: 100m
-      #   memory: 128Mi
-      #   ephemeral-storage: 100Mi
-      # Increasing the grace termination period prevents Kubernetes
-      # from killing the node process prematurely. Premature shutdown
-      # can lead to data integrity issues
-      # -- Amount of time to wait before force-killing the container
-      terminationGracePeriodSeconds: 60
+blockChain:
+  # -- The name of the blockchain network. Possible values could be "mainnet", "testnet", "devnet", etc.
+  network: ""
+  
+  # -- The version of the blocks. Specify the version you are using, e.g., "1.0.0", "2.1.3", "v1", etc.
+  blocksVersion: ""
+
+authUrl: ""
+
+meteringUrl: ""
+
+# -- Overrides the name of the chart.
+# If not set, the name will be derived from the chart name.
+nameOverride: ""
+
+# -- Overrides the full name of the chart.
+# If not set, the full name will be derived from the release name and the chart name.
+fullnameOverride: ""
+
+
+
+server:
+
+  serviceAccount:
+    # -- Specifies whether a service account should be created
+    create: false
+    # -- Annotations to add to the service account
+    annotations: {}
+    # -- The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: ""
+
+  # Configuration for the service monitor
+  serviceMonitor:
+    # -- Enable or disable the service monitor
+    enabled: false # 
+    # -- Interval at which Prometheus scrapes metrics
+    interval: 30s 
+    # -- Timeout for the scrape request
+    scrapeTimeout: 10s 
+
+  # -- Pull secrets required to fetch the Image
+  imagePullSecrets: []
+
+  ingress:
+    enabled: false
+    annotations: {}
+    tls: 
+      secretName: ""
+    hosts: []
+    paths: []
+
+  resources:
+    enabled: false
+    requests:
+      # -- Specifies the CPU resource request for the container.
+      # CPU resource requests are measured in units of cores.
+      # Examples: "250m" for 0.25 cores, "1" for 1 core.
+      cpu: {}
+  
+      # -- Specifies the memory resource request for the container.
+      # Memory resource requests are measured in bytes.
+      # Examples: "256Mi" for 256 mebibytes, "1Gi" for 1 gibibyte.
+      memory: {}
+  
+    limits:
+      # -- Specifies the CPU resource limit for the container.
+      # CPU resource limits are measured in units of cores.
+      # Examples: "500m" for 0.5 cores, "2" for 2 cores.
+      cpu: {}
+  
+      # -- Specifies the memory resource limit for the container.
+      # Memory resource limits are measured in bytes.
+      # Examples: "512Mi" for 512 mebibytes, "2Gi" for 2 gibibytes.
+      memory: {}
+
+
+  autoscaling:
+    # -- Specifies whether the Horizontal Pod Autoscaler is enabled
+    enabled: false
+
+    # -- Specifies the minimum number of replicas that the autoscaler can scale down to.
+    minReplicas: 1
     
+    # -- Specifies the maximum number of replicas that the autoscaler can scale up to.
+    maxReplicas: 5
+    
+    # -- Specifies the target average CPU utilization (represented as a percentage of requested CPU) across all replicas.
+    # The autoscaler will adjust the number of replicas to maintain this average utilization.
+    targetCPUUtilizationPercentage: 80
+    
+    # -- Specifies the target average memory utilization (represented as a percentage of requested memory) across all replicas.
+    # The autoscaler will adjust the number of replicas to maintain this average utilization.
+    targetMemoryUtilizationPercentage: 80
 
 
-# -- Blockmeta Sink Inject
-    inject:
-      service:
-        type: ClusterIP
-        ports:
-          prom: 9102
-      serviceAccount:
-        # -- Specifies whether a service account should be created
-        create: true
-        # -- Annotations to add to the service account
-        annotations: {}
-        # -- The name of the service account to use.
-        # If not set and create is true, a name is generated using the fullname template
-        name: ""
-      image:
-        # -- Image for the blockmeta service
-        repository: ghcr.io/streamingfast/substreams-sink-kv
-        pullPolicy: IfNotPresent
-        # -- Pull secrets required to fetch the Image
-        imagePullSecrets: []
-        # -- Overrides the image tag
-        # @default -- Chart.appVersion
-        tag: "435682b"
-      # -- Annotations for the `Pod`
-      podAnnotations: {}
-      # -- Extra labels to attach to the Pod for matching against
-      extraLabels: {}
-      resources: {}
-      # We usually recommend not to specify default resources and to leave this as a conscious
-      # choice for the user. This also increases chances charts run on environments with little
-      # resources, such as Minikube. If you do want to specify resources, uncomment the following
-      # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-      # limits:
-      #   cpu: 100m
-      #   memory: 128Mi
+
+  service:
+    # -- Specifies the type of the Kubernetes service.
+    # Valid options are "ClusterIP", "NodePort", "LoadBalancer", and "ExternalName".
+    type: ClusterIP
+    
+    # -- Specifies the IP family policy for the service.
+    # Valid options are "SingleStack", "PreferDualStack", and "RequireDualStack".
+    ipFamilyPolicy: {}
+    
+    # -- Specifies the cluster IP address of the service.
+    # If not specified, a cluster IP will be automatically assigned.
+    clusterIP: {}
+    
+    ports:
+      # -- Specifies the port for the blockmeta service GRPC interface.
+      # This port will be exposed by the service.
+      grpc: 50051
+      
+
+  # -- Define custom aliases for preconfigured commands in your environment.
+  # This allows you to create shorthand commands for frequently used operations,
+  # enhancing efficiency and reducing the need for repetitive typing.
+  env: {}
+
+  
+  # -- Specify additional command-line arguments to pass to the `tier-2` component.
+  # These arguments can be used to override default settings or provide additional
+  # configurations that are not covered by the standard configuration options.
+  extraArgs: {}
+
+  # Increasing the grace termination period prevents Kubernetes
+  # from killing the node process prematurely. Premature shutdown
+  # can lead to data integrity issues
+  # -- Amount of time to wait before force-killing the process
+  terminationGracePeriodSeconds: 10
+
+  # -- Annotations for the `Pod`
+  podAnnotations: {}
+
+  # -- Pod-wide security context
+  podSecurityContext: {}
+
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    #   ephemeral-storage: 100Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
       #   ephemeral-storage: 100Mi
-      # requests:
-      #   cpu: 100m
-      #   memory: 128Mi
+  
+  # -- Node selection constraints for pod scheduling.
+  # Allows you to specify a map of key-value pairs to target specific nodes.
+  nodeSelector: {}
+  
+  # -- Tolerations for pod scheduling.
+  # Allows the pod to be scheduled on nodes with matching taints.
+  # Example:
+  # tolerations:
+  #   - key: "key1"
+  #     operator: "Exists"
+  #     effect: "NoSchedule"
+  tolerations: {}
+  
+  # -- Affinity rules for pod scheduling.
+  # Defines rules for preferred or required node and pod selection.
+  # Example:
+  # affinity:
+  #   nodeAffinity:
+  #     requiredDuringSchedulingIgnoredDuringExecution:
+  #       nodeSelectorTerms:
+  #         - matchExpressions:
+  #             - key: "key1"
+  #               operator: "In"
+  #               values:
+  #                 - "value1"
+  affinity: {}
+
+
+inject:
+
+  serviceAccount:
+    # -- Specifies whether a service account should be created
+    create: false
+    # -- Annotations to add to the service account
+    annotations: {}
+    # -- The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: ""
+
+  # Configuration for the service monitor
+  serviceMonitor:
+    # -- Enable or disable the service monitor
+    enabled: false # 
+    # -- Interval at which Prometheus scrapes metrics
+    interval: 30s 
+    # -- Timeout for the scrape request
+    scrapeTimeout: 10s 
+
+  # -- Pull secrets required to fetch the Image
+  imagePullSecrets: []
+
+  resources:
+    enabled: false
+    requests:
+      # -- Specifies the CPU resource request for the container.
+      # CPU resource requests are measured in units of cores.
+      # Examples: "250m" for 0.25 cores, "1" for 1 core.
+      cpu: {}
+  
+      # -- Specifies the memory resource request for the container.
+      # Memory resource requests are measured in bytes.
+      # Examples: "256Mi" for 256 mebibytes, "1Gi" for 1 gibibyte.
+      memory: {}
+  
+    limits:
+      # -- Specifies the CPU resource limit for the container.
+      # CPU resource limits are measured in units of cores.
+      # Examples: "500m" for 0.5 cores, "2" for 2 cores.
+      cpu: {}
+  
+      # -- Specifies the memory resource limit for the container.
+      # Memory resource limits are measured in bytes.
+      # Examples: "512Mi" for 512 mebibytes, "2Gi" for 2 gibibytes.
+      memory: {}
+
+
+  autoscaling:
+    # -- Specifies whether the Horizontal Pod Autoscaler is enabled
+    enabled: false
+
+    # -- Specifies the minimum number of replicas that the autoscaler can scale down to.
+    minReplicas: 1
+    
+    # -- Specifies the maximum number of replicas that the autoscaler can scale up to.
+    maxReplicas: 5
+    
+    # -- Specifies the target average CPU utilization (represented as a percentage of requested CPU) across all replicas.
+    # The autoscaler will adjust the number of replicas to maintain this average utilization.
+    targetCPUUtilizationPercentage: 80
+    
+    # -- Specifies the target average memory utilization (represented as a percentage of requested memory) across all replicas.
+    # The autoscaler will adjust the number of replicas to maintain this average utilization.
+    targetMemoryUtilizationPercentage: 80
+
+
+
+  service:
+    # -- Specifies the type of the Kubernetes service.
+    # Valid options are "ClusterIP", "NodePort", "LoadBalancer", and "ExternalName".
+    type: ClusterIP
+    
+    # -- Specifies the IP family policy for the service.
+    # Valid options are "SingleStack", "PreferDualStack", and "RequireDualStack".
+    ipFamilyPolicy: {}
+    
+    # -- Specifies the cluster IP address of the service.
+    # If not specified, a cluster IP will be automatically assigned.
+    clusterIP: {}
+    
+    ports:      
+      # -- Specifies the port for the metrics interface.
+      # This port will be exposed by the service.
+      metrics: 9102
+
+
+  # -- Define custom aliases for preconfigured commands in your environment.
+  # This allows you to create shorthand commands for frequently used operations,
+  # enhancing efficiency and reducing the need for repetitive typing.
+  env: {}
+
+  
+  # -- Specify additional command-line arguments to pass to the `tier-2` component.
+  # These arguments can be used to override default settings or provide additional
+  # configurations that are not covered by the standard configuration options.
+  extraArgs: {}
+
+  # Increasing the grace termination period prevents Kubernetes
+  # from killing the node process prematurely. Premature shutdown
+  # can lead to data integrity issues
+  # -- Amount of time to wait before force-killing the process
+  terminationGracePeriodSeconds: 10
+
+  # -- Annotations for the `Pod`
+  podAnnotations: {}
+
+  # -- Pod-wide security context
+  podSecurityContext: {}
+
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    #   ephemeral-storage: 100Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
       #   ephemeral-storage: 100Mi
-      # Increasing the grace termination period prevents Kubernetes
-      # from killing the node process prematurely. Premature shutdown
-      # can lead to data integrity issues
-      # -- Amount of time to wait before force-killing the container
-      terminationGracePeriodSeconds: 60
+  
+  # -- Node selection constraints for pod scheduling.
+  # Allows you to specify a map of key-value pairs to target specific nodes.
+  nodeSelector: {}
+  
+  # -- Tolerations for pod scheduling.
+  # Allows the pod to be scheduled on nodes with matching taints.
+  # Example:
+  # tolerations:
+  #   - key: "key1"
+  #     operator: "Exists"
+  #     effect: "NoSchedule"
+  tolerations: {}
+  
+  # -- Affinity rules for pod scheduling.
+  # Defines rules for preferred or required node and pod selection.
+  # Example:
+  # affinity:
+  #   nodeAffinity:
+  #     requiredDuringSchedulingIgnoredDuringExecution:
+  #       nodeSelectorTerms:
+  #         - matchExpressions:
+  #             - key: "key1"
+  #               operator: "In"
+  #               values:
+  #                 - "value1"
+  affinity: {}
+
+sink:
+
+  serviceAccount:
+    # -- Specifies whether a service account should be created
+    create: false
+    # -- Annotations to add to the service account
+    annotations: {}
+    # -- The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: ""
+
+  # Configuration for the service monitor
+  serviceMonitor:
+    # -- Enable or disable the service monitor
+    enabled: false # 
+    # -- Interval at which Prometheus scrapes metrics
+    interval: 30s 
+    # -- Timeout for the scrape request
+    scrapeTimeout: 10s 
+
+  # -- Pull secrets required to fetch the Image
+  imagePullSecrets: []
+
+  resources:
+    enabled: false
+    requests:
+      # -- Specifies the CPU resource request for the container.
+      # CPU resource requests are measured in units of cores.
+      # Examples: "250m" for 0.25 cores, "1" for 1 core.
+      cpu: {}
+  
+      # -- Specifies the memory resource request for the container.
+      # Memory resource requests are measured in bytes.
+      # Examples: "256Mi" for 256 mebibytes, "1Gi" for 1 gibibyte.
+      memory: {}
+  
+    limits:
+      # -- Specifies the CPU resource limit for the container.
+      # CPU resource limits are measured in units of cores.
+      # Examples: "500m" for 0.5 cores, "2" for 2 cores.
+      cpu: {}
+  
+      # -- Specifies the memory resource limit for the container.
+      # Memory resource limits are measured in bytes.
+      # Examples: "512Mi" for 512 mebibytes, "2Gi" for 2 gibibytes.
+      memory: {}
+
+
+  autoscaling:
+    # -- Specifies whether the Horizontal Pod Autoscaler is enabled
+    enabled: false
+
+    # -- Specifies the minimum number of replicas that the autoscaler can scale down to.
+    minReplicas: 1
+    
+    # -- Specifies the maximum number of replicas that the autoscaler can scale up to.
+    maxReplicas: 5
+    
+    # -- Specifies the target average CPU utilization (represented as a percentage of requested CPU) across all replicas.
+    # The autoscaler will adjust the number of replicas to maintain this average utilization.
+    targetCPUUtilizationPercentage: 80
+    
+    # -- Specifies the target average memory utilization (represented as a percentage of requested memory) across all replicas.
+    # The autoscaler will adjust the number of replicas to maintain this average utilization.
+    targetMemoryUtilizationPercentage: 80
+
+
+
+  service:
+    # -- Specifies the type of the Kubernetes service.
+    # Valid options are "ClusterIP", "NodePort", "LoadBalancer", and "ExternalName".
+    type: ClusterIP
+    
+    # -- Specifies the IP family policy for the service.
+    # Valid options are "SingleStack", "PreferDualStack", and "RequireDualStack".
+    ipFamilyPolicy: {}
+    
+    # -- Specifies the cluster IP address of the service.
+    # If not specified, a cluster IP will be automatically assigned.
+    clusterIP: {}
+    
+    ports:
+      # -- Specifies the port for the sink GRPC interface.
+      # This port will be exposed by the service.
+      grpc: 9000     
+
+  # -- Define custom aliases for preconfigured commands in your environment.
+  # This allows you to create shorthand commands for frequently used operations,
+  # enhancing efficiency and reducing the need for repetitive typing.
+  env: {}
+
+  
+  # -- Specify additional command-line arguments to pass to the `tier-2` component.
+  # These arguments can be used to override default settings or provide additional
+  # configurations that are not covered by the standard configuration options.
+  extraArgs: {}
+
+  # Increasing the grace termination period prevents Kubernetes
+  # from killing the node process prematurely. Premature shutdown
+  # can lead to data integrity issues
+  # -- Amount of time to wait before force-killing the process
+  terminationGracePeriodSeconds: 10
+
+  # -- Annotations for the `Pod`
+  podAnnotations: {}
+
+  # -- Pod-wide security context
+  podSecurityContext: {}
+
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    #   ephemeral-storage: 100Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+      #   ephemeral-storage: 100Mi
+  
+  # -- Node selection constraints for pod scheduling.
+  # Allows you to specify a map of key-value pairs to target specific nodes.
+  nodeSelector: {}
+  
+  # -- Tolerations for pod scheduling.
+  # Allows the pod to be scheduled on nodes with matching taints.
+  # Example:
+  # tolerations:
+  #   - key: "key1"
+  #     operator: "Exists"
+  #     effect: "NoSchedule"
+  tolerations: {}
+  
+  # -- Affinity rules for pod scheduling.
+  # Defines rules for preferred or required node and pod selection.
+  # Example:
+  # affinity:
+  #   nodeAffinity:
+  #     requiredDuringSchedulingIgnoredDuringExecution:
+  #       nodeSelectorTerms:
+  #         - matchExpressions:
+  #             - key: "key1"
+  #               operator: "In"
+  #               values:
+  #                 - "value1"
+  affinity: {}

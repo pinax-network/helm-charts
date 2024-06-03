@@ -1,13 +1,13 @@
-{{- $values := $.Values.server }}
-{{- $componentName := "server" }}
+{{- $values := $.Values.inject }}
+{{- $componentName := "inject" }}
 {{- $componentLabel := include "blockmeta.componentLabelFor" $componentName }}
 
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "server.uniqueName" . }}-svc
+  name: {{ include "inject.uniqueName" . }}-svc
   labels:
-    app.kubernetes.io/name: {{ include "server.uniqueName" . }}-svc
+    app.kubernetes.io/name: {{ include "inject.uniqueName" . }}-svc
 spec:
   {{- with $values.service.type }}
   type: {{ . }}
@@ -28,4 +28,4 @@ spec:
       name: {{ $portName }}
   {{- end }}
   selector:
-    app.kubernetes.io/name: {{ include "server.uniqueName" . }}
+    app.kubernetes.io/name: {{ include "inject.uniqueName" . }}
