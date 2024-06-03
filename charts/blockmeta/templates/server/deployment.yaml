@@ -45,7 +45,7 @@ spec:
           imagePullPolicy: {{ $.Values.image.service.pullPolicy }}
           args:
             - "./blockmeta"
-            - "--sink-addr={{ include "sink.uniqueName" . }}-svc"
+            - "--sink-addr={{ include "sink.uniqueName" . }}-svc:{{ index $.Values.sink.service.ports "grpc" }}"
             - "--grpc-listen-addr=:{{ index $values.service.ports "grpc" }}"
             - "--auth-url={{ .Values.auth.url }}"
             - "--metering-url={{ .Values.metering.url }}"
