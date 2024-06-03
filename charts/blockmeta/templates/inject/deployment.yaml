@@ -1,4 +1,4 @@
-{{- $values := $.Values.server }}
+{{- $values := $.Values.inject }}
 {{- $componentName := "inject" }}
 {{- $componentLabel := include "blockmeta.componentLabelFor" $componentName | default "" }}
 
