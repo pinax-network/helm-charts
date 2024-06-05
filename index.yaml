@@ -34,6 +34,16 @@ entries:
   blockmeta:
   - apiVersion: v2
     appVersion: service-2f971e0-sink-0205920
+    created: "2024-06-05T18:13:42.715937837Z"
+    description: A Helm chart for Kubernetes
+    digest: a9cca6d9aaf64e1aa19b050fee071a25dd9f276a1fb37ebff05bced7dd3cec47
+    name: blockmeta
+    type: application
+    urls:
+    - https://github.com/pinax-network/helm-charts/releases/download/blockmeta-3.4.0/blockmeta-3.4.0.tgz
+    version: 3.4.0
+  - apiVersion: v2
+    appVersion: service-2f971e0-sink-0205920
     created: "2024-06-03T22:01:48.160474647Z"
     description: A Helm chart for Kubernetes
     digest: 9c3e31b8b4e09f277d016535936f126fdd263a93bf25750f4507eedc3b84325e
@@ -879,4 +889,4 @@ entries:
     urls:
     - https://github.com/pinax-network/helm-charts/releases/download/substreams-tier-2-1.0.0/substreams-tier-2-1.0.0.tgz
     version: 1.0.0
-generated: "2024-06-03T22:01:48.329844196Z"
+generated: "2024-06-05T18:13:42.833504688Z"
