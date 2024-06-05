@@ -29,3 +29,23 @@ spec:
   {{- end }}
   selector:
     app.kubernetes.io/name: {{ include "inject.uniqueName" . }}
+
+---
+{{- if .Values.substreams.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "inject.uniqueName" . }}-monitor
+  labels:
+    {{- include "inject.labels" . | nindent 4 }}
+spec:
+  endpoints:
+    - honorLabels: true
+      interval: {{ .Values.inject.serviceMonitor.interval | default "30s" }}
+      scrapeTimeout: {{ .Values.inject.serviceMonitor.scrapeTimeout | default "10s" }}
+      port: metrics
+      path: /metrics
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "inject.uniqueName" . }}-svc
+{{- end }}
