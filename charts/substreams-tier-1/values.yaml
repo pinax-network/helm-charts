@@ -10,6 +10,17 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
+alertManager:
+  # -- Set to true if AlertManager integration is enabled
+  enabled: false
+  # -- The namespace where head_block_time_drift metrics are collected
+  namespace: {}
+  # -- Threshold in seconds for triggering a warning alert for head block time drift
+  warnBlockTime: 30
+  # -- Threshold in seconds for triggering a critical alert for head block time drift
+  critBlockTime: 90
+
+
 # -- Image configuration for substreams tier 2
 image:
   # -- The repository where the Docker image is located.
@@ -119,7 +130,7 @@ substreams:
     scrapeTimeout: 10s 
 
   # -- Pull secrets required to fetch the Image
-  imagePullSecrets: []
+  imagePullSecrets: {}
 
   autoscaling:
     # -- Specifies whether the Horizontal Pod Autoscaler is enabled
