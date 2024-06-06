@@ -61,15 +61,6 @@ server:
     # If not set and create is true, a name is generated using the fullname template
     name: ""
 
-  # Configuration for the service monitor
-  serviceMonitor:
-    # -- Enable or disable the service monitor
-    enabled: false # 
-    # -- Interval at which Prometheus scrapes metrics
-    interval: 30s 
-    # -- Timeout for the scrape request
-    scrapeTimeout: 10s 
-
   # -- Pull secrets required to fetch the Image
   imagePullSecrets: []
 
@@ -371,15 +362,6 @@ sink:
     # -- The name of the service account to use.
     # If not set and create is true, a name is generated using the fullname template
     name: ""
-
-  # Configuration for the service monitor
-  serviceMonitor:
-    # -- Enable or disable the service monitor
-    enabled: false # 
-    # -- Interval at which Prometheus scrapes metrics
-    interval: 30s 
-    # -- Timeout for the scrape request
-    scrapeTimeout: 10s 
 
   # -- Pull secrets required to fetch the Image
   imagePullSecrets: []
