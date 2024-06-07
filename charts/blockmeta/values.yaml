@@ -48,6 +48,16 @@ nameOverride: ""
 # If not set, the full name will be derived from the release name and the chart name.
 fullnameOverride: ""
 
+alertManager:
+  # -- Set to true if AlertManager integration is enabled
+  enabled: false
+  # -- The namespace where head_block_time_drift metrics are collected
+  namespace: {}
+  # -- Threshold in seconds for triggering a warning alert for head block time drift
+  warnBlockTime: 30
+  # -- Threshold in seconds for triggering a critical alert for head block time drift
+  critBlockTime: 90
+
 
 
 server:
