@@ -12,14 +12,14 @@ spec:
   - name: {{ include "substreams.uniqueName" . }}-group
     rules:
     - alert: head_block_time_drift-warn
-      expr: round(head_block_time_drift{namespace='{{ $alertmanager.namespace }}'},0.1) > {{ $alertmanager.warnBlockTime }}
+      expr: round(head_block_time_drift{namespace='{{ $alertmanager.namespace }}', deployment='{{ include "substreams.uniqueName" . }}'},0.1) > {{ $alertmanager.warnBlockTime }}
       annotations: 
         description: head_block_time_drift is larger than {{ $alertmanager.warnBlockTime }} for {{ include "substreams.uniqueName" . }}
         summary: head_block_time_drift for {{ include "substreams.uniqueName" . }}
       labels:
         severity: warning
     - alert: head_block_time_drift-crit
-      expr: round(head_block_time_drift{namespace='{{ $alertmanager.namespace }}'},0.1) > {{ $alertmanager.critBlockTime }}
+      expr: round(head_block_time_drift{namespace='{{ $alertmanager.namespace }}', deployment='{{ include "substreams.uniqueName" . }}'},0.1) > {{ $alertmanager.critBlockTime }}
       annotations: 
         description: head_block_time_drift is larger than {{ $alertmanager.critBlockTime }} for {{ include "substreams.uniqueName" . }}
         summary: head_block_time_drift for {{ include "substreams.uniqueName" . }}
