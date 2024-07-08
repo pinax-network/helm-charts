@@ -9,11 +9,14 @@ metadata:
   name: {{ include "noop.uniqueName" .}}
   labels:
     {{- include "noop.labels" . | nindent 4 }}
+    {{- if $componentLabel }}
     {{- $componentLabel | nindent 4 }}
+    {{- end }}
 spec:
   selector:
     matchLabels:
-      {{- include "noop.selectorLabels" . | nindent 4 }}
+      app.kubernetes.io/name: {{ include "noop.uniqueName" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
   {{- if $values.volumeClaimSpec.enabled }}
   volumeClaimTemplates:
     - metadata:
@@ -31,8 +34,8 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "noop.labels" . | nindent 4 }}
-        {{- $componentLabel | nindent 4 }}
+        app.kubernetes.io/name: {{ include "noop.uniqueName" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
       {{- with $values.podSecurityContext }}
       securityContext:

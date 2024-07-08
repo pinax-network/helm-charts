@@ -9,7 +9,7 @@ kind: Service
 metadata:
   name: {{ include "noop.uniqueName" . }}-svc
   labels:
-    {{- include "noop.labels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ include "noop.uniqueName" . }}-svc
 spec:
   type: {{ .Values.noop.service.type }}
   {{- if .Values.noop.service.ipFamilyPolicy }}
@@ -28,5 +28,4 @@ spec:
       targetPort: metrics
       protocol: TCP
   selector:
-    {{- include "noop.selectorLabels" . | nindent 4 }}
-    {{- $componentLabel | nindent 4 }}
+    app.kubernetes.io/name: {{ include "noop.uniqueName" . }}
