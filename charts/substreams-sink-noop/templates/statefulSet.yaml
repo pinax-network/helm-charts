@@ -1,0 +1,104 @@
+{{- $values := .Values.noop }}
+{{- $networkName := $values.networkName | default "ethereum" }}
+{{- $componentName := printf "noop-%s" $networkName }}
+{{- $componentLabel := include "noop.componentLabelFor" $componentName  | default "" }}
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "noop.uniqueName" .}}
+  labels:
+    {{- include "noop.labels" . | nindent 4 }}
+    {{- $componentLabel | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "noop.selectorLabels" . | nindent 4 }}
+  {{- if $values.volumeClaimSpec.enabled }}
+  volumeClaimTemplates:
+    - metadata:
+        name: state-store
+      spec:
+        {{- with $spec := $values.volumeClaimSpec }}
+        {{- $spec := omit $spec "enabled" }}
+        {{- toYaml $spec | nindent 8 }}
+        {{- end }}
+  {{- end }}
+  template:
+    metadata:
+      {{- with $values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "noop.labels" . | nindent 4 }}
+        {{- $componentLabel | nindent 4 }}
+    spec:
+      {{- with $values.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with $values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if $values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml $values.nodeSelector | nindent 8 }}
+      {{- end }}
+      {{- if $.Values.serviceAccount.create }}
+      serviceAccountName: {{ include "noop.serviceAccountName" . }}
+      {{- end }}
+      terminationGracePeriodSeconds: {{ $values.terminationGracePeriodSeconds | default 60 }}
+      containers:
+        - name: {{ $componentName }}
+          image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ $.Values.image.pullPolicy }}
+          args:
+            - "{{ $values.endpoint | default "mainnet.eth.streamingfast.io:443" }}"
+            - "{{ $values.manifest | default "https://github.com/streamingfast/substreams-eth-block-meta/releases/download/v0.4.1/substreams-eth-block-meta-v0.4.1.spkg" }}"
+            - "{{ $values.module | default "graph_out" }}"
+            {{- if $values.volumeClaimSpec.enabled }}
+            - "--state-store=./state/state.yaml"
+            {{- end }}
+            {{- if and $values.startBlock $values.stopBlock }}
+            - "{{ $values.startBlock }}:{{ $values.stopBlock }}"
+            {{- else if $values.startBlock }}
+            - "+{{ $values.startBlock }}"
+            {{- end }}
+            {{- range $value := $values.extraArgs }}
+            - "{{ $value }}"
+            {{- end }}
+          ports:
+            - name: http
+              containerPort: {{ index $values.service.ports "grpc" }}
+              protocol: TCP
+            - name: metrics
+              containerPort: {{ index $values.service.ports "metrics" }}
+              protocol: TCP
+          {{- if $values.volumeClaimSpec.enabled }}
+          volumeMounts:
+            - name: state-store
+              mountPath: /state
+          {{- end }}
+          {{- if $.Values.resources }}
+          resources:
+            {{- if $.Values.resources.requests }}
+            requests:
+              {{- if $.Values.resources.requests.cpu }}
+              cpu: {{ $.Values.resources.requests.cpu }}
+              {{- end }}
+              {{- if $.Values.resources.requests.memory }}
+              memory: {{ $.Values.resources.requests.memory }}
+              {{- end }}
+            {{- end }}
+            {{- if $.Values.resources.limits }}
+            limits:
+              {{- if $.Values.resources.limits.cpu }}
+              cpu: {{ $.Values.resources.limits.cpu }}
+              {{- end }}
+              {{- if $.Values.resources.limits.memory }}
+              memory: {{ $.Values.resources.limits.memory }}
+              {{- end }}
+            {{- end }}
+          {{- end }}

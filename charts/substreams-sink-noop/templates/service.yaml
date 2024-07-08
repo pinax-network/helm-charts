@@ -1,0 +1,32 @@
+{{- $values := .Values.noop }}
+{{- $networkName := $values.networkName | default "ethereum" }}
+{{- $componentName := printf "noop-%s" $networkName }}
+{{- $componentLabel := include "noop.componentLabelFor" $componentName  | default "" }}
+
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "noop.uniqueName" . }}-svc
+  labels:
+    {{- include "noop.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.noop.service.type }}
+  {{- if .Values.noop.service.ipFamilyPolicy }}
+  ipFamilyPolicy: {{ .Values.noop.service.ipFamilyPolicy }}
+  {{- end }}
+  {{- if .Values.noop.service.clusterIP }}
+  clusterIP: {{ .Values.noop.service.clusterIP }}
+  {{- end }}
+  ports:
+    - name: grpc
+      port: {{ .Values.noop.service.ports.grpc }}
+      targetPort: grpc
+      protocol: TCP
+    - name: metrics
+      port: {{ .Values.noop.service.ports.metrics }}
+      targetPort: metrics
+      protocol: TCP
+  selector:
+    {{- include "noop.selectorLabels" . | nindent 4 }}
+    {{- $componentLabel | nindent 4 }}
