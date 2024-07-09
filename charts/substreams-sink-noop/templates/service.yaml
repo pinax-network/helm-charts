@@ -29,3 +29,24 @@ spec:
       protocol: TCP
   selector:
     app.kubernetes.io/name: {{ include "noop.uniqueName" . }}
+
+
+---
+{{- if .Values.noop.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "noop.uniqueName" . }}-monitor
+  labels:
+    {{- include "noop.labels" . | nindent 4 }}
+spec:
+  endpoints:
+    - honorLabels: true
+      interval: {{ .Values.noop.serviceMonitor.interval | default "30s" }}
+      scrapeTimeout: {{ .Values.noop.serviceMonitor.scrapeTimeout | default "10s" }}
+      port: metrics
+      path: /metrics
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "noop.uniqueName" . }}-svc
+{{- end }}
