@@ -45,6 +45,19 @@ spec:
       scrapeTimeout: {{ .Values.substreams.serviceMonitor.scrapeTimeout | default "10s" }}
       port: metrics
       path: /metrics
+      relabelings:
+      - action: replace
+        sourceLabels: [__meta_kubernetes_pod_label_app]
+        targetLabel: app
+      - action: replace
+        sourceLabels: [__meta_kubernetes_pod_label_block_version]
+        targetLabel: block_version
+      - action: replace
+        sourceLabels: [__meta_kubernetes_pod_label_network]
+        targetLabel: network
+      - action: replace
+        sourceLabels: [__meta_kubernetes_pod_sf_type]
+        targetLabel: sf_type
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "substreams.uniqueName" . }}-svc
