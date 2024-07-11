@@ -26,10 +26,10 @@ spec:
         app.kubernetes.io/name: {{ include "substreams.uniqueName" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
         app: substreams
-        network: {{ $.Values.blockChain.network }}
-        block_version: {{ $.Values.blockChain.blocksVersion }}
-        sf_type: {{ $.Values.blockChain.type }}
-        tier: 1
+        network: "{{ $.Values.blockChain.network }}"
+        block_version: "{{ $.Values.blockChain.blocksVersion }}"
+        sf_type: "{{ $.Values.blockChain.type }}"
+        tier: "1"
     spec:
       {{- with $values.podSecurityContext }}
       securityContext:
