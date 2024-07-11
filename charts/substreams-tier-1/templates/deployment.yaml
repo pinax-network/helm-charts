@@ -27,7 +27,7 @@ spec:
         app.kubernetes.io/instance: {{ .Release.Name }}
         app: substreams
         network: {{ $.Values.blockChain.network }}
-        block_version: {{ default "v1" $.Values.blockChain.blocksVersion }}
+        block_version: {{ $.Values.blockChain.blocksVersion }}
         sf_type: {{ $.Values.blockChain.type }}
         tier: 1
     spec:
