@@ -54,7 +54,7 @@ spec:
         {{- toYaml $values.nodeSelector | nindent 8 }}
       {{- end }}
       {{- if $.Values.serviceAccount.create }}
-      serviceAccountName: {{ include "noop.serviceAccountName" . }}-sa
+      serviceAccountName: {{ include "noop.uniqueName" . }}-sa
       {{- end }}
       terminationGracePeriodSeconds: {{ $values.terminationGracePeriodSeconds | default 60 }}
       containers:
