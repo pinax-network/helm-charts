@@ -36,6 +36,10 @@ spec:
       labels:
         app.kubernetes.io/name: {{ include "noop.uniqueName" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
+        app: substreams-sink-noop
+        network: "{{ $.Values.noop.networkName }}"
+        block_version: "{{ $.Values.noop.blocksVersion }}"
+        sf_type: "{{ $.Values.noop.type }}"
     spec:
       {{- with $values.podSecurityContext }}
       securityContext:

@@ -89,6 +89,12 @@ noop:
   # -- The name of the network to connect to, defaults to ethereum
   networkName: {}
   
+  # -- The version of the blocks to use, v1, v2 etc.
+  blocksVersion: {}
+
+  # -- The type of blockchain component. Possible values could be "cl, "consensus-layer, "el, "execution-layer", etc.
+  type: {}
+
   # -- The endpoint to connect to the network, defaults to mainnet.eth.streamingfast.io:443
   endpoint: {}
   
