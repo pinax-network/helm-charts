@@ -24,6 +24,7 @@ spec:
       labels:
         {{- include "substreams.selectorLabels" . | nindent 8 }}
         {{- $componentLabel | nindent 8 }}
+        app: substreams-tier-2
     spec:
       {{- with $values.podSecurityContext }}
       securityContext:

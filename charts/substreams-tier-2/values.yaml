@@ -22,7 +22,7 @@ image:
   
   # -- The tag of the Docker image to use.
   # If not set, the default tag will be used.
-  tag: "v2.5.1"
+  tag: "v2.6.4"
 
 # -- Overrides the name of the chart.
 # If not set, the name will be derived from the chart name.

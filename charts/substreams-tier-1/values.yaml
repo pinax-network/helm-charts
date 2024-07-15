@@ -32,7 +32,7 @@ image:
   
   # -- The tag of the Docker image to use.
   # If not set, the default tag will be used.
-  tag: "v2.5.1"
+  tag: "v2.6.4"
 
 blockChain:
   # -- The name of the blockchain network. Possible values could be "mainnet", "testnet", "devnet", etc.
