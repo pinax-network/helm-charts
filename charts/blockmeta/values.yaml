@@ -34,19 +34,21 @@ image:
 
 blockChain:
   # -- The name of the blockchain network. Possible values could be "mainnet", "testnet", "devnet", etc.
-  network: ""
+  network: {}
   
   # -- The version of the blocks. Specify the version you are using, e.g., "1.0.0", "2.1.3", "v1", etc.
-  blocksVersion: ""
+  blocksVersion: {}
 
+  # -- The type of blockchain component. Possible values could be "cl, "consensus-layer, "el, "execution-layer", etc.
+  type: {}
 
 # -- Overrides the name of the chart.
 # If not set, the name will be derived from the chart name.
-nameOverride: ""
+nameOverride: {}
 
 # -- Overrides the full name of the chart.
 # If not set, the full name will be derived from the release name and the chart name.
-fullnameOverride: ""
+fullnameOverride: {}
 
 alertManager:
   # -- Set to true if AlertManager integration is enabled
