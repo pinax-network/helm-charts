@@ -23,9 +23,9 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        app.kubernetes.io/name: {{ include "substreams.uniqueName" . }}
-        app.kubernetes.io/instance: {{ .Release.Name }}
-        app: substreams-tier-1
+        app.kubernetes.io/name: "{{ include "substreams.uniqueName" . }}"
+        app.kubernetes.io/instance: "{{ .Release.Name }}"
+        app: "substreams-tier-1"
         network: "{{ $.Values.blockChain.network }}"
         block_version: "{{ $.Values.blockChain.blocksVersion }}"
         sf_type: "{{ $.Values.blockChain.type }}"
