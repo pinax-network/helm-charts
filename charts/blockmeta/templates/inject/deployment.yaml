@@ -14,10 +14,6 @@ spec:
     matchLabels:
       app.kubernetes.io/name: {{ include "inject.uniqueName" . }}
       app.kubernetes.io/instance: {{ .Release.Name }}
-      app: blockmeta
-      network: "{{ $.Values.blockChain.network }}"
-      block_version: "{{ $.Values.blockChain.blocksVersion }}"
-      sf_type: "{{ $.Values.blockChain.type }}"
   template:
     metadata:
       {{- with $values.podAnnotations }}
@@ -27,6 +23,10 @@ spec:
       labels:
         app.kubernetes.io/name: {{ include "inject.uniqueName" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
+        app: blockmeta
+        network: "{{ $.Values.blockChain.network }}"
+        block_version: "{{ $.Values.blockChain.blocksVersion }}"
+        sf_type: "{{ $.Values.blockChain.type }}"
     spec:
       {{- with $values.podSecurityContext }}
       securityContext:
