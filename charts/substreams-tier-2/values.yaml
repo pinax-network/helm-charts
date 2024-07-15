@@ -78,6 +78,15 @@ substreams:
     # The autoscaler will adjust the number of replicas to maintain this average utilization.
     targetMemoryUtilizationPercentage: 80
 
+  # Configuration for the service monitor
+  serviceMonitor:
+    # -- Enable or disable the service monitor
+    enabled: false
+    # -- Interval at which Prometheus scrapes metrics
+    interval: 30s 
+    # -- Timeout for the scrape request
+    scrapeTimeout: 10s 
+
 
 
   service:

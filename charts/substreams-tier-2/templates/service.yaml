@@ -31,3 +31,27 @@ spec:
   selector:
     {{- include "substreams.selectorLabels" . | nindent 4 }}
     {{- $componentLabel | nindent 4 }}
+
+---
+{{- if .Values.substreams.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: substreams-tier-2-monitor
+  labels:
+    {{- include "substreams.labels" . | nindent 4 }}
+spec:
+  endpoints:
+    - honorLabels: true
+      interval: {{ .Values.substreams.serviceMonitor.interval | default "30s" }}
+      scrapeTimeout: {{ .Values.substreams.serviceMonitor.scrapeTimeout | default "10s" }}
+      port: metrics
+      path: /metrics
+      relabelings:
+      - action: replace
+        sourceLabels: [__meta_kubernetes_pod_label_app]
+        targetLabel: app
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: substreams-tier-2     
+{{- end }}
