@@ -1022,6 +1022,16 @@ entries:
   substreams-tier-2:
   - apiVersion: v2
     appVersion: v2.6.4
+    created: "2024-07-15T16:22:34.839160403Z"
+    description: A Helm chart for Kubernetes
+    digest: 6055418ab7d1e0a957bec725d25a9aed60f4b65bd06145a1c2cb71e517f42dc1
+    name: substreams-tier-2
+    type: application
+    urls:
+    - https://github.com/pinax-network/helm-charts/releases/download/substreams-tier-2-1.0.7/substreams-tier-2-1.0.7.tgz
+    version: 1.0.7
+  - apiVersion: v2
+    appVersion: v2.6.4
     created: "2024-07-15T16:05:01.887706984Z"
     description: A Helm chart for Kubernetes
     digest: 17524fdc59d55babad15f229b697bef83704061daedd2716a8fccb8756c9f1bd
@@ -1090,4 +1100,4 @@ entries:
     urls:
     - https://github.com/pinax-network/helm-charts/releases/download/substreams-tier-2-1.0.0/substreams-tier-2-1.0.0.tgz
     version: 1.0.0
-generated: "2024-07-15T16:05:01.888126715Z"
+generated: "2024-07-15T16:22:34.839395034Z"
