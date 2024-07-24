@@ -1,0 +1,31 @@
+image:
+  repository: ghcr.io/pinax-network/substreams-sink-sql
+  tag: develop
+  pullPolicy: IfNotPresent
+
+nameOverride: ""
+fullnameOverride: ""
+
+# Secret to pull image from private repo
+imagePullSecret: ghcr-cred
+
+# Number of job to parallelize the filling process
+jobAmount: 1
+# Start and end block that will be split between all jobs
+startBlock: 0
+endBlock: -1
+
+command:
+  - "substreams-sink-sql"
+  - "run"
+  - "clickhouse://testing:secret@ch-node44b.mar.eosn.io:9000/eos_tokens_v1"
+  - "https://github.com/pinax-network/substreams-antelope-tokens/releases/download/v0.4.0/antelope-tokens-v0.4.0.spkg"
+  - "--undo-buffer-size=100"
+  - "--batch-row-flush-interval=100000"
+  - "--batch-block-flush-interval=20000"
+  - "--live-block-flush-interval=10"
+  - "-e"
+  - "eos-sf-substreams-tier1-v3.service.march.consul.eosn.io:9000"
+  - "--plaintext"
+  - "--on-module-hash-mistmatch=warn"
+args: []

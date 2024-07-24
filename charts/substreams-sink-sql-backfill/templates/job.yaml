@@ -1,0 +1,47 @@
+{{- $totalBlocks := sub .Values.endBlock .Values.startBlock }}
+{{- $currentBlock := .Values.startBlock }}
+{{- $blockLeftover := mod $totalBlocks .Values.jobAmount }}
+{{- $blockIncrement := div (sub $totalBlocks $blockLeftover) .Values.jobAmount }}
+{{- $values := .Values }}
+
+{{- range $i := until ($values.jobAmount | int) }}
+{{- if ne $i 0 }}
+{{ $currentBlock = add $currentBlock $blockIncrement }}
+{{- end }}
+{{- if eq $i (sub $values.jobAmount 1) }}
+{{ $blockIncrement = add $blockIncrement $blockLeftover }}
+{{- end }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "substreams-sink-sql-backfill.fullname" $ }}-{{$i}}
+  namespace: {{ $.Release.Namespace }}
+  labels:
+    {{- include "substreams-sink-sql-backfill.labels" $ | nindent 4 }}
+spec:
+  template:
+    metadata:
+      labels:
+        {{- include "substreams-sink-sql-backfill.labels" $ | nindent 8 }}
+    spec:
+      containers:
+      - name: {{ include "substreams-sink-sql-backfill.fullname" $ }}
+        image: "{{ $values.image.repository }}:{{ $values.image.tag }}"
+        {{- if $values.command }}
+        command:
+        {{- range $values.command }}
+        - {{ . | quote }}
+        {{- end }}
+        - "{{ $currentBlock }}:{{ add $currentBlock $blockIncrement }}"
+        {{- end }}
+        {{- if $values.args }}
+        args:
+        {{- range $values.args }}
+        - {{ . | quote }}
+        {{- end }}
+        {{- end }}
+      restartPolicy: OnFailure
+      imagePullSecrets:
+        - name: {{ $values.imagePullSecret }}
+{{- end }}
