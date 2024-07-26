@@ -53,7 +53,7 @@ spec:
               name: {{ $values.dsn.secretName }}
         envFrom:
         - configMapRef:
-          name: env-{{ $.Release.Name }}
+            name: env-{{ $.Release.Name }}
       restartPolicy: OnFailure
       imagePullSecrets:
         - name: {{ $values.imagePullSecret }}
