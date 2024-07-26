@@ -33,7 +33,7 @@ spec:
         {{- range $values.command }}
         - {{ . | quote }}
         {{- end }}
-        - "$DSN"
+        - "$(DSN)"
         - "{{ $values.manifest }}"
         - "{{ $currentBlock }}:{{ add $currentBlock $blockIncrement }}"
         {{- end }}
@@ -44,7 +44,7 @@ spec:
         {{- end }}
         {{- end }}
         env:
-        - name: SINK_SQL_RUN_CURSOR_TABLE
+        - name: SINK_SQL_RUN_CURSORS_TABLE
           value: backprocess_{{ $currentBlock }}
         - name: DSN
           valueFrom:
