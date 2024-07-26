@@ -14,18 +14,22 @@ jobAmount: 1
 # Start and end block that will be split between all jobs
 startBlock: 0
 endBlock: -1
+# spkg file to use
+manifest: https://github.com/pinax-network/substreams-antelope-tokens/releases/download/v0.4.0/antelope-tokens-v0.4.0.spkg
+dsn:
+  secretName: sql-sink-dsn
+  key: dsn
+# environment variables to be use by the applications <key>: <value>
+env:
+  substreams_endpoints_config_mainnet: eos-sf-substreams-tier1-v3.service.march.consul.eosn.io:9000
+  sink_sql_run_undo_buffer_size: 100
+  sink_sql_run_batch_row_flush_interval: 100000
+  sink_sql_run_batch_block_flush_interval: 20000
+  sink_sql_run_live_block_flush_interval: 10
+  sink_sql_run_on_module_hash_mistmatch: warn
 
 command:
   - "substreams-sink-sql"
   - "run"
-  - "clickhouse://testing:secret@ch-node44b.mar.eosn.io:9000/eos_tokens_v1"
-  - "https://github.com/pinax-network/substreams-antelope-tokens/releases/download/v0.4.0/antelope-tokens-v0.4.0.spkg"
-  - "--undo-buffer-size=100"
-  - "--batch-row-flush-interval=100000"
-  - "--batch-block-flush-interval=20000"
-  - "--live-block-flush-interval=10"
-  - "-e"
-  - "eos-sf-substreams-tier1-v3.service.march.consul.eosn.io:9000"
   - "--plaintext"
-  - "--on-module-hash-mistmatch=warn"
 args: []

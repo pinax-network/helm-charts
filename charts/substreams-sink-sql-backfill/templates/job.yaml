@@ -41,6 +41,14 @@ spec:
         - {{ . | quote }}
         {{- end }}
         {{- end }}
+        envFrom:
+        - configMapRef:
+          name: env-{{ $.Release.Name }}
+        - name: DSN
+          valueFrom:
+            secretKeyRef:
+              key: {{ $values.dsn.key }}
+              name: {{ $values.dsn.secretName }}
       restartPolicy: OnFailure
       imagePullSecrets:
         - name: {{ $values.imagePullSecret }}
