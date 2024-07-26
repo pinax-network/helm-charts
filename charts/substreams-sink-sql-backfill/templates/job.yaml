@@ -33,6 +33,8 @@ spec:
         {{- range $values.command }}
         - {{ . | quote }}
         {{- end }}
+        - "$DSN"
+        - "{{ $values.manifest }}"
         - "{{ $currentBlock }}:{{ add $currentBlock $blockIncrement }}"
         {{- end }}
         {{- if $values.args }}
