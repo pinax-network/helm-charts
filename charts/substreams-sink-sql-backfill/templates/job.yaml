@@ -43,14 +43,17 @@ spec:
         - {{ . | quote }}
         {{- end }}
         {{- end }}
-        envFrom:
-        - configMapRef:
-          name: env-{{ $.Release.Name }}
+        env:
+        - name: SINK_SQL_RUN_CURSOR_TABLE
+          value: backprocess_{{ $currentBlock }}
         - name: DSN
           valueFrom:
             secretKeyRef:
               key: {{ $values.dsn.key }}
               name: {{ $values.dsn.secretName }}
+        envFrom:
+        - configMapRef:
+          name: env-{{ $.Release.Name }}
       restartPolicy: OnFailure
       imagePullSecrets:
         - name: {{ $values.imagePullSecret }}
