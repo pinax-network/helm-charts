@@ -694,6 +694,16 @@ entries:
   substreams-sink-sql-backfill:
   - apiVersion: v2
     appVersion: 0.0.0
+    created: "2024-07-26T13:42:42.185905586Z"
+    description: A Helm chart for Kubernetes
+    digest: a165ea6af1a8132abca41d2d5cb30dfe7868c6ec78b3d0059663e77e20c235f9
+    name: substreams-sink-sql-backfill
+    type: application
+    urls:
+    - https://github.com/pinax-network/helm-charts/releases/download/substreams-sink-sql-backfill-0.0.3/substreams-sink-sql-backfill-0.0.3.tgz
+    version: 0.0.3
+  - apiVersion: v2
+    appVersion: 0.0.0
     created: "2024-07-26T13:24:42.32045314Z"
     description: A Helm chart for Kubernetes
     digest: 2cef61593b3dfce625e78f064980766de5fee2e369bd483f3b70f79fb687be59
@@ -1151,4 +1161,4 @@ entries:
     urls:
     - https://github.com/pinax-network/helm-charts/releases/download/substreams-tier-2-1.0.0/substreams-tier-2-1.0.0.tgz
     version: 1.0.0
-generated: "2024-07-26T13:24:42.320695123Z"
+generated: "2024-07-26T13:42:42.186216209Z"
