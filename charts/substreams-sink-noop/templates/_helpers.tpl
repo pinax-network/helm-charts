@@ -79,7 +79,7 @@ app.kubernetes.io/component: {{ . }}
 Generate a unique name for resources based on network name.
 */}}
 {{- define "noop.uniqueName" -}}
-{{- printf "substreams-sink-noop-%s-%s" (default "ethereum" .Values.noop.networkName) .Values.noop.blocksVersion | trunc 63 | trimSuffix "-" }}
+{{- printf "%s-substreams-sink-noop-%s" (default "eth" .Values.noop.networkName) .Values.noop.blocksVersion | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 

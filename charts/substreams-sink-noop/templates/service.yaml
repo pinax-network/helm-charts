@@ -46,7 +46,7 @@ spec:
       scrapeTimeout: {{ .Values.noop.serviceMonitor.scrapeTimeout | default "10s" }}
       port: metrics
       path: /metrics
-      relabelings:
+      metricRelabelings:
       - action: replace
         sourceLabels: [__meta_kubernetes_pod_label_app]
         targetLabel: app
