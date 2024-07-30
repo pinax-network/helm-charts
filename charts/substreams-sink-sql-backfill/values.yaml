@@ -38,8 +38,3 @@ env:
   sink_sql_run_live_block_flush_interval: 10
   sink_sql_run_on_module_hash_mistmatch: warn
   sink_sql_run_plaintext: true
-
-command:
-  - "substreams-sink-sql"
-  - "run"
-args: []

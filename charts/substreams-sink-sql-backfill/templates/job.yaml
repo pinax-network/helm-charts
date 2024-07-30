@@ -25,13 +25,12 @@ spec:
       labels:
         {{- include "substreams-sink-sql-backfill.labels" $ | nindent 8 }}
     spec:
-      initContainers:
+      containers:
       # Container to create cursor tables
       - name: {{ include "substreams-sink-sql-backfill.fullname" $ }}-create-tables
         image: curlimages/curl:latest
-        command:
-        - "/bin/sh"
-        - "-c"
+        command: ["/bin/sh", "-c"]
+        args:
         - |
           cat <<EOF > /tmp/create-tables.sql
           CREATE TABLE IF NOT EXISTS {{ $values.database }}.{{ $values.tablePrefix }}_{{ $currentBlock }}
@@ -46,6 +45,7 @@ spec:
               ORDER BY (id);
           EOF
           curl -X POST 'http://{{ $values.host }}:8123/?user=$(USERNAME)&password=$(PASSWORD)' --data-binary @/tmp/create-tables.sql
+          touch /jobs-sync/create-tables
         env:
         - name: USERNAME
           valueFrom:
@@ -57,24 +57,18 @@ spec:
             secretKeyRef:
               name: {{ $values.clickhouseAuth.secretName }}
               key: {{ $values.clickhouseAuth.keyPassword }}
+        volumeMounts:
+        - name: jobs-sync
+          mountPath: /jobs-sync
       # Container to backfill data
       - name: {{ include "substreams-sink-sql-backfill.fullname" $ }}-backfill
         image: "{{ $values.image.repository }}:{{ $values.image.tag }}"
-        {{- if $values.command }}
-        command:
-        {{- range $values.command }}
-        - {{ . | quote }}
-        {{- end }}
-        - "clickhouse://$(USERNAME):$(PASSWORD)@{{ $values.host }}:9000/{{ $values.database }}"
-        - "{{ $values.manifest }}"
-        - "{{ $currentBlock }}:{{ add $currentBlock $blockIncrement }}"
-        {{- end }}
-        {{- if $values.args }}
+        command: ["/bin/sh", "-c"]
         args:
-        {{- range $values.args }}
-        - {{ . | quote }}
-        {{- end }}
-        {{- end }}
+        - |
+          while [ ! -f /jobs-sync/create-tables ]; do sleep 1; done;
+          substreams-sink-sql run clickhouse://$(USERNAME):$(PASSWORD)@{{ $values.host }}:9000/{{ $values.database }} {{ $values.manifest }} {{ $currentBlock }}:{{ add $currentBlock $blockIncrement }};
+          touch /jobs-sync/run-backfill
         env:
         - name: SINK_SQL_RUN_CURSORS_TABLE
           value: {{ $values.tablePrefix }}_{{ $currentBlock }}
@@ -91,14 +85,16 @@ spec:
         envFrom:
         - configMapRef:
             name: env-{{ $.Release.Name }}
+        volumeMounts:
+        - name: jobs-sync
+          mountPath: /jobs-sync
       # Container to drop cursor tables
-      containers:
       - name: {{ include "substreams-sink-sql-backfill.fullname" $ }}-drop-tables
         image: curlimages/curl:latest
-        command:
-        - "/bin/sh"
-        - "-c"
+        command: ["/bin/sh", "-c"]
+        args:
         - |
+          while [ ! -f /jobs-sync/run-backfill ]; do sleep 1; done;
           cat <<EOF > /tmp/drop-tables.sql
           DROP TABLE {{ $values.database }}.{{ $values.tablePrefix }}_{{ $currentBlock }}
           EOF
@@ -114,7 +110,13 @@ spec:
             secretKeyRef:
               name: {{ $values.clickhouseAuth.secretName }}
               key: {{ $values.clickhouseAuth.keyPassword }}
+        volumeMounts:
+        - name: jobs-sync
+          mountPath: /jobs-sync
       restartPolicy: OnFailure
       imagePullSecrets:
         - name: {{ $values.imagePullSecret }}
+      volumes:
+      - name: jobs-sync
+        emptyDir: {}
 {{- end }}
