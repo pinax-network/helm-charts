@@ -15,13 +15,23 @@ jobAmount: 1
 startBlock: 0
 endBlock: -1
 # spkg file to use
-manifest: https://github.com/file.spkg
-dsn:
-  secretName: sql-sink-dsn
-  key: dsn
+manifest: myFile.spkg
+
+# Clickhouse host name
+host: myClickhouseDB
+# Clickhouse database to use
+database:
+# Prefix to add to cursor tables being created and deleted by the backfill jobs
+# By default: backprocess-<startBlock>
+tablePrefix: backprocess
+# Username/Password to connect to database from an existing secret
+clickhouseAuth:
+  secretName: ch-auth
+  keyUsername: username
+  keyPassword: password
 # environment variables to be use by the applications <key>: <value>
 env:
-  substreams_endpoints_config_mainnet: substreams:9000
+  substreams_endpoints_config_mainnet: mySubstreams:9000
   sink_sql_run_undo_buffer_size: 100
   sink_sql_run_batch_row_flush_interval: 100000
   sink_sql_run_batch_block_flush_interval: 20000

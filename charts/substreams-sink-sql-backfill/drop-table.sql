@@ -1,1 +1,0 @@
-DROP TABLE eos_tokens_v1.backprocess_test
