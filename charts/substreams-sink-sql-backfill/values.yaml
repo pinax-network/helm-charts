@@ -20,7 +20,7 @@ manifest: myFile.spkg
 # Clickhouse host name
 host: myClickhouseDB
 # Clickhouse database to use
-database:
+database: myDatabase
 # Prefix to add to cursor tables being created and deleted by the backfill jobs
 # By default: backprocess-<startBlock>
 tablePrefix: backprocess
