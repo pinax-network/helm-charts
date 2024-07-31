@@ -20,6 +20,7 @@ metadata:
   labels:
     {{- include "substreams-sink-sql-backfill.labels" $ | nindent 4 }}
 spec:
+  ttlSecondsAfterFinished: 60
   template:
     metadata:
       labels:
@@ -79,6 +80,10 @@ spec:
           
           touch /tmp/run-backfill
         env:
+        {{- range $key, $val := $values.env }}
+        - name: {{ $key | upper }}
+          value: {{ $val  | quote }}
+        {{- end }}
         - name: SINK_SQL_RUN_CURSORS_TABLE
           value: {{ $values.tablePrefix }}_{{ $currentBlock }}
         - name: USERNAME
@@ -91,9 +96,6 @@ spec:
             secretKeyRef:
               name: {{ $values.clickhouseAuth.secretName }}
               key: {{ $values.clickhouseAuth.keyPassword }}
-        envFrom:
-        - configMapRef:
-            name: env-{{ $.Release.Name }}
         volumeMounts:
         - name: jobs-sync
           mountPath: /tmp
