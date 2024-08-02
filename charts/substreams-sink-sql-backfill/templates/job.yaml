@@ -15,7 +15,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "substreams-sink-sql-backfill.fullname" $ }}-{{$i}}
+  name: {{ include "substreams-sink-sql-backfill.fullname" $ }}{{ $i }}-{{ $currentBlock }}
   namespace: {{ $.Release.Namespace }}
   labels:
     {{- include "substreams-sink-sql-backfill.labels" $ | nindent 4 }}
@@ -37,6 +37,7 @@ spec:
       # Container to create cursor tables
       - name: {{ include "substreams-sink-sql-backfill.fullname" $ }}-create-tables
         image: curlimages/curl:latest
+        imagePullPolicy: Always
         command: ["/bin/sh", "-c"]
         args:
         - |
@@ -76,6 +77,7 @@ spec:
       # Container to backfill data
       - name: {{ include "substreams-sink-sql-backfill.fullname" $ }}-backfill
         image: "{{ $values.image.repository }}:{{ $values.image.tag }}"
+        imagePullPolicy: Always
         command: ["/bin/sh", "-c"]
         args:
         - |
@@ -110,6 +112,7 @@ spec:
       # Container to drop cursor tables
       - name: {{ include "substreams-sink-sql-backfill.fullname" $ }}-drop-tables
         image: curlimages/curl:latest
+        imagePullPolicy: Always
         command: ["/bin/sh", "-c"]
         args:
         - |
