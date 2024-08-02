@@ -6,6 +6,13 @@ image:
 nameOverride: ""
 fullnameOverride: ""
 
+# nodeAffinity:
+# - matchExpressions:
+#   - key: kubernetes.io/hostname
+#     operator: NotIn   # In or NotIn
+#     values:
+#       - dom85
+
 # Secret to pull image from private repo
 imagePullSecret: ghcr-cred
 

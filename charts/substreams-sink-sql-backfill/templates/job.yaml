@@ -26,6 +26,13 @@ spec:
       labels:
         {{- include "substreams-sink-sql-backfill.labels" $ | nindent 8 }}
     spec:
+      {{- if $values.nodeAffinity }}
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            {{- $values.nodeAffinity | toYaml | nindent 12}}
+      {{- end }}
       containers:
       # Container to create cursor tables
       - name: {{ include "substreams-sink-sql-backfill.fullname" $ }}-create-tables
