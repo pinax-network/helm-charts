@@ -1,6 +1,6 @@
 apiVersion: v2
 name: substreams-sink-sql-backfill
-description: A Helm chart for Kubernetes
+description: Chart to backfill clickhouse database using jobs
 
 # A chart can be either an 'application' or a 'library' chart.
 #

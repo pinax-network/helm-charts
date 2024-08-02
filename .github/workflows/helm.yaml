@@ -11,7 +11,9 @@ jobs:
     # depending on default permission settings for your org (contents being read-only or read-write for workloads), you will have to add permissions
     # see: https://docs.github.com/en/actions/security-guides/automatic-token-authentication#modifying-the-permissions-for-the-github_token
     permissions:
-      contents: write
+      contents: write # to push chart release and create a release (helm/chart-releaser-action)
+      packages: write # needed for ghcr access
+
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -62,5 +64,5 @@ jobs:
               break
             fi
 
-            helm push "${pkg}" oci://ghcr.io/${GITHUB_REPOSITORY_OWNER}/charts
+            helm push "${pkg}" oci://ghcr.io/pinax-network/charts
           done
