@@ -6,24 +6,46 @@ image:
 nameOverride: ""
 fullnameOverride: ""
 
+# Specify jobs for certain nodes
 # nodeAffinity:
 # - matchExpressions:
 #   - key: kubernetes.io/hostname
 #     operator: NotIn   # In or NotIn
 #     values:
-#       - dom85
+#       - domX
 
 # Secret to pull image from private repo
 imagePullSecret: ghcr-cred
 
-# Number of job to parallelize the filling process
-jobAmount: 1
-# Start and end block that will be split between all jobs
-startBlock: 0
-endBlock: -1
+# Make sure to use the service account that match with argo workflow server
+serviceAccount: argo-workflows-workflow
+
+# Time to live for containers once the job is completed
+ttlStrategy:
+  secondsAfterCompletion: 3600
+  secondsAfterFailure: 7200
+  secondsAfterSuccess: 3600
+
+# Indicate the number of parallel jobs and the resources used by a job
+# This way, you can limit the total resources used with <parallelism>*<resource>
+parallelism: 2
+containerResources:
+  requests:
+    cpu: 250m
+    memory: 512Mi
+  limits:
+    cpu: 350m
+    memory: 1024Mi
+
+# Block ranges to run. Will run as many jobs as it can based on resources available. Once the resource limit is hit, the jobs left will be put in queue
+blockRanges:
+    # range of blocks
+  - range: [0, 10]
+    # blocks per job to run for that range
+    blocksPerJob: 5
+
 # spkg file to use
 manifest: myFile.spkg
-
 # Clickhouse host name
 host: myClickhouseDB
 # Clickhouse database to use

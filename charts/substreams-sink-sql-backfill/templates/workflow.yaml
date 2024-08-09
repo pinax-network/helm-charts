@@ -1,0 +1,168 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  name: {{ .Release.Name }}
+  generateName: backfill-
+  namespace: {{ .Release.Namespace }}
+spec:
+  serviceAccountName: {{ .Values.serviceAccount }}
+  {{- if .Values.ttlStrategy }}
+  ttlStrategy:
+    {{- .Values.ttlStrategy | toYaml | nindent 4}}
+  {{- end }}
+  {{- if .Values.nodeAffinity }}
+  podSpecPatch: |
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          {{- .Values.nodeAffinity | toYaml | nindent 12}}
+  {{- end }}
+  {{- if .Values.imagePullSecret }}
+  imagePullSecrets:
+  - name: {{ .Values.imagePullSecret }}
+  {{- end }}
+  entrypoint: main
+  parallelism: {{ .Values.parallelism | default 2 }}
+  templates:
+  - name: main
+    retryStrategy:
+      retryPolicy: "Always"
+      limit: "3"
+      backoff:
+        duration: "10"
+        factor: "2"
+        maxDuration: "1h"
+    steps:
+    {{- range $rangeIndex, $range := .Values.blockRanges }}
+    {{- if eq $rangeIndex 0 }}
+    - - name: full-run-{{ $rangeIndex }}
+    {{- else }}
+      - name: full-run-{{ $rangeIndex }}
+    {{- end }}
+        template: full-run
+        arguments:
+          parameters:
+          - name: start
+            value: {{ "{{item.start}}" | quote }}
+          - name: stop
+            value: {{ "{{item.stop}}" | quote }}
+        withItems:
+        {{- range $currentBlock := untilStep (index $range.range 0 | int) (index $range.range 1 | int) ($range.blocksPerJob | int) }}
+        {{- if lt (add $currentBlock $range.blocksPerJob | int) (index $range.range 1 | int) }}
+        - { start: {{ $currentBlock | quote }}, stop: {{ add $currentBlock $range.blocksPerJob | quote }} }
+        {{- else }}
+        - { start: {{ $currentBlock | quote }}, stop: {{ (index $range.range 1 | int) | quote }} }
+        {{- end }}
+        {{- end }}
+    {{- end }}
+  - name: full-run
+    inputs:
+      parameters:
+      - name: start
+      - name: stop
+    steps:
+    - - name: create-tables
+        template: ch-job
+        arguments:
+          parameters:
+          - name: start
+            value: {{ "{{inputs.parameters.start}}" | quote }}
+          - name: script
+            value: |
+              set -e
+
+              cat <<EOF > create-tables.sql
+              CREATE TABLE IF NOT EXISTS {{ .Values.database }}.{{ .Values.tablePrefix }}_{{ "{{inputs.parameters.start}}" }}
+              (
+                  id        String,
+                  cursor    String,
+                  block_num Int64,
+                  block_id  String
+              )
+              ENGINE = ReplacingMergeTree()
+                  PRIMARY KEY (id)
+                  ORDER BY (id);
+              EOF
+
+              cat create-tables.sql
+
+              curl -sS -X POST http://{{ .Values.host }}:8123/?user=$(USERNAME)\&password=$(PASSWORD) --data-binary @create-tables.sql || exit 1
+    - - name: sink-backfill
+        template: sink-backfill-job
+        arguments:
+          parameters:
+          - name: start
+            value: {{ "{{inputs.parameters.start}}" | quote }}
+          - name: stop
+            value: {{ "{{inputs.parameters.stop}}" | quote }}
+    - - name: drop-tables
+        template: ch-job
+        arguments:
+          parameters:
+          - name: start
+            value: {{ "{{inputs.parameters.start}}" | quote }}
+          - name: script
+            value: |
+              set -e
+
+              echo 'DROP TABLE {{ .Values.database }}.{{ .Values.tablePrefix }}_{{ "{{inputs.parameters.start}}" }}' > drop-tables.sql
+
+              curl -X POST http://{{ .Values.host }}:8123/?user=$(USERNAME)\&password=$(PASSWORD) --data-binary @drop-tables.sql
+
+  - name: ch-job
+    inputs:
+      parameters:
+      - name: start
+      - name: script
+    container:
+      image: curlimages/curl:8.9.1
+      env:
+        - name: USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.clickhouseAuth.secretName }}
+              key: {{ .Values.clickhouseAuth.keyUsername }}
+        - name: PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.clickhouseAuth.secretName }}
+              key: {{ .Values.clickhouseAuth.keyPassword }}
+      command: ["/bin/sh", "-c"]
+      args: 
+      - |
+        {{ "{{inputs.parameters.script}}" }}
+
+  - name: sink-backfill-job
+    inputs:
+      parameters:
+      - name: start
+      - name: stop
+    podSpecPatch: |
+      containers:
+        - name: main
+          resources:
+          {{ .Values.containerResources | toYaml | nindent 12 }}
+    container:
+      image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+      env:
+      {{- range $key, $val := .Values.env }}
+      - name: {{ $key | upper }}
+        value: {{ $val  | quote }}
+      {{- end }}
+      - name: SINK_SQL_RUN_CURSORS_TABLE
+        value: {{ .Values.tablePrefix }}_{{ "{{inputs.parameters.start}}" }}
+      - name: USERNAME
+        valueFrom:
+          secretKeyRef:
+            name: {{ .Values.clickhouseAuth.secretName }}
+            key: {{ .Values.clickhouseAuth.keyUsername }}
+      - name: PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: {{ .Values.clickhouseAuth.secretName }}
+            key: {{ .Values.clickhouseAuth.keyPassword }}
+      command: ["/bin/sh", "-c"]
+      args: 
+      - |
+        ./substreams-sink-sql run clickhouse://$(USERNAME):$(PASSWORD)@{{ .Values.host }}:9000/{{ .Values.database }} {{ .Values.manifest }} {{ "{{inputs.parameters.start}}" }}:{{ "{{inputs.parameters.stop}}" }}
