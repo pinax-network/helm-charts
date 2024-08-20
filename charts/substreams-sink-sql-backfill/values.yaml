@@ -1,6 +1,10 @@
+# Before running the workload, you should have
+# - an existing namespace with the argo workflow serviceAccount
+# - a secret with the credentials for the clickhouse database
+
 image:
   repository: ghcr.io/pinax-network/substreams-sink-sql
-  tag: f9081de
+  tag: develop
   pullPolicy: IfNotPresent
 
 nameOverride: ""
@@ -11,19 +15,34 @@ fullnameOverride: ""
 #   - key: kubernetes.io/hostname
 #     operator: NotIn   # In or NotIn
 #     values:
-#       - dom85
+#       - domX
 
 # Secret to pull image from private repo
 imagePullSecret: ghcr-cred
 
-# Number of job to parallelize the filling process
-jobAmount: 1
-# Start and end block that will be split between all jobs
-startBlock: 0
-endBlock: -1
+# Make sure to use the service account that match with argo workflow server
+serviceAccount: argo-workflow
+
+# If the namespace exist, make sure the serviceAccount mentionned previously is in that namespace
+# If the namespace does not existe, create it and then add it to `workflowNamespaces` in argo-workflows helm values. This will add the serviceAccount to the new namespace.
+# Resources limits for the namespace and the containers running the backfill jobs (both must be specified)
+namespace:
+  name: backfill-workflow
+  cpuLimit: 4
+  memoryLimit: 6Gi
+container:
+  cpuLimit: 100m
+  memoryLimit: 256Mi
+
+# Block ranges to run. Will run as many jobs as it can based on resources available. Once the resource limit is hit, the jobs left will be put in queue
+blockRanges:
+    # range of blocks
+  - range: [0, 10]
+    # blocks per job to run for that range
+    blocksPerJob: 5
+
 # spkg file to use
 manifest: myFile.spkg
-
 # Clickhouse host name
 host: myClickhouseDB
 # Clickhouse database to use
