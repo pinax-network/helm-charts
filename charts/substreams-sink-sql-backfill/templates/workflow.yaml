@@ -3,9 +3,9 @@ kind: Workflow
 metadata:
   name: {{ .Release.Name }}
   generateName: backfill-
-  namespace: {{ .Values.namespace.name }}
+  namespace: {{ .Release.Namespace }}
 spec:
-  serviceAccountName: argo-workflow
+  serviceAccountName: {{ .Values.serviceAccount }}
   {{- if .Values.ttlStrategy }}
   ttlStrategy:
     {{- .Values.ttlStrategy | toYaml | nindent 4}}
@@ -23,6 +23,7 @@ spec:
   - name: {{ .Values.imagePullSecret }}
   {{- end }}
   entrypoint: main
+  parallelism: {{ .Values.parallelism | default 2 }}
   templates:
   - name: main
     retryStrategy:
@@ -71,8 +72,8 @@ spec:
             value: |
               set -e
 
-              cat <<EOF > /tmp/create-tables.sql
-              CREATE TABLE IF NOT EXISTS {{ .Values.database }}.{{ .Values.tablePrefix }}_{{ "{{inputs.parameters.start}}" | quote }}
+              cat <<EOF > create-tables.sql
+              CREATE TABLE IF NOT EXISTS {{ .Values.database }}.{{ .Values.tablePrefix }}_{{ "{{inputs.parameters.start}}" }}
               (
                   id        String,
                   cursor    String,
@@ -84,9 +85,9 @@ spec:
                   ORDER BY (id);
               EOF
 
-              exit 1
+              cat create-tables.sql
 
-              curl -X POST "http://{{ .Values.host }}:8123/?user=$(USERNAME)\&password=$(PASSWORD)" --data-binary @/tmp/create-tables.sql
+              curl -sS -X POST http://{{ .Values.host }}:8123/?user=$(USERNAME)\&password=$(PASSWORD) --data-binary @create-tables.sql || exit 1
     - - name: sink-backfill
         template: sink-backfill-job
         arguments:
@@ -105,9 +106,9 @@ spec:
             value: |
               set -e
 
-              echo 'DROP TABLE {{ .Values.database }}.{{ .Values.tablePrefix }}_{{ "{{inputs.parameters.start}}" | quote }}' > /tmp/drop-tables.sql
+              echo 'DROP TABLE {{ .Values.database }}.{{ .Values.tablePrefix }}_{{ "{{inputs.parameters.start}}" }}' > drop-tables.sql
 
-              curl -X POST "http://{{ .Values.host }}:8123/?user=$(USERNAME)\&password=$(PASSWORD)" --data-binary @/tmp/drop-tables.sql
+              curl -X POST http://{{ .Values.host }}:8123/?user=$(USERNAME)\&password=$(PASSWORD) --data-binary @drop-tables.sql
 
   - name: ch-job
     inputs:
@@ -130,7 +131,7 @@ spec:
       command: ["/bin/sh", "-c"]
       args: 
       - |
-        {{ "{{inputs.parameters.script}}" | quote }}
+        {{ "{{inputs.parameters.script}}" }}
 
   - name: sink-backfill-job
     inputs:
@@ -141,9 +142,7 @@ spec:
       containers:
         - name: main
           resources:
-            limits:
-              cpu: {{ .Values.container.cpuLimit | quote }}
-              memory: {{ .Values.container.memoryLimit | quote }}
+          {{ .Values.containerResources | toYaml | nindent 12 }}
     container:
       image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
       env:
@@ -152,7 +151,7 @@ spec:
         value: {{ $val  | quote }}
       {{- end }}
       - name: SINK_SQL_RUN_CURSORS_TABLE
-        value: {{ .Values.tablePrefix }}_{{ "{{inputs.parameters.start}}" | quote }}
+        value: {{ .Values.tablePrefix }}_{{ "{{inputs.parameters.start}}" }}
       - name: USERNAME
         valueFrom:
           secretKeyRef:
@@ -166,4 +165,4 @@ spec:
       command: ["/bin/sh", "-c"]
       args: 
       - |
-        ./substreams-sink-sql run clickhouse://$(USERNAME):$(PASSWORD)@{{ .Values.host }}:9000/{{ .Values.database }} {{ .Values.manifest }} {{ "{{inputs.parameters.start}}" | quote }}:{{ "{{inputs.parameters.stop}}" | quote }}
+        ./substreams-sink-sql run clickhouse://$(USERNAME):$(PASSWORD)@{{ .Values.host }}:9000/{{ .Values.database }} {{ .Values.manifest }} {{ "{{inputs.parameters.start}}" }}:{{ "{{inputs.parameters.stop}}" }}

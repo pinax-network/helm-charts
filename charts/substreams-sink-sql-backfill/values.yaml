@@ -10,6 +10,7 @@ image:
 nameOverride: ""
 fullnameOverride: ""
 
+# Specify jobs for certain nodes
 # nodeAffinity:
 # - matchExpressions:
 #   - key: kubernetes.io/hostname
@@ -23,16 +24,24 @@ imagePullSecret: ghcr-cred
 # Make sure to use the service account that match with argo workflow server
 serviceAccount: argo-workflows
 
+# Time to live for containers once the job is completed
+ttlStrategy:
+  secondsAfterCompletion: 3600
+  secondsAfterFailure: 7200
+  secondsAfterSuccess: 3600
+
 # If the namespace exist, make sure the serviceAccount mentionned previously is in that namespace
 # If the namespace does not existe, create it and then add it to `workflowNamespaces` in argo-workflows helm values. This will add the serviceAccount to the new namespace.
-# Resources limits for the namespace and the containers running the backfill jobs (both must be specified)
-namespace:
-  name: mynamespace
-  cpuLimit: 4
-  memoryLimit: 6Gi
-container:
-  cpuLimit: 100m
-  memoryLimit: 256Mi
+# Indicate the number of parallel jobs and the resources used by a job
+# This way, you can limit the total resources used with <parallelism>*<resource>
+parallelism: 2
+containerResources:
+  requests:
+    cpu: 250m
+    memory: 512Mi
+  limits:
+    cpu: 350m
+    memory: 1024Mi
 
 # Block ranges to run. Will run as many jobs as it can based on resources available. Once the resource limit is hit, the jobs left will be put in queue
 blockRanges:
