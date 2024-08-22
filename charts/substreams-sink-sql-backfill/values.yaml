@@ -1,7 +1,3 @@
-# Before running the workload, you should have
-# - an existing namespace with the argo workflow serviceAccount
-# - a secret with the credentials for the clickhouse database
-
 image:
   repository: ghcr.io/pinax-network/substreams-sink-sql
   tag: develop
@@ -22,7 +18,7 @@ fullnameOverride: ""
 imagePullSecret: ghcr-cred
 
 # Make sure to use the service account that match with argo workflow server
-serviceAccount: argo-workflows
+serviceAccount: argo-workflows-workflow
 
 # Time to live for containers once the job is completed
 ttlStrategy:
@@ -30,8 +26,6 @@ ttlStrategy:
   secondsAfterFailure: 7200
   secondsAfterSuccess: 3600
 
-# If the namespace exist, make sure the serviceAccount mentionned previously is in that namespace
-# If the namespace does not existe, create it and then add it to `workflowNamespaces` in argo-workflows helm values. This will add the serviceAccount to the new namespace.
 # Indicate the number of parallel jobs and the resources used by a job
 # This way, you can limit the total resources used with <parallelism>*<resource>
 parallelism: 2
