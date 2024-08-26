@@ -704,6 +704,16 @@ entries:
   substreams-sink-sql-backfill:
   - apiVersion: v2
     appVersion: f9081de
+    created: "2024-08-26T13:48:15.87823301Z"
+    description: Chart to backfill clickhouse database using jobs
+    digest: 979ede3538c39fe9c15e5cef0d0f00226d5a4374a16a033932c828d2903f9903
+    name: substreams-sink-sql-backfill
+    type: application
+    urls:
+    - https://github.com/pinax-network/helm-charts/releases/download/substreams-sink-sql-backfill-0.1.4/substreams-sink-sql-backfill-0.1.4.tgz
+    version: 0.1.4
+  - apiVersion: v2
+    appVersion: f9081de
     created: "2024-08-22T14:28:41.199724067Z"
     description: Chart to backfill clickhouse database using jobs
     digest: 4d5912c2f5d8a4c0051ee8035575a470e9ff898b750ce93dc416d99ea56a2c3e
@@ -1335,4 +1345,4 @@ entries:
     urls:
     - https://github.com/pinax-network/helm-charts/releases/download/substreams-tier-2-1.0.0/substreams-tier-2-1.0.0.tgz
     version: 1.0.0
-generated: "2024-08-22T14:28:41.199968236Z"
+generated: "2024-08-26T13:48:15.878643398Z"
