@@ -20,11 +20,18 @@ imagePullSecret: ghcr-cred
 # Make sure to use the service account that match with argo workflow server
 serviceAccount: argo-workflows-workflow
 
-# Time to live for containers once the job is completed
+# Time to live for workflow once it's finished
 ttlStrategy:
-  secondsAfterCompletion: 3600
+  secondsAfterCompletion: 600
   secondsAfterFailure: 7200
-  secondsAfterSuccess: 3600
+  secondsAfterSuccess: 60
+
+# Time to live for pods
+# https://github.com/argoproj/argo-workflows/blob/main/examples/pod-gc-strategy.yaml
+podGarbageCollection:
+  strategy: OnPodCompletion
+  deleteDelayDuration: 30s
+
 
 # Indicate the number of parallel jobs and the resources used by a job
 # This way, you can limit the total resources used with <parallelism>*<resource>

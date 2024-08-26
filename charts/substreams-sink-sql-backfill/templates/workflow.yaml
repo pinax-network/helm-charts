@@ -10,6 +10,10 @@ spec:
   ttlStrategy:
     {{- .Values.ttlStrategy | toYaml | nindent 4}}
   {{- end }}
+  {{- if .Values.podGarbageCollection }}
+  podGC:
+    {{- .Values.podGarbageCollection | toYaml | nindent 4}}
+  {{- end }}
   {{- if .Values.nodeAffinity }}
   podSpecPatch: |
     affinity:
