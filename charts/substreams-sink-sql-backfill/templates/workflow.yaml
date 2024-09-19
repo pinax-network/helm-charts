@@ -72,14 +72,14 @@ spec:
               set -e
 
               cat <<EOF > create-tables.sql
-              CREATE TABLE IF NOT EXISTS {{ .Values.database }}.{{ .Values.tablePrefix }}_{{ "{{inputs.parameters.start}}" }}
+              CREATE TABLE IF NOT EXISTS {{ .Values.database }}.{{ .Values.tablePrefix }}_{{ "{{inputs.parameters.start}}" }} ON CLUSTER {{ .Values.cluster }}
               (
                   id        String,
                   cursor    String,
                   block_num Int64,
                   block_id  String
               )
-              ENGINE = ReplacingMergeTree()
+              ENGINE = ReplicatedReplacingMergeTree()
                   PRIMARY KEY (id)
                   ORDER BY (id);
               EOF
@@ -105,7 +105,7 @@ spec:
             value: |
               set -e
 
-              echo 'DROP TABLE {{ .Values.database }}.{{ .Values.tablePrefix }}_{{ "{{inputs.parameters.start}}" }}' > drop-tables.sql
+              echo 'DROP TABLE {{ .Values.database }}.{{ .Values.tablePrefix }}_{{ "{{inputs.parameters.start}}" }} ON CLUSTER {{ .Values.cluster }}' > drop-tables.sql
 
               curl -X POST http://{{ .Values.host }}:8123/?user=$(USERNAME)\&password=$(PASSWORD) --data-binary @drop-tables.sql
 
@@ -164,4 +164,4 @@ spec:
       command: ["/bin/sh", "-c"]
       args: 
       - |
-        ./substreams-sink-sql run clickhouse://$(USERNAME):$(PASSWORD)@{{ .Values.host }}:9000/{{ .Values.database }} {{ .Values.manifest }} {{ "{{inputs.parameters.start}}" }}:{{ "{{inputs.parameters.stop}}" }}
+        ./substreams-sink-sql run clickhouse://$(USERNAME):$(PASSWORD)@{{ .Values.host }}:9000/{{ .Values.database }} {{ .Values.manifest }} {{ "{{inputs.parameters.start}}" }}:{{ "{{inputs.parameters.stop}}" }} --endpoint={{ .Values.endpoint }}

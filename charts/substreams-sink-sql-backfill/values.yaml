@@ -33,7 +33,7 @@ podGarbageCollection:
   deleteDelayDuration: 30s
 
 retryStrategy:
-  retryPolicy: "OnFailure"
+  retryPolicy: "Always"
   limit: "100"
   backoff:
     duration: "1m"
@@ -60,13 +60,19 @@ blockRanges:
 
 # spkg file to use
 manifest: myFile.spkg
+# substreams endpoint
+endpoint: mySubstreams:9000
+
 # Clickhouse host name
 host: myClickhouseDB
+# Clickhouse cluster
+cluster: myCluster
 # Clickhouse database to use
 database: myDatabase
 # Prefix to add to cursor tables being created and deleted by the backfill jobs
 # By default: backprocess-<startBlock>
 tablePrefix: backprocess
+
 # Username/Password to connect to database from an existing secret
 clickhouseAuth:
   secretName: ch-auth
@@ -74,7 +80,6 @@ clickhouseAuth:
   keyPassword: password
 # environment variables to be use by the applications <key>: <value>
 env:
-  substreams_endpoints_config_mainnet: mySubstreams:9000
   sink_sql_run_undo_buffer_size: 100
   sink_sql_run_batch_row_flush_interval: 100000
   sink_sql_run_batch_block_flush_interval: 20000
