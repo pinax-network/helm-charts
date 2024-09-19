@@ -32,6 +32,13 @@ podGarbageCollection:
   strategy: OnPodCompletion
   deleteDelayDuration: 30s
 
+retryStrategy:
+  retryPolicy: "OnFailure"
+  limit: "100"
+  backoff:
+    duration: "1m"
+    factor: "2"
+    maxDuration: "6h"
 
 # Indicate the number of parallel jobs and the resources used by a job
 # This way, you can limit the total resources used with <parallelism>*<resource>
