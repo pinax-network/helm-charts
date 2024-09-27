@@ -164,4 +164,4 @@ spec:
       command: ["/bin/sh", "-c"]
       args:
       - |
-        ./substreams-sink-sql run clickhouse://$(USERNAME):$(PASSWORD)@{{ .Values.host }}:9000/{{ .Values.database }} {{ .Values.manifest }} {{ "{{inputs.parameters.start}}" }}:{{ "{{inputs.parameters.stop}}" }} --endpoint={{ .Values.endpoint }} {{ if .Values.additionalHeaders }}{{- range .Values.additionalHeaders }}-H {{ . }} {{- end }}{{ end }}
+        ./substreams-sink-sql run clickhouse://$(USERNAME):$(PASSWORD)@{{ .Values.host }}:9000/{{ .Values.database }} {{ .Values.manifest }} {{ "{{inputs.parameters.start}}" }}:{{ "{{inputs.parameters.stop}}" }} --endpoint={{ .Values.endpoint }} {{ if .Values.additionalHeaders }}{{- range .Values.additionalHeaders }}-H {{quote . }} {{- end }}{{ end }}
