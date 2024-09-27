@@ -128,7 +128,7 @@ spec:
               name: {{ .Values.clickhouseAuth.secretName }}
               key: {{ .Values.clickhouseAuth.keyPassword }}
       command: ["/bin/sh", "-c"]
-      args: 
+      args:
       - |
         {{ "{{inputs.parameters.script}}" }}
 
@@ -162,6 +162,6 @@ spec:
             name: {{ .Values.clickhouseAuth.secretName }}
             key: {{ .Values.clickhouseAuth.keyPassword }}
       command: ["/bin/sh", "-c"]
-      args: 
+      args:
       - |
-        ./substreams-sink-sql run clickhouse://$(USERNAME):$(PASSWORD)@{{ .Values.host }}:9000/{{ .Values.database }} {{ .Values.manifest }} {{ "{{inputs.parameters.start}}" }}:{{ "{{inputs.parameters.stop}}" }} --endpoint={{ .Values.endpoint }}
+        ./substreams-sink-sql run clickhouse://$(USERNAME):$(PASSWORD)@{{ .Values.host }}:9000/{{ .Values.database }} {{ .Values.manifest }} {{ "{{inputs.parameters.start}}" }}:{{ "{{inputs.parameters.stop}}" }} --endpoint={{ .Values.endpoint }} {{ if .Values.additionalHeaders }}{{- range .Values.additionalHeaders }}-H {{ . }} {{- end }}{{ end }}
