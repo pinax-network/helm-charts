@@ -24,7 +24,7 @@ alertManager:
 # -- Image configuration for substreams tier 2
 image:
   # -- The repository where the Docker image is located.
-  repository: ghcr.io/streamingfast/firehose-ethereum
+  repository: ghcr.io/streamingfast/firehose-core
   
   # -- The pull policy for the Docker image.
   # Valid options are "Always", "IfNotPresent", and "Never".
@@ -32,7 +32,7 @@ image:
   
   # -- The tag of the Docker image to use.
   # If not set, the default tag will be used.
-  tag: "v2.6.4"
+  tag: "v1.6.4"
 
 blockChain:
   # -- The name of the blockchain network. Possible values could be "mainnet", "testnet", "devnet", etc.
@@ -86,6 +86,12 @@ substreams:
     
     # -- Determines if logs should be written to a file. If false, logs will be written to stdout.
     log-to-file: false
+
+    # -- Sets the chain advertised name.
+    advertise-chain-name: {}
+
+    # -- Sorts the internal config to a value YAML-formatted string. .i.e. "s1", "s2", "s3"
+    substreams-state-store-default-tag: {}
     
     # -- Configuration for the common authentication plugin.
     common-auth-plugin: {}
@@ -119,7 +125,10 @@ substreams:
     
     # -- Address for the Substreams Tier 1 gRPC listener.
     substreams-tier1-grpc-listen-addr: :9000
-    
+
+    # -- Temporary directory for cache files.
+    common-tmp-dir: /tmp
+
     # -- Endpoint for Substreams Tier 1 subrequests.
     substreams-tier1-subrequests-endpoint: {}
 
