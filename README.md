@@ -38,8 +38,8 @@
 - URL: https://github.com/pinax-network/helm-charts/releases/download/substreams-sink-webhook-1.0.3/substreams-sink-webhook-1.0.3.tgz
 
 ### substreams-tier-1
-- Version: v1.6.4
-- URL: https://github.com/pinax-network/helm-charts/releases/download/substreams-tier-1-v1.6.4/substreams-tier-1-v1.6.4.tgz
+- Version: 4.0.0
+- URL: https://github.com/pinax-network/helm-charts/releases/download/substreams-tier-1-4.0.0/substreams-tier-1-4.0.0.tgz
 
 ### substreams-tier-2
 - Version: 1.0.8
