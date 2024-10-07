@@ -30,16 +30,16 @@
 - URL: https://github.com/pinax-network/helm-charts/releases/download/substreams-sink-prometheus-1.1.5/substreams-sink-prometheus-1.1.5.tgz
 
 ### substreams-sink-sql-backfill
-- Version: 0.0.9
-- URL: https://github.com/pinax-network/helm-charts/releases/download/substreams-sink-sql-backfill-0.0.9/substreams-sink-sql-backfill-0.0.9.tgz
+- Version: 0.1.7
+- URL: https://github.com/pinax-network/helm-charts/releases/download/substreams-sink-sql-backfill-0.1.7/substreams-sink-sql-backfill-0.1.7.tgz
 
 ### substreams-sink-webhook
 - Version: 1.0.3
 - URL: https://github.com/pinax-network/helm-charts/releases/download/substreams-sink-webhook-1.0.3/substreams-sink-webhook-1.0.3.tgz
 
 ### substreams-tier-1
-- Version: 3.7.0
-- URL: https://github.com/pinax-network/helm-charts/releases/download/substreams-tier-1-3.7.0/substreams-tier-1-3.7.0.tgz
+- Version: v1.6.4
+- URL: https://github.com/pinax-network/helm-charts/releases/download/substreams-tier-1-v1.6.4/substreams-tier-1-v1.6.4.tgz
 
 ### substreams-tier-2
 - Version: 1.0.7
