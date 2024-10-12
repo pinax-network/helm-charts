@@ -61,5 +61,5 @@ spec:
         targetLabel: sf_type
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "noop.uniqueName" . }}-svc
+      app.kubernetes.io/name: {{ include "noop.uniqueName" . }}
 {{- end }}
