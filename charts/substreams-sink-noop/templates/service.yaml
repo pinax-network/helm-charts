@@ -3,13 +3,13 @@
 {{- $componentName := printf "noop-%s" $networkName }}
 {{- $componentLabel := include "noop.componentLabelFor" $componentName  | default "" }}
 
-
 apiVersion: v1
 kind: Service
 metadata:
   name: {{ include "noop.uniqueName" . }}-svc
   labels:
-    app.kubernetes.io/name: {{ include "noop.uniqueName" . }}-svc
+    service.kubernetes.io/name: {{ include "noop.uniqueName" . }}-svc
+    app.kubernetes.io/name: {{ include "noop.uniqueName" . }}
 spec:
   type: {{ .Values.noop.service.type }}
   {{- if .Values.noop.service.ipFamilyPolicy }}
@@ -29,7 +29,6 @@ spec:
       protocol: TCP
   selector:
     app.kubernetes.io/name: {{ include "noop.uniqueName" . }}
-
 
 ---
 {{- if .Values.noop.serviceMonitor.enabled }}
@@ -61,5 +60,5 @@ spec:
         targetLabel: sf_type
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "noop.uniqueName" . }}
+      service.kubernetes.io/name: {{ include "noop.uniqueName" . }}-svc
 {{- end }}
