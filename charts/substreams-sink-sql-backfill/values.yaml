@@ -53,8 +53,8 @@ containerResources:
 
 # Block ranges to run. Will run as many jobs as it can based on resources available. Once the resource limit is hit, the jobs left will be put in queue
 blockRanges:
-    # range of blocks
-  - range: [0, 10]
+  # range of blocks
+  - range: [ 0, 10 ]
     # blocks per job to run for that range
     blocksPerJob: 5
 
@@ -72,6 +72,8 @@ database: myDatabase
 # Prefix to add to cursor tables being created and deleted by the backfill jobs
 # By default: backprocess-<startBlock>
 tablePrefix: backprocess
+# Optionally pass one or multiple headers to the Substreams endpoint (such as X-Sf-Substreams-Parallel-Jobs for example)
+additionalHeaders: [ ]
 
 # Username/Password to connect to database from an existing secret
 clickhouseAuth:
