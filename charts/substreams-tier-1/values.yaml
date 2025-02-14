@@ -1,6 +1,18 @@
 # Default values for substreams tier 1.
 # This is a YAML-formatted file.
 
+# Select which image to use: "firehoseCore" or "firehoseEthereum"
+
+selectedImage: "firehoseEthereum"
+
+# images:
+#   firehoseCore:
+#     repository: streamingfast/firehose-core
+#     tag: "custom-tag"
+#   firehoseEthereum:
+#     repository: streamingfast/firehose-ethereum
+#     tag: "custom-tag"
+
 serviceAccount:
   # -- Specifies whether a service account should be created
   create: true
@@ -19,20 +31,6 @@ alertManager:
   warnBlockTime: 30
   # -- Threshold in seconds for triggering a critical alert for head block time drift
   critBlockTime: 90
-
-
-# -- Image configuration for substreams tier 2
-image:
-  # -- The repository where the Docker image is located.
-  repository: ghcr.io/streamingfast/firehose-core
-  
-  # -- The pull policy for the Docker image.
-  # Valid options are "Always", "IfNotPresent", and "Never".
-  pullPolicy: IfNotPresent
-  
-  # -- The tag of the Docker image to use.
-  # If not set, the default tag will be used.
-  tag: ""
 
 blockChain:
   # -- The name of the blockchain network. Possible values could be "mainnet", "testnet", "devnet", etc.

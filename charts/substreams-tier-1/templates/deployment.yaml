@@ -1,6 +1,16 @@
 {{- $values := $.Values.substreams }}
 {{- $componentName := "tier-1" }}
 {{- $componentLabel := include "substreams.componentLabelFor" $componentName | default "" }}
+{{- $selectedImage := $.Values.selectedImage | default "firehoseCore" }}
+
+{{/* Define default images */}}
+{{- $defaultImages := dict 
+  "firehoseCore" (dict "repository" "streamingfast/firehose-core" "tag" $.Chart.AppVersion)
+  "firehoseEthereum" (dict "repository" "streamingfast/firehose-ethereum" "tag" "v2.9.1")
+}}
+
+{{/* Merge with any user-provided image overrides */}}
+{{- $images := merge ($.Values.images | default dict) $defaultImages }}
 
 apiVersion: apps/v1
 kind: Deployment
@@ -48,8 +58,8 @@ spec:
       terminationGracePeriodSeconds: {{ $values.terminationGracePeriodSeconds | default 60 }}
       containers:
         - name: {{ $componentName }}
-          image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ $.Values.image.pullPolicy }}
+          image: "{{ index $images $selectedImage "repository" }}:{{ index $images $selectedImage "tag" }}"
+          imagePullPolicy: {{ $.Values.imagePullPolicy | default "IfNotPresent" }}
           args:
             - "start"
             - "-c"
@@ -88,4 +98,3 @@ spec:
             items:
               - key: config.yaml
                 path: config.yaml
-
