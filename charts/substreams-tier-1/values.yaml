@@ -3,7 +3,7 @@
 
 # Select which image to use: "firehoseCore" or "firehoseEthereum"
 
-selectedImage: "firehoseEthereum"
+selectedImage: "firehoseCore"
 
 # images:
 #   firehoseCore:
