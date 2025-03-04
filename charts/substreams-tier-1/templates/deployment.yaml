@@ -6,7 +6,7 @@
 {{/* Define default images */}}
 {{- $defaultImages := dict 
   "firehoseCore" (dict "repository" "ghcr.io/streamingfast/firehose-core" "tag" $.Chart.AppVersion)
-  "firehoseEthereum" (dict "repository" "ghcr.io/streamingfast/firehose-ethereum" "tag" "v2.9.1")
+  "firehoseEthereum" (dict "repository" "ghcr.io/streamingfast/firehose-ethereum" "tag" "v2.11.1")
 }}
 
 {{/* Merge with any user-provided image overrides */}}
