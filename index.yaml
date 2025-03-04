@@ -34,6 +34,16 @@ entries:
   blockmeta:
   - apiVersion: v2
     appVersion: v2.3.0
+    created: "2025-03-04T17:02:21.060216945Z"
+    description: A Helm chart for Kubernetes
+    digest: d7aff863be681d4aa5b0373f8eed2f49a1cfb83380d3b851670be0c90244080f
+    name: blockmeta
+    type: application
+    urls:
+    - https://github.com/pinax-network/helm-charts/releases/download/blockmeta-4.2.0/blockmeta-4.2.0.tgz
+    version: 4.2.0
+  - apiVersion: v2
+    appVersion: v2.3.0
     created: "2025-03-04T16:33:56.348347781Z"
     description: A Helm chart for Kubernetes
     digest: 296369ffa8a08ebe8f5952f753dd1b6f40645bade0801e1e7ceb20e889c77a1b
@@ -1086,6 +1096,16 @@ entries:
     version: 4.0.0
   substreams-tier-2:
   - apiVersion: v2
+    appVersion: v2.11.1
+    created: "2025-03-04T17:02:21.315587304Z"
+    description: A Helm chart for Kubernetes
+    digest: 560c4a6632106cbab9eb7ff38d38ddd7bfc48f0de8e4003d96f7e5ed693821ef
+    name: substreams-tier-2
+    type: application
+    urls:
+    - https://github.com/pinax-network/helm-charts/releases/download/substreams-tier-2-1.0.9/substreams-tier-2-1.0.9.tgz
+    version: 1.0.9
+  - apiVersion: v2
     appVersion: v1.6.4
     created: "2024-10-07T18:51:48.488257549Z"
     description: A Helm chart for Kubernetes
@@ -1175,4 +1195,4 @@ entries:
     urls:
     - https://github.com/pinax-network/helm-charts/releases/download/substreams-tier-2-1.0.0/substreams-tier-2-1.0.0.tgz
     version: 1.0.0
-generated: "2025-03-04T16:33:56.475141486Z"
+generated: "2025-03-04T17:02:21.315947113Z"
