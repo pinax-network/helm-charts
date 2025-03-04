@@ -21,7 +21,7 @@ image:
     # Valid options are "Always", "IfNotPresent", and "Never".
     pullPolicy: IfNotPresent
     # -- The tag for the Docker image. If not set, the default tag will be used.
-    tag: "v0.1.0"
+    tag: "2f971e0"
   
   sink:
     # -- The repository where the Docker image is located.

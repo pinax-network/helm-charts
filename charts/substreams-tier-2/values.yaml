@@ -14,7 +14,7 @@ serviceAccount:
 # -- Image configuration for substreams tier 2
 image:
   # -- The repository where the Docker image is located.
-  repository: ghcr.io/streamingfast/firehose-core
+  repository: ghcr.io/streamingfast/firehose-ethereum
   
   # -- The pull policy for the Docker image.
   # Valid options are "Always", "IfNotPresent", and "Never".
@@ -22,7 +22,7 @@ image:
   
   # -- The tag of the Docker image to use.
   # If not set, the default tag will be used.
-  tag: "v1.6.4"
+  tag: ""
 
 # -- Overrides the name of the chart.
 # If not set, the name will be derived from the chart name.
