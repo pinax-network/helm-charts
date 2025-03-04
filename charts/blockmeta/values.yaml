@@ -21,7 +21,7 @@ image:
     # Valid options are "Always", "IfNotPresent", and "Never".
     pullPolicy: IfNotPresent
     # -- The tag for the Docker image. If not set, the default tag will be used.
-    tag: "2f971e0"
+    tag: "v0.1.0"
   
   sink:
     # -- The repository where the Docker image is located.
@@ -30,7 +30,7 @@ image:
     # Valid options are "Always", "IfNotPresent", and "Never".
     pullPolicy: IfNotPresent
     # -- The tag for the Docker image. If not set, the default tag will be used.
-    tag: "0205920"
+    tag: "v2.3.0"
 
 blockChain:
   # -- The name of the blockchain network. Possible values could be "mainnet", "testnet", "devnet", etc.
