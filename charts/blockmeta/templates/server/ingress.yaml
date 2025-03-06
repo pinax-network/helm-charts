@@ -1,6 +1,7 @@
 {{- $values := $.Values.server }}
 {{- $componentName := "server" }}
 {{- $componentLabel := include "blockmeta.componentLabelFor" $componentName }}
+{{- if $values.ingress.enabled }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -37,3 +38,4 @@ spec:
     - {{ $values.ingress.host | quote }}
     secretName: {{ $values.ingress.tls.secretName | default (printf "%s-tls" (include "server.uniqueName" .)) }}
   {{- end }}
+{{- end }}
