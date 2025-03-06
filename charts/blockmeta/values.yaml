@@ -76,13 +76,29 @@ server:
   # -- Pull secrets required to fetch the Image
   imagePullSecrets: []
 
+  # Ingress configuration
   ingress:
-    enabled: false
+    enabled: true
+    host: "example.domain.com"  # Replace with your actual domain
+    
+    # Ingress class configuration - use the new ingressClassName field (K8s 1.19+)
+    ingressClassName: "nginx"  # Set to your preferred ingress controller
+    
+    paths:
+      default: "/"
+      # Add additional path mappings if needed
+      # api: "/api"
+    
+    # TLS configuration
+    tls:
+      enabled: false  # Set to true to enable HTTPS
+      secretName: ""  # Optional: Custom TLS secret name
+      
+    # Additional annotations
     annotations: {}
-    tls: 
-      secretName: ""
-    hosts: []
-    paths: []
+      # Add custom annotations as needed, e.g.:
+      # nginx.ingress.kubernetes.io/rewrite-target: "/"
+      # cert-manager.io/cluster-issuer: "letsencrypt-prod"
 
   resources:
     enabled: false

@@ -1,8 +1,6 @@
 {{- $values := $.Values.server }}
 {{- $componentName := "server" }}
 {{- $componentLabel := include "blockmeta.componentLabelFor" $componentName }}
-
-{{- if $values.ingress.enabled }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -10,31 +8,32 @@ metadata:
   labels:
     app.kubernetes.io/name: {{ include "server.uniqueName" . }}-ingress
   annotations:
-    {{- range $key, $value := $values.ingress.annotations }}
-    {{ $key }}: {{ $value | quote }}
+    {{- with $values.ingress.ingressClassName }}
+    kubernetes.io/ingress.class: {{ . | quote }}
+    {{- end }}
+    {{- with $values.ingress.annotations }}
+    {{- toYaml . | nindent 4 }}
     {{- end }}
 spec:
-  {{- if $values.ingress.tls }}
-  tls:
-    - hosts:
-        {{- range $host := $values.ingress.hosts }}
-        - {{ $host }}
-        {{- end }}
-      secretName: {{ $values.ingress.tls.secretName }}
+  {{- if $values.ingress.ingressClassName }}
+  ingressClassName: {{ $values.ingress.ingressClassName | quote }}
   {{- end }}
   rules:
-    {{- range $host := $values.ingress.hosts }}
-    - host: {{ $host }}
-      http:
-        paths:
-          {{- range $path := $values.ingress.paths }}
-          - path: {{ $path.path }}
-            pathType: {{ $path.pathType | default "ImplementationSpecific" }}
-            backend:
-              service:
-                name: {{ include "server.uniqueName" . }}-svc
-                port:
-                  number: {{ $path.port }}
-          {{- end }}
-    {{- end }}
-{{- end }}
+  - host: {{ $values.ingress.host | quote }}
+    http:
+      paths:
+      {{- range $portName, $portNumber := $values.service.ports }}
+      - path: {{ $values.ingress.paths.default | default "/" }}
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ include "server.uniqueName" $ }}-svc
+            port:
+              name: {{ $portName }}
+      {{- end }}
+  {{- if $values.ingress.tls.enabled }}
+  tls:
+  - hosts:
+    - {{ $values.ingress.host | quote }}
+    secretName: {{ $values.ingress.tls.secretName | default (printf "%s-tls" (include "server.uniqueName" .)) }}
+  {{- end }}

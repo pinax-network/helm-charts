@@ -1,6 +1,6 @@
 # blockmeta
 
-![Version: 4.0.0](https://img.shields.io/badge/Version-4.0.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: service-2f971e0-sink-0205920](https://img.shields.io/badge/AppVersion-service--2f971e0--sink--0205920-informational?style=flat-square)
+![Version: 4.3.0](https://img.shields.io/badge/Version-4.3.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.3.0](https://img.shields.io/badge/AppVersion-v2.3.0-informational?style=flat-square)
 
 A Helm chart for Kubernetes
 
@@ -22,7 +22,7 @@ A Helm chart for Kubernetes
 | image.service.tag | string | `"2f971e0"` | The tag for the Docker image. If not set, the default tag will be used. |
 | image.sink.pullPolicy | string | `"IfNotPresent"` | The pull policy for the Docker image. Valid options are "Always", "IfNotPresent", and "Never". |
 | image.sink.repository | string | `"ghcr.io/streamingfast/substreams-sink-kv"` | The repository where the Docker image is located. |
-| image.sink.tag | string | `"0205920"` | The tag for the Docker image. If not set, the default tag will be used. |
+| image.sink.tag | string | `"v2.3.0"` | The tag for the Docker image. If not set, the default tag will be used. |
 | inject.affinity | object | `{}` | Affinity rules for pod scheduling. Defines rules for preferred or required node and pod selection. Example: affinity:   nodeAffinity:     requiredDuringSchedulingIgnoredDuringExecution:       nodeSelectorTerms:         - matchExpressions:             - key: "key1"               operator: "In"               values:                 - "value1" |
 | inject.autoscaling.enabled | bool | `false` | Specifies whether the Horizontal Pod Autoscaler is enabled |
 | inject.autoscaling.maxReplicas | int | `5` | Specifies the maximum number of replicas that the autoscaler can scale up to. |
@@ -65,9 +65,11 @@ A Helm chart for Kubernetes
 | server.extraArgs | object | `{}` | Specify additional command-line arguments to pass to the `tier-2` component. These arguments can be used to override default settings or provide additional configurations that are not covered by the standard configuration options. |
 | server.imagePullSecrets | list | `[]` | Pull secrets required to fetch the Image |
 | server.ingress.annotations | object | `{}` |  |
-| server.ingress.enabled | bool | `false` |  |
-| server.ingress.hosts | list | `[]` |  |
-| server.ingress.paths | list | `[]` |  |
+| server.ingress.enabled | bool | `true` |  |
+| server.ingress.host | string | `"example.domain.com"` |  |
+| server.ingress.ingressClassName | string | `"nginx"` |  |
+| server.ingress.paths.default | string | `"/"` |  |
+| server.ingress.tls.enabled | bool | `false` |  |
 | server.ingress.tls.secretName | string | `""` |  |
 | server.nodeSelector | object | `{}` | Node selection constraints for pod scheduling. Allows you to specify a map of key-value pairs to target specific nodes. |
 | server.podAnnotations | object | `{}` | Annotations for the `Pod` |
