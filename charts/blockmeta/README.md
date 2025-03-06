@@ -65,7 +65,7 @@ A Helm chart for Kubernetes
 | server.extraArgs | object | `{}` | Specify additional command-line arguments to pass to the `tier-2` component. These arguments can be used to override default settings or provide additional configurations that are not covered by the standard configuration options. |
 | server.imagePullSecrets | list | `[]` | Pull secrets required to fetch the Image |
 | server.ingress.annotations | object | `{}` |  |
-| server.ingress.enabled | bool | `true` |  |
+| server.ingress.enabled | bool | `false` |  |
 | server.ingress.host | string | `"example.domain.com"` |  |
 | server.ingress.ingressClassName | string | `"nginx"` |  |
 | server.ingress.paths.default | string | `"/"` |  |

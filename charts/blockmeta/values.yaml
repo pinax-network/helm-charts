@@ -78,7 +78,7 @@ server:
 
   # Ingress configuration
   ingress:
-    enabled: true
+    enabled: false
     host: "example.domain.com"  # Replace with your actual domain
     
     # Ingress class configuration - use the new ingressClassName field (K8s 1.19+)
