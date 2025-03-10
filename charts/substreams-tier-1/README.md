@@ -1,6 +1,6 @@
 # substreams-tier-1
 
-![Version: 4.2.0](https://img.shields.io/badge/Version-4.2.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.7.2](https://img.shields.io/badge/AppVersion-v1.7.2-informational?style=flat-square)
+![Version: 4.5.0](https://img.shields.io/badge/Version-4.5.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.9.1](https://img.shields.io/badge/AppVersion-v1.9.1-informational?style=flat-square)
 
 A Helm chart for Kubernetes
 
@@ -16,13 +16,20 @@ A Helm chart for Kubernetes
 | blockChain.network | object | `{}` | The name of the blockchain network. Possible values could be "mainnet", "testnet", "devnet", etc. |
 | blockChain.type | object | `{}` | The type of blockchain component. Possible values could be "cl, "consensus-layer, "el, "execution-layer", etc. |
 | fullnameOverride | string | `""` | Overrides the full name of the chart. If not set, the full name will be derived from the release name and the chart name. |
+| ingress.annotations | object | `{}` |  |
+| ingress.enabled | bool | `false` |  |
+| ingress.host | string | `"example.domain.com"` |  |
+| ingress.ingressClassName | string | `"nginx"` |  |
+| ingress.paths.default | string | `"/"` |  |
+| ingress.tls.enabled | bool | `false` |  |
+| ingress.tls.secretName | string | `""` |  |
 | nameOverride | string | `""` | Overrides the name of the chart. If not set, the name will be derived from the chart name. |
 | resources.enabled | bool | `false` |  |
 | resources.limits.cpu | object | `{}` | Specifies the CPU resource limit for the container. CPU resource limits are measured in units of cores. Examples: "500m" for 0.5 cores, "2" for 2 cores. |
 | resources.limits.memory | object | `{}` | Specifies the memory resource limit for the container. Memory resource limits are measured in bytes. Examples: "512Mi" for 512 mebibytes, "2Gi" for 2 gibibytes. |
 | resources.requests.cpu | object | `{}` | Specifies the CPU resource request for the container. CPU resource requests are measured in units of cores. Examples: "250m" for 0.25 cores, "1" for 1 core. |
 | resources.requests.memory | object | `{}` | Specifies the memory resource request for the container. Memory resource requests are measured in bytes. Examples: "256Mi" for 256 mebibytes, "1Gi" for 1 gibibyte. |
-| selectedImage | string | `"firehoseEthereum"` |  |
+| selectedImage | string | `"firehoseCore"` |  |
 | serviceAccount.annotations | object | `{}` | Annotations to add to the service account |
 | serviceAccount.create | bool | `true` | Specifies whether a service account should be created |
 | serviceAccount.name | string | `""` | The name of the service account to use. If not set and create is true, a name is generated using the fullname template |
