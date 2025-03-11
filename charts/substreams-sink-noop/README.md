@@ -1,6 +1,6 @@
 # substreams-sink-noop
 
-![Version: 4.5.0](https://img.shields.io/badge/Version-4.5.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.3.1](https://img.shields.io/badge/AppVersion-v1.3.1-informational?style=flat-square)
+![Version: 4.6.0](https://img.shields.io/badge/Version-4.6.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.3.1](https://img.shields.io/badge/AppVersion-v1.3.1-informational?style=flat-square)
 
 A Helm chart for Kubernetes
 
@@ -22,6 +22,13 @@ A Helm chart for Kubernetes
 | image.repository | string | `"ghcr.io/streamingfast/substreams-sink-noop"` | Image for substreams-sink-noop |
 | image.tag | string | Chart.appVersion | Overrides the image tag |
 | imagePullSecrets | list | `[]` | Pull secrets required to fetch the Image |
+| ingress.annotations | object | `{}` |  |
+| ingress.enabled | bool | `false` |  |
+| ingress.host | string | `"example.domain.com"` |  |
+| ingress.ingressClassName | string | `"nginx"` |  |
+| ingress.paths.default | string | `"/"` |  |
+| ingress.tls.enabled | bool | `false` |  |
+| ingress.tls.secretName | string | `""` |  |
 | nameOverride | string | `""` | Overrides the name of the chart. If not set, the name will be derived from the chart name. |
 | noop.blocksVersion | object | `{}` | The version of the blocks to use, v1, v2 etc. |
 | noop.endpoint | object | `{}` | The endpoint to connect to the network, defaults to mainnet.eth.streamingfast.io:443 |
