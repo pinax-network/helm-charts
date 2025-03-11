@@ -540,6 +540,16 @@ entries:
   substreams-sink-noop:
   - apiVersion: v2
     appVersion: v1.3.1
+    created: "2025-03-11T23:41:17.120753939Z"
+    description: A Helm chart for Kubernetes
+    digest: c6abb1a82b1920a6104aa157f3b182d498d911af7aa1e31999dd7f61458d32f9
+    name: substreams-sink-noop
+    type: application
+    urls:
+    - https://github.com/pinax-network/helm-charts/releases/download/substreams-sink-noop-4.6.0/substreams-sink-noop-4.6.0.tgz
+    version: 4.6.0
+  - apiVersion: v2
+    appVersion: v1.3.1
     created: "2024-10-16T17:16:26.322333251Z"
     description: A Helm chart for Kubernetes
     digest: ac4a480fd2b7c87955954030180a85c5961310890d47443db182c0f3c5d33057
@@ -1235,4 +1245,4 @@ entries:
     urls:
     - https://github.com/pinax-network/helm-charts/releases/download/substreams-tier-2-1.0.0/substreams-tier-2-1.0.0.tgz
     version: 1.0.0
-generated: "2025-03-10T17:46:22.140471313Z"
+generated: "2025-03-11T23:41:17.292886392Z"
