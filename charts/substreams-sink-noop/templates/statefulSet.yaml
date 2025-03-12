@@ -77,7 +77,7 @@ spec:
             - "{{ $value }}"
             {{- end }}
           ports:
-            - name: http
+            - name: grpc
               containerPort: {{ index $values.service.ports "grpc" }}
               protocol: TCP
             - name: metrics
