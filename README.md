@@ -22,8 +22,8 @@
 - URL: https://github.com/pinax-network/helm-charts/releases/download/substreams-sink-clickhouse-1.0.5/substreams-sink-clickhouse-1.0.5.tgz
 
 ### substreams-sink-noop
-- Version: 4.6.0
-- URL: https://github.com/pinax-network/helm-charts/releases/download/substreams-sink-noop-4.6.0/substreams-sink-noop-4.6.0.tgz
+- Version: 4.6.1
+- URL: https://github.com/pinax-network/helm-charts/releases/download/substreams-sink-noop-4.6.1/substreams-sink-noop-4.6.1.tgz
 
 ### substreams-sink-prometheus
 - Version: 1.1.5
