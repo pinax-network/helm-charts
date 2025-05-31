@@ -1,0 +1,85 @@
+{{- $values := $.Values.substreams_sink_noop }}
+{{- $componentName := "substreams-sink-noop" }}
+{{- $componentLabel := include "substreams_sink_noop.componentLabelFor" $componentName }}
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "substreams_sink_noop.fullname" . }}-{{ $componentName }}
+  labels:
+    {{- include "substreams_sink_noop.labels" . | nindent 4 }}
+    {{- $componentLabel | nindent 4 }}
+spec:
+  serviceName: {{ include "substreams_sink_noop.fullname" . }}-{{ $componentName }}-headless
+  replicas: {{ $values.replicaCount | default 1 }}
+  selector:
+    matchLabels:
+      {{- include "substreams_sink_noop.selectorLabels" . | nindent 6 }}
+      {{- $componentLabel | nindent 6 }}
+  template:
+    metadata:
+      {{- with $values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "substreams_sink_noop.selectorLabels" . | nindent 8 }}
+        {{- $componentLabel | nindent 8 }}
+    spec:
+      {{- with $values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "substreams_sink_noop.fullname" . }}-{{ $componentName }}-sa
+      {{- with $values.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      terminationGracePeriodSeconds: {{ $values.terminationGracePeriodSeconds | default "60" }}
+      containers:
+        - name: {{ $componentName }}
+          image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ $.Values.image.pullPolicy }}
+          args:
+            - {{ $values.config.endpoint | default "mainnet.eth.streamingfast.io:443" }}
+            - {{ $values.config.manifest | default "https://github.com/streamingfast/substreams-eth-block-meta/releases/download/v0.4.1/substreams-eth-block-meta-v0.4.1.spkg" }}
+            - {{ $values.config.module | default "graph_out" }}
+            {{- if $values.volumeClaimSpec.enabled }}
+            - "--state-store=./state/state.yaml"
+            {{- end }}
+            {{- range $arg := $values.extraArgs }}
+            - {{ $arg }}
+            {{- end }}
+          ports:
+            - name: grpc
+              containerPort: {{ index $values.service.ports "grpc" }}
+              protocol: TCP
+            - name: metrics
+              containerPort: {{ index $values.service.ports "metrics" }}
+              protocol: TCP
+          {{- if hasKey $values "resources" }}
+          resources:
+            {{- if hasKey $values.resources "requests" }}
+            requests:
+              {{- toYaml $values.resources.requests | nindent 14 }}
+            {{- end }}
+            {{- if hasKey $values.resources "limits" }}
+            limits:
+              {{- toYaml $values.resources.limits | nindent 14 }}
+            {{- end }}
+          {{- end }}
+          {{- if $values.volumeClaimSpec.enabled }}
+          volumeMounts:
+            - name: state-storage
+              mountPath: /app/state
+          {{- end }}
+  {{- if $values.volumeClaimSpec.enabled }}
+  volumeClaimTemplates:
+    - metadata:
+        name: state-storage
+      spec:
+        {{- with $spec := $values.volumeClaimSpec }}
+        {{- $spec := omit $spec "enabled" }}
+        {{- toYaml $spec | nindent 8 }}
+        {{- end }}
+  {{- end }}

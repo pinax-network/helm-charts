@@ -1,0 +1,55 @@
+{{- $values := $.Values.blockmeta }}
+{{- $componentName := "blockmeta" }}
+{{- $componentLabel := include "blockmeta.componentLabelFor" $componentName }}
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "blockmeta.fullname" . }}-{{ $componentName }}
+  labels:
+    {{- include "blockmeta.labels" . | nindent 4 }}
+    {{- $componentLabel | nindent 4 }}
+spec:
+  serviceName: {{ include "blockmeta.fullname" . }}-{{ $componentName }}-headless
+  replicas: {{ $values.replicaCount | default 1 }}
+  selector:
+    matchLabels:
+      {{- include "blockmeta.selectorLabels" . | nindent 6 }}
+      {{- $componentLabel | nindent 6 }}
+  template:
+    metadata:
+      {{- with $values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "blockmeta.selectorLabels" . | nindent 8 }}
+        {{- $componentLabel | nindent 8 }}
+    spec:
+      {{- with $values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "blockmeta.serviceAccountName" . }}
+      {{- with $values.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      terminationGracePeriodSeconds: {{ $values.terminationGracePeriodSeconds | default "60" }}
+      containers:
+        - name: {{ $componentName }}
+          image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ $.Values.image.pullPolicy }}
+          args:
+            - ./blockmeta
+            - --sink-addr={{ $values.config.sink_address }}
+            - --grpc-listen-addr=:{{ index $values.service.ports "grpc" }}
+            - --auth-url={{ $values.config.auth_url }}
+            - --metering-url={{ $values.config.metering_url }}
+            {{- range $arg := $values.config.extraArgs }}
+            - {{ $arg }}
+            {{- end }}
+          ports:
+            - name: grpc
+              containerPort: {{ index $values.service.ports "grpc" }}
+              protocol: TCP

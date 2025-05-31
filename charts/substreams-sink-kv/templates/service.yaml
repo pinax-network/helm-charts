@@ -1,0 +1,25 @@
+{{- $values := $.Values.substreams_sink_kv }}
+{{- $componentName := "substreams-sink-kv" }}
+{{- $componentLabel := include "substreams_sink_kv.componentLabelFor" $componentName }}
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "substreams_sink_kv.fullname" . }}-{{ $componentName }}
+  labels:
+    {{- include "substreams_sink_kv.labels" . | nindent 4 }}
+    {{- $componentLabel | nindent 4 }}
+spec:
+  type: {{ $values.service.type | default "ClusterIP" }}
+  selector:
+    {{- include "substreams_sink_kv.selectorLabels" . | nindent 4 }}
+    {{- $componentLabel | nindent 4 }}
+  ports:
+    - name: grpc
+      port: {{ index $values.service.ports "grpc" }}
+      targetPort: grpc
+      protocol: TCP
+    - name: metrics
+      port: {{ index $values.service.ports "metrics" }}
+      targetPort: metrics
+      protocol: TCP

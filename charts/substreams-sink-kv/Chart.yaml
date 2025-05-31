@@ -1,0 +1,11 @@
+apiVersion: v2
+name: substreams-sink-kv
+description: A Helm chart for deploying substreams-sink-kv
+type: application
+version: 0.0.1
+appVersion: v2.3.0
+keywords:
+  - blockmeta
+  - substreams
+annotations:
+  lookupName: "ghcr.io/streamingfast/substreams-sink-kv"

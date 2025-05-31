@@ -1,0 +1,28 @@
+{{- $values := $.Values.blockmeta }}
+{{- $componentName := "blockmeta" }}
+{{- $componentLabel := include "blockmeta.componentLabelFor" $componentName }}
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "blockmeta.fullname" . }}-{{ $componentName }}
+  labels:
+    {{- include "blockmeta.labels" . | nindent 4 }}
+    {{- $componentLabel | nindent 4 }}
+spec:
+  type: {{ $values.service.type | default "ClusterIP" }}
+  {{- if $values.service.ipFamilyPolicy }}
+  ipFamilyPolicy: {{ $values.service.ipFamilyPolicy }}
+  {{- end }}
+  {{- if $values.service.ipFamilies }}
+  ipFamilies:
+    {{- toYaml $values.service.ipFamilies | nindent 4 }}
+  {{- end }}
+  selector:
+    {{- include "blockmeta.selectorLabels" . | nindent 4 }}
+    {{- $componentLabel | nindent 4 }}
+  ports:
+    - name: grpc
+      port: {{ index $values.service.ports "grpc" }}
+      targetPort: grpc
+      protocol: TCP

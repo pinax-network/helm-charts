@@ -1,0 +1,36 @@
+{{- $values := $.Values.subgraph_oracle }}
+{{- $componentName := "subgraph-oracle" }}
+
+{{- if $values.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "subgraph_oracle.fullname" . }}-monitor
+  labels:
+    release: prometheus
+    {{- include "subgraph_oracle.labels" . | nindent 4 }}
+    {{- with $values.serviceMonitor.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with $values.serviceMonitor.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "subgraph_oracle.selectorLabels" . | nindent 6 }}
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+  endpoints:
+    - port: metrics
+      interval: {{ $values.serviceMonitor.interval | default "15s" }}
+      scrapeTimeout: {{ $values.serviceMonitor.scrapeTimeout | default "10s" }}
+      path: {{ $values.serviceMonitor.path | default "/metrics" }}
+      honorLabels: {{ $values.serviceMonitor.honorLabels | default false }}
+      {{- with $values.serviceMonitor.relabelings }}
+      relabelings:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

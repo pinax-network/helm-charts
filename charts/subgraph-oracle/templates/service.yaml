@@ -1,0 +1,28 @@
+{{- $values := $.Values.subgraph_oracle }}
+{{- $componentName := "subgraph-oracle" }}
+{{- $componentLabel := include "subgraph_oracle.componentLabelFor" $componentName }}
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "subgraph_oracle.fullname" . }}-{{ $componentName }}
+  labels:
+    {{- include "subgraph_oracle.labels" . | nindent 4 }}
+    {{- $componentLabel | nindent 4 }}
+spec:
+  type: {{ $values.service.type | default "ClusterIP" }}
+  {{- if $values.service.ipFamilyPolicy }}
+  ipFamilyPolicy: {{ $values.service.ipFamilyPolicy }}
+  {{- end }}
+  {{- if $values.service.ipFamilies }}
+  ipFamilies:
+    {{- toYaml $values.service.ipFamilies | nindent 4 }}
+  {{- end }}
+  selector:
+    {{- include "subgraph_oracle.selectorLabels" . | nindent 4 }}
+    {{- $componentLabel | nindent 4 }}
+  ports:
+    - name: metrics
+      port: {{ index $values.service.ports "metrics" }}
+      targetPort: grpc
+      protocol: TCP

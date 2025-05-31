@@ -1,0 +1,11 @@
+apiVersion: v2
+name: substreams-sink-noop
+description: A Helm chart for deploying substreams-sink-noop
+type: application
+version: 0.0.1
+appVersion: v1.4.0
+keywords:
+  - noop
+  - substreams
+annotations:
+  lookupName: "ghcr.io/streamingfast/substreams-sink-noop"

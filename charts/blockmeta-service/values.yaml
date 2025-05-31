@@ -1,0 +1,96 @@
+# Default values for blockmeta.
+# This is a YAML-formatted file.
+
+# Override the name of the chart
+nameOverride: ""
+fullnameOverride: ""
+
+image:
+  # -- Repository for the blockmeta service image
+  repository: ghcr.io/streamingfast/blockmeta-service
+  # -- Image pull policy (e.g., Always, IfNotPresent, Never)
+  pullPolicy: IfNotPresent
+  # -- Overrides the image tag (default: Chart.appVersion)
+  tag: ""
+
+serviceAccount:
+  # -- Specifies whether a service account should be created
+  create: true
+  # -- Annotations to add to the service account
+  annotations: {}
+  # -- The name of the service account to use.
+  #    If not set and `create` is true, a name is generated using the fullname template.
+  name: ""
+
+blockmeta:
+
+  config:
+    # -- Address of the sink service
+    sink_address: ""
+    # -- Authentication URL for the service
+    auth_url: ""
+    # -- URL for metering service
+    metering_url: ""
+    # -- Additional command-line arguments to pass to the service
+    extraArgs: []
+
+  service:
+    # -- Type of Kubernetes service (e.g., ClusterIP, NodePort, LoadBalancer)
+    type: ClusterIP
+    ports:
+      # -- Port for gRPC communication
+      grpc: 50051
+
+    # -- Set the IP family policy for the service
+    # Options:
+    # - SingleStack (IPv4 or IPv6)
+    # - PreferDualStack (Prefers dual-stack but may use single-stack)
+    # - RequireDualStack (Must use both IPv4 and IPv6)
+    ipFamilyPolicy: "SingleStack"
+
+    # -- Set the IP families to use (e.g., ["IPv4", "IPv6"])
+    ipFamilies:
+      - "IPv4"
+
+  # Ingress configuration
+  ingress:
+    # -- Enable or disable ingress
+    enabled: false
+    # -- Hostname for the ingress
+    host: "example.domain.com"  # Replace with your actual domain
+
+    # -- Ingress class configuration (K8s 1.19+)
+    ingressClassName: "nginx"  # Set to your preferred ingress controller
+
+    paths:
+      # -- Default path mapping for ingress
+      default: "/"
+      # -- Add additional path mappings if needed
+      # api: "/api"
+
+    # TLS configuration
+    tls:
+      # -- Enable TLS (HTTPS) for ingress
+      enabled: false  # Set to true to enable HTTPS
+      # -- Name of the TLS secret (leave empty for auto-generation)
+      secretName: ""  
+
+    # Additional ingress annotations
+    annotations: {}
+      # -- Add custom annotations for ingress, e.g.:
+      # nginx.ingress.kubernetes.io/rewrite-target: "/"
+      # cert-manager.io/cluster-issuer: "letsencrypt-prod"
+
+  # -- Pod-wide security context settings
+  podSecurityContext:
+    # -- Run the pod as a non-root user (recommended for security)
+    runAsNonRoot: false
+    # -- (Optional) User ID to run the container
+    # runAsUser: 101337
+    # -- (Optional) Group ID for the container process
+    # runAsGroup: 101337
+    # -- (Optional) Filesystem group for container
+    # fsGroup: 101337
+
+  # -- Grace period for pod termination (in seconds)
+  terminationGracePeriodSeconds: 60

@@ -1,0 +1,49 @@
+{{- $values := $.Values.subgraph_oracle }}
+{{- $componentName := "subgraph-oracle" }}
+{{- $componentLabel := include "subgraph_oracle.componentLabelFor" $componentName }}
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "subgraph_oracle.fullname" . }}-{{ $componentName }}
+  labels:
+    {{- include "subgraph_oracle.labels" . | nindent 4 }}
+    {{- $componentLabel | nindent 4 }}
+spec:
+  replicas: {{ $values.replicaCount | default 1 }}
+  selector:
+    matchLabels:
+      {{- include "subgraph_oracle.selectorLabels" . | nindent 6 }}
+      {{- $componentLabel | nindent 6 }}
+  template:
+    metadata:
+      {{- with $values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "subgraph_oracle.selectorLabels" . | nindent 8 }}
+        {{- $componentLabel | nindent 8 }}
+    spec:
+      {{- with $values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "subgraph_oracle.serviceAccountName" . }}
+      {{- with $values.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      terminationGracePeriodSeconds: {{ $values.terminationGracePeriodSeconds | default "60" }}
+      containers:
+        - name: {{ $componentName }}
+          image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ $.Values.image.pullPolicy }}
+          args:
+            {{- range $arg := $values.config }}
+            - {{ . | quote }}
+            {{- end }}
+          ports:
+            - name: metrics
+              containerPort: {{ index $values.service.ports "metrics" }}
+              protocol: TCP

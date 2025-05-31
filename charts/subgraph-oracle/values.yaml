@@ -1,0 +1,107 @@
+# Default values for blockmeta.
+# This is a YAML-formatted file.
+
+# Override the name of the chart
+nameOverride: ""
+fullnameOverride: ""
+
+image:
+  # -- Repository for the blockmeta service image
+  repository: ghcr.io/graphprotocol/availability-oracle
+  # -- Image pull policy (e.g., Always, IfNotPresent, Never)
+  pullPolicy: IfNotPresent
+  # -- Overrides the image tag (default: Chart.appVersion)
+  tag: ""
+
+serviceAccount:
+  # -- Specifies whether a service account should be created
+  create: true
+  # -- Annotations to add to the service account
+  annotations: {}
+  # -- The name of the service account to use.
+  #    If not set and `create` is true, a name is generated using the fullname template.
+  name: ""
+
+subgraph_oracle:
+
+  config:
+  # -- Configuration arguments passed to the container
+  # For detailed option explanations, see:
+  # https://github.com/graphprotocol/subgraph-oracle/blob/main/README.md
+  #
+  # Example:
+  #   - "--ipfs=https://ipfs.network.thegraph.com/ipfs/"
+  #   - "--subgraph=http://graph-node-query:8000/subgraphs/id/<your-subgraph-id>"
+  #   - "--epoch-block-oracle-subgraph=<oracle-subgraph-url>"
+  #   - "--ipfs-concurrency=4"
+  #   - "--ipfs-timeout=10000"
+  #   - "--min-signal=100"
+  #   - "--period=300"
+  #   - "--subgraph-availability-manager-contract=0x..."
+  #   - "--url=http://<network-rpc-endpoint>"
+  #   - "--oracle-index=3"
+  #   - "--signing-key=<your-signing-key>"
+  #   - "--dry-run"
+
+  service:
+    # -- Type of Kubernetes service (e.g., ClusterIP, NodePort, LoadBalancer)
+    type: ClusterIP
+    ports:
+      # -- Port for gRPC communication
+      metrics: 8090
+
+  serviceMonitor:
+    # -- Enable or disable the service monitor
+    enabled: false
+
+    # -- Interval at which Prometheus scrapes metrics
+    interval: 30s 
+
+    # -- Timeout for the scrape request
+    scrapeTimeout: 10s 
+    
+    # -- Additional annotations for the ServiceMonitor resource
+    annotations: {}
+      # prometheus.io/scrape: "true"
+      # prometheus.io/port: "9102"
+    
+    # -- Additional labels for the ServiceMonitor resource
+    labels: {}
+      # release: prometheus
+      
+    # -- Configure metrics path
+    path: /metrics
+    
+    # -- Honor labels from scraped metrics
+    honorLabels: false
+    
+    # -- Relabeling configurations for the ServiceMonitor
+    relabelings: []
+      # - action: replace
+      #   sourceLabels: [__meta_kubernetes_pod_label_app]
+      #   targetLabel: app
+
+    # -- Set the IP family policy for the service
+    # Options:
+    # - SingleStack (IPv4 or IPv6)
+    # - PreferDualStack (Prefers dual-stack but may use single-stack)
+    # - RequireDualStack (Must use both IPv4 and IPv6)
+    ipFamilyPolicy: "SingleStack"
+
+    # -- Set the IP families to use (e.g., ["IPv4", "IPv6"])
+    ipFamilies:
+      - "IPv4"
+
+  # -- Pod-wide security context settings
+  podSecurityContext:
+    # -- Run the pod as a non-root user (recommended for security)
+    runAsNonRoot: false
+    # -- (Optional) User ID to run the container
+    # runAsUser: 101337
+    # -- (Optional) Group ID for the container process
+    # runAsGroup: 101337
+    # -- (Optional) Filesystem group for container
+    # fsGroup: 101337
+
+  # -- Grace period for pod termination (in seconds)
+  terminationGracePeriodSeconds: 60

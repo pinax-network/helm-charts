@@ -1,0 +1,98 @@
+# Default values for blockmeta.
+# This is a YAML-formatted file.
+
+# Override the name of the chart
+nameOverride: ""
+fullnameOverride: ""
+
+image:
+  # -- Repository for the blockmeta service image
+  repository: ghcr.io/streamingfast/substreams-sink-kv
+  # -- Image pull policy (e.g., Always, IfNotPresent, Never)
+  pullPolicy: IfNotPresent
+  # -- Overrides the image tag (default: Chart.appVersion)
+  tag: ""
+
+serviceAccount:
+  # -- Specifies whether a service account should be created
+  create: true
+  # -- Annotations to add to the service account
+  annotations: {}
+  # -- The name of the service account to use.
+  #    If not set and `create` is true, a name is generated using the fullname template.
+  name: ""
+
+substreams_sink_kv:
+
+  config:
+    # -- Address of the sink service
+    tikv_address: ""
+    # -- Authentication URL for the service
+    spkg_address: ""
+    # -- Address of the substreams service
+    substreams_address: ""
+
+  service:
+    # -- Type of Kubernetes service (e.g., ClusterIP, NodePort, LoadBalancer)
+    type: ClusterIP
+    ports:
+      # -- Port for gRPC communication
+      grpc: 50051
+      # -- Port for metrics
+      metrics: 9102
+
+    # -- Set the IP family policy for the service
+    # Options:
+    # - SingleStack (IPv4 or IPv6)
+    # - PreferDualStack (Prefers dual-stack but may use single-stack)
+    # - RequireDualStack (Must use both IPv4 and IPv6)
+    ipFamilyPolicy: "SingleStack"
+
+    # -- Set the IP families to use (e.g., ["IPv4", "IPv6"])
+    ipFamilies:
+      - "IPv4"
+
+  serviceMonitor:
+    # -- Enable or disable the service monitor
+    enabled: false
+
+    # -- Interval at which Prometheus scrapes metrics
+    interval: 30s 
+
+    # -- Timeout for the scrape request
+    scrapeTimeout: 10s 
+    
+    # -- Additional annotations for the ServiceMonitor resource
+    annotations: {}
+      # prometheus.io/scrape: "true"
+      # prometheus.io/port: "9102"
+    
+    # -- Additional labels for the ServiceMonitor resource
+    labels: {}
+      # release: prometheus
+      
+    # -- Configure metrics path
+    path: /metrics
+    
+    # -- Honor labels from scraped metrics
+    honorLabels: false
+    
+    # -- Relabeling configurations for the ServiceMonitor
+    relabelings: []
+      # - action: replace
+      #   sourceLabels: [__meta_kubernetes_pod_label_app]
+      #   targetLabel: app
+
+  # -- Pod-wide security context settings
+  podSecurityContext:
+    # -- Run the pod as a non-root user (recommended for security)
+    runAsNonRoot: false
+    # -- (Optional) User ID to run the container
+    # runAsUser: 101337
+    # -- (Optional) Group ID for the container process
+    # runAsGroup: 101337
+    # -- (Optional) Filesystem group for container
+    # fsGroup: 101337
+
+  # -- Grace period for pod termination (in seconds)
+  terminationGracePeriodSeconds: 60

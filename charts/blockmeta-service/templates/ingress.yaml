@@ -1,0 +1,38 @@
+{{- if .Values.blockmeta.ingress.enabled }}
+{{- $values := $.Values.blockmeta }}
+{{- $componentName := "blockmeta" }}
+{{- $componentLabel := include "blockmeta.componentLabelFor" $componentName }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "blockmeta.fullname" . }}-{{ $componentName }}-ingress
+  labels:
+    {{- include "blockmeta.labels" . | nindent 4 }}
+  annotations:
+    {{- toYaml .Values.blockmeta.ingress.annotations | nindent 4 }}
+spec:
+  ingressClassName: {{ $values.ingress.ingressClassName | default "nginx" }}
+  rules:
+    - host: {{ $values.ingress.host }}
+      http:
+        paths:
+          {{- range $pathName, $path := $values.ingress.paths }}
+          - path: {{ $path }}
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "blockmeta.fullname" $ }}-{{ $componentName }}
+                port:
+                  number: {{ index $values.service.ports "grpc" }}
+          {{- end }}
+  {{- if $values.ingress.tls.enabled }}
+  tls:
+    - hosts:
+        - {{ $values.ingress.host }}
+      {{- if $values.ingress.tls.secretName }}
+      secretName: {{ $values.ingress.tls.secretName }}
+      {{- else }}
+      secretName: {{ include "blockmeta.fullname" . }}-tls
+      {{- end }}
+  {{- end }}
+{{- end }}

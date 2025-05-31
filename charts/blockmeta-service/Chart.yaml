@@ -1,0 +1,11 @@
+apiVersion: v2
+name: blockmeta-service
+description: A Helm chart for deploying blockmeta service
+type: application
+version: 0.0.1
+appVersion: 2f971e0
+keywords:
+  - blockmeta
+  - substreams
+annotations:
+  lookupName: "ghcr.io/streamingfast/blockmeta-service"

@@ -1,0 +1,11 @@
+apiVersion: v2
+name: subgraph-oracle
+description: A Helm chart for deploying subgraph-oracle
+type: application
+version: 0.0.1
+appVersion: sha-28312fd
+keywords:
+  - subgraph-oracle
+  - graph-protocol
+annotations:
+  lookupName: "ghcr.io/graphprotocol/availability-oracle"

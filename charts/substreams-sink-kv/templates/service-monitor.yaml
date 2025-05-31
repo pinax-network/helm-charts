@@ -1,0 +1,35 @@
+{{- $values := $.Values.substreams_sink_kv }}
+{{- $componentName := "substreams-sink-kv" }}
+
+{{- if $values.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "substreams_sink_kv.fullname" . }}-{{ $componentName }}-monitor
+  labels:
+    {{- include "substreams_sink_kv.labels" . | nindent 4 }}
+    {{- with $values.serviceMonitor.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with $values.serviceMonitor.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "substreams_sink_kv.selectorLabels" . | nindent 6 }}
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+  endpoints:
+    - port: metrics
+      path: {{ $values.serviceMonitor.path | default "/metrics" }}
+      interval: {{ $values.serviceMonitor.interval | default "30s" }}
+      scrapeTimeout: {{ $values.serviceMonitor.scrapeTimeout | default "10s" }}
+      honorLabels: {{ $values.serviceMonitor.honorLabels | default false }}
+      {{- with $values.serviceMonitor.relabelings }}
+      relabelings:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

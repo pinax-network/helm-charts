@@ -1,0 +1,38 @@
+{{- if .Values.substreams_sink_noop.ingress.enabled }}
+{{- $values := $.Values.substreams_sink_noop }}
+{{- $componentName := "substreams-sink-noop" }}
+{{- $componentLabel := include "substreams_sink_noop.componentLabelFor" $componentName }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "substreams_sink_noop.fullname" . }}-{{ $componentName }}-ingress
+  labels:
+    {{- include "substreams_sink_noop.labels" . | nindent 4 }}
+  annotations:
+    {{- toYaml .Values.substreams_sink_noop.ingress.annotations | nindent 4 }}
+spec:
+  ingressClassName: {{ $values.ingress.ingressClassName | default "nginx" }}
+  rules:
+    - host: {{ $values.ingress.host }}
+      http:
+        paths:
+          {{- range $pathName, $path := $values.ingress.paths }}
+          - path: {{ $path }}
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "substreams_sink_noop.fullname" $ }}-{{ $componentName }}
+                port:
+                  number: {{ index $values.service.ports "grpc" }}
+          {{- end }}
+  {{- if $values.ingress.tls.enabled }}
+  tls:
+    - hosts:
+        - {{ $values.ingress.host }}
+      {{- if $values.ingress.tls.secretName }}
+      secretName: {{ $values.ingress.tls.secretName }}
+      {{- else }}
+      secretName: {{ include "substreams_sink_noop.fullname" . }}-tls
+      {{- end }}
+  {{- end }}
+{{- end }}
