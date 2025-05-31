@@ -1,3 +1,83 @@
 apiVersion: v1
-entries: {}
-generated: "2024-01-01T00:00:00Z"
+entries:
+  blockmeta-service:
+  - annotations:
+      lookupName: ghcr.io/streamingfast/blockmeta-service
+    apiVersion: v2
+    appVersion: 2f971e0
+    created: "2025-05-31T02:50:37.40039072Z"
+    description: A Helm chart for deploying blockmeta service
+    digest: 69318f089f340efe1a773095c751b87748424ee21019ca7e5212201af618627f
+    keywords:
+    - blockmeta
+    - substreams
+    name: blockmeta-service
+    type: application
+    urls:
+    - https://github.com/pinax-network/helm-charts/releases/download/blockmeta-service-0.0.1/blockmeta-service-0.0.1.tgz
+    version: 0.0.1
+  subgraph-oracle:
+  - annotations:
+      lookupName: ghcr.io/graphprotocol/availability-oracle
+    apiVersion: v2
+    appVersion: sha-28312fd
+    created: "2025-05-31T02:50:37.486855929Z"
+    description: A Helm chart for deploying subgraph-oracle
+    digest: 0fcfa37ca51f2f5520a61b6874621ceda8a927ab3bf66bcdead88240cb987341
+    keywords:
+    - subgraph-oracle
+    - graph-protocol
+    name: subgraph-oracle
+    type: application
+    urls:
+    - https://github.com/pinax-network/helm-charts/releases/download/subgraph-oracle-0.0.1/subgraph-oracle-0.0.1.tgz
+    version: 0.0.1
+  substreams-sink-kv:
+  - annotations:
+      lookupName: ghcr.io/streamingfast/substreams-sink-kv
+    apiVersion: v2
+    appVersion: v2.3.0
+    created: "2025-05-31T02:50:37.616213443Z"
+    description: A Helm chart for deploying substreams-sink-kv
+    digest: 5a6deed37adf61359d10d0d2aae917952c222190fcba24d9d31f52d4859dd115
+    keywords:
+    - blockmeta
+    - substreams
+    name: substreams-sink-kv
+    type: application
+    urls:
+    - https://github.com/pinax-network/helm-charts/releases/download/substreams-sink-kv-0.0.1/substreams-sink-kv-0.0.1.tgz
+    version: 0.0.1
+  substreams-sink-noop:
+  - annotations:
+      lookupName: ghcr.io/streamingfast/substreams-sink-noop
+    apiVersion: v2
+    appVersion: v1.4.0
+    created: "2025-05-31T02:50:37.728910414Z"
+    description: A Helm chart for deploying substreams-sink-noop
+    digest: 9283ae180914680edad9aeb634d9ed16743f855e320347a575a32474d6f4d574
+    keywords:
+    - noop
+    - substreams
+    name: substreams-sink-noop
+    type: application
+    urls:
+    - https://github.com/pinax-network/helm-charts/releases/download/substreams-sink-noop-0.0.1/substreams-sink-noop-0.0.1.tgz
+    version: 0.0.1
+  substreams-tier-2:
+  - annotations:
+      lookupName: ghcr.io/streamingfast/firehose-ethereum
+    apiVersion: v2
+    appVersion: v2.11.10
+    created: "2025-05-31T02:50:37.833492345Z"
+    description: A Helm chart for deploying substreams-tier-2
+    digest: 38b388f5a63d177da70263a0fc798aae021f62824e055ae1d12065ddcc570db3
+    keywords:
+    - substreams-tier-2
+    - firehose-ethereum
+    name: substreams-tier-2
+    type: application
+    urls:
+    - https://github.com/pinax-network/helm-charts/releases/download/substreams-tier-2-0.0.2/substreams-tier-2-0.0.2.tgz
+    version: 0.0.2
+generated: "2025-05-31T02:50:37.833498126Z"
