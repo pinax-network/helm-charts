@@ -251,8 +251,7 @@ jobs:
               <div class="container">
                   <div class="header">
                       <img src="https://pinax.network/assets/brand/logos/pinax_horizontal.svg" alt="Pinax Network" class="logo">
-                      <h1>{repo_name.replace('-', ' ').title()} Helm Repository</h1>
-                      <p class="subtitle">Production-ready Helm charts for blockchain infrastructure</p>
+                      <h1>{repo_name.replace('-', ' ').title()}</h1>
                   </div>
                   
                   <div class="section">
