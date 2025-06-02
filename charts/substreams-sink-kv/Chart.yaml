@@ -2,7 +2,7 @@ apiVersion: v2
 name: substreams-sink-kv
 description: A Helm chart for deploying substreams-sink-kv
 type: application
-version: 0.0.2
+version: 0.0.3
 appVersion: v2.3.0
 keywords:
   - blockmeta

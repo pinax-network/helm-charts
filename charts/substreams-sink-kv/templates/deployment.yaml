@@ -55,7 +55,7 @@ spec:
               protocol: TCP
         - name: substreams-sink-inject
           image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ $values.image.pullPolicy }}
+          imagePullPolicy: {{ $.Values.image.pullPolicy }}
           args:
             - "inject"
             - {{ $values.config.substreams_address }}
