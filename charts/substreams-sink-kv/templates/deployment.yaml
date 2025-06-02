@@ -54,7 +54,7 @@ spec:
               containerPort: {{ index $values.service.ports "grpc" }}
               protocol: TCP
         - name: substreams-sink-inject
-          image: "{{ $values.image.repository }}:{{ $values.image.tag | default .Chart.AppVersion }}"
+          image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ $values.image.pullPolicy }}
           args:
             - "inject"
