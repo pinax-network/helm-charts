@@ -1,0 +1,48 @@
+name: Bump Helm Chart Version on Renovate PR
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+
+jobs:
+  bump-version:
+    if: github.actor == 'renovate[bot]'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Install yq (v4)
+        run: |
+          YQ_VERSION=v4.40.5
+          curl -L https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64 -o /usr/local/bin/yq
+          chmod +x /usr/local/bin/yq
+
+      - name: Detect modified Chart.yaml files and bump version
+        run: |
+          git fetch origin main
+          MODIFIED=$(git diff --name-only origin/main | grep 'charts/.*/Chart.yaml' || true)
+          for file in $MODIFIED; do
+            if [[ -f "$file" ]]; then
+              echo "Bumping version in $file"
+              old_version=$(yq '.version' "$file")
+              IFS='.' read -r major minor patch <<< "$old_version"
+              new_patch=$((patch + 1))
+              new_version="${major}.${minor}.${new_patch}"
+              yq e ".version = \"$new_version\"" -i "$file"
+            fi
+          done
+
+      - name: Commit and push version bump
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add charts/*/Chart.yaml
+          git diff --cached --quiet || git commit -m "chore: bump chart version"
+          git push
