@@ -7,7 +7,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "substreams_sink_kv.fullname" . }}-{{ $componentName }}
+  name: {{ include "substreams_sink_kv.fullname" . }}
   labels:
     {{- include "substreams_sink_kv.labels" . | nindent 4 }}
     {{- $componentLabel | nindent 4 }}
