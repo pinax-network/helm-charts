@@ -1,0 +1,7 @@
+repositoryID:
+name: pinax-charts
+displayName: Pinax Helm Charts
+description: Helm charts maintained by Pinax
+type: helm
+url: https://pinax-network.github.io/helm-charts
+organization: pinax
