@@ -5,6 +5,21 @@ entries:
       lookupName: ghcr.io/streamingfast/blockmeta-service
     apiVersion: v2
     appVersion: 2f971e0
+    created: "2025-06-02T22:43:19.576289941Z"
+    description: A Helm chart for deploying blockmeta service
+    digest: 38d7f89e3bcb0b75bc6cf8e2d524133efd3e8302859549b2c2b19793c4e4335b
+    keywords:
+    - blockmeta
+    - substreams
+    name: blockmeta-service
+    type: application
+    urls:
+    - https://github.com/pinax-network/helm-charts/releases/download/blockmeta-service-0.0.3/blockmeta-service-0.0.3.tgz
+    version: 0.0.3
+  - annotations:
+      lookupName: ghcr.io/streamingfast/blockmeta-service
+    apiVersion: v2
+    appVersion: 2f971e0
     created: "2025-06-02T22:36:37.646895639Z"
     description: A Helm chart for deploying blockmeta service
     digest: 12f1b6ee25c3c008c694de6231c152cdc0fe487ec93892a637e155d7b8dd1557
@@ -185,4 +200,4 @@ entries:
     urls:
     - https://github.com/pinax-network/helm-charts/releases/download/substreams-tier-2-0.0.2/substreams-tier-2-0.0.2.tgz
     version: 0.0.2
-generated: "2025-06-02T22:36:37.806151702Z"
+generated: "2025-06-02T22:43:19.576314949Z"
