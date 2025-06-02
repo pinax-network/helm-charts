@@ -37,6 +37,21 @@ entries:
       lookupName: ghcr.io/streamingfast/substreams-sink-kv
     apiVersion: v2
     appVersion: v2.3.0
+    created: "2025-06-02T21:47:12.40423357Z"
+    description: A Helm chart for deploying substreams-sink-kv
+    digest: cf4d75436b2c1084fe1d507565e44cd091a408fc9373f923efbe1604fae399c4
+    keywords:
+    - blockmeta
+    - substreams
+    name: substreams-sink-kv
+    type: application
+    urls:
+    - https://github.com/pinax-network/helm-charts/releases/download/substreams-sink-kv-0.0.2/substreams-sink-kv-0.0.2.tgz
+    version: 0.0.2
+  - annotations:
+      lookupName: ghcr.io/streamingfast/substreams-sink-kv
+    apiVersion: v2
+    appVersion: v2.3.0
     created: "2025-05-31T02:50:37.616213443Z"
     description: A Helm chart for deploying substreams-sink-kv
     digest: 5a6deed37adf61359d10d0d2aae917952c222190fcba24d9d31f52d4859dd115
@@ -125,4 +140,4 @@ entries:
     urls:
     - https://github.com/pinax-network/helm-charts/releases/download/substreams-tier-2-0.0.2/substreams-tier-2-0.0.2.tgz
     version: 0.0.2
-generated: "2025-06-02T20:16:54.86159704Z"
+generated: "2025-06-02T21:47:12.404247736Z"
