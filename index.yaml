@@ -53,6 +53,21 @@ entries:
       lookupName: ghcr.io/streamingfast/substreams-sink-noop
     apiVersion: v2
     appVersion: v1.4.0
+    created: "2025-06-02T20:16:54.861576241Z"
+    description: A Helm chart for deploying substreams-sink-noop
+    digest: 2c029b98d27b47687a06596d843179f593b32bdc7ab8c9b0a84b5df700c437d4
+    keywords:
+    - noop
+    - substreams
+    name: substreams-sink-noop
+    type: application
+    urls:
+    - https://github.com/pinax-network/helm-charts/releases/download/substreams-sink-noop-0.0.3/substreams-sink-noop-0.0.3.tgz
+    version: 0.0.3
+  - annotations:
+      lookupName: ghcr.io/streamingfast/substreams-sink-noop
+    apiVersion: v2
+    appVersion: v1.4.0
     created: "2025-06-02T20:10:37.007848101Z"
     description: A Helm chart for deploying substreams-sink-noop
     digest: f799b333d7fd7d2df1b930075dab13fbd7b74fe20b16b59772b7b6cf30328218
@@ -110,4 +125,4 @@ entries:
     urls:
     - https://github.com/pinax-network/helm-charts/releases/download/substreams-tier-2-0.0.2/substreams-tier-2-0.0.2.tgz
     version: 0.0.2
-generated: "2025-06-02T20:10:37.00786338Z"
+generated: "2025-06-02T20:16:54.86159704Z"
