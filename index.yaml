@@ -47,6 +47,21 @@ entries:
     - https://github.com/pinax-network/helm-charts/releases/download/blockmeta-service-0.0.1/blockmeta-service-0.0.1.tgz
     version: 0.0.1
   firehose-ethereum:
+  - annotations:
+      lookupName: ghcr.io/streamingfast/firehose-ethereum
+    apiVersion: v2
+    appVersion: v2.11.13-geth
+    created: "2025-07-07T16:42:39.140633175Z"
+    description: A Helm chart for Kubernetes
+    digest: ddece1d5623dfc6ce83d6c6f03ab55052271acf7d8370690831350bfe3cf8b21
+    keywords:
+    - firehose
+    - substreams
+    name: firehose-ethereum
+    type: application
+    urls:
+    - https://github.com/pinax-network/helm-charts/releases/download/firehose-ethereum-0.2.0/firehose-ethereum-0.2.0.tgz
+    version: 0.2.0
   - apiVersion: v2
     appVersion: v2.11.13-geth
     created: "2025-07-02T15:55:36.410789615Z"
@@ -241,4 +256,4 @@ entries:
     urls:
     - https://github.com/pinax-network/helm-charts/releases/download/substreams-tier-2-0.0.2/substreams-tier-2-0.0.2.tgz
     version: 0.0.2
-generated: "2025-07-02T15:55:36.410822788Z"
+generated: "2025-07-07T16:42:39.140677438Z"
