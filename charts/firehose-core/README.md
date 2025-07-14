@@ -1,6 +1,6 @@
-# firehose-ethereum
+# firehose-core
 
-![Version: 0.3.0](https://img.shields.io/badge/Version-0.3.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.11.13-geth](https://img.shields.io/badge/AppVersion-v2.11.13--geth-informational?style=flat-square)
+![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.10.1](https://img.shields.io/badge/AppVersion-v1.10.1-informational?style=flat-square)
 
 A Helm chart for Kubernetes
 
@@ -57,7 +57,6 @@ A Helm chart for Kubernetes
 | fullMode.components.relayer.replicas | int | `1` | Number of replicas for the relayer node |
 | fullMode.components.substreams.config.advertise-chain-name | string | `"mainnet"` | Substreams arguments |
 | fullMode.components.substreams.config.substreams-block-execution-timeout | string | `"10m"` |  |
-| fullMode.components.substreams.config.substreams-rpc-endpoints | string | `""` |  |
 | fullMode.components.substreams.config.substreams-state-store-default-tag | string | `"s3"` |  |
 | fullMode.components.substreams.config.substreams-state-store-url | string | `""` |  |
 | fullMode.components.substreams.config.substreams-tier1-active-requests-hard-limit | int | `50` |  |
@@ -70,7 +69,7 @@ A Helm chart for Kubernetes
 | fullMode.storage | object | `{"lighthouse":{"size":"400Gi"},"readerNode":{"size":"4Ti"},"storageClass":""}` | Storage configuration for full mode |
 | fullnameOverride | string | `""` |  |
 | image.pullPolicy | string | `"IfNotPresent"` |  |
-| image.repository | string | `"ghcr.io/streamingfast/firehose-ethereum"` | Image for Firehose |
+| image.repository | string | `"ghcr.io/streamingfast/firehose-core"` | Image for Firehose |
 | image.tag | string | Chart.appVersion | Overrides the image tag |
 | imagePullSecrets | list | `[]` | Pull secrets required to fetch the Image |
 | mode | string | `"full"` | Firehose operating mode Options:   - "full": Complete Firehose stack with all components (reader, merger, relayer, etc.)   - "chunk": Lightweight mode for specific block ranges |
