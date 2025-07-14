@@ -51,6 +51,21 @@ entries:
       lookupName: ghcr.io/streamingfast/firehose-ethereum
     apiVersion: v2
     appVersion: v2.11.13-geth
+    created: "2025-07-14T21:12:55.195188652Z"
+    description: A Helm chart for Kubernetes
+    digest: a2c704fd7b915d66ec8879920f3bbf21782dfc34bf7be2dfbb1544edfa5d647e
+    keywords:
+    - firehose
+    - substreams
+    name: firehose-ethereum
+    type: application
+    urls:
+    - https://github.com/pinax-network/helm-charts/releases/download/firehose-ethereum-0.3.0/firehose-ethereum-0.3.0.tgz
+    version: 0.3.0
+  - annotations:
+      lookupName: ghcr.io/streamingfast/firehose-ethereum
+    apiVersion: v2
+    appVersion: v2.11.13-geth
     created: "2025-07-07T16:42:39.140633175Z"
     description: A Helm chart for Kubernetes
     digest: ddece1d5623dfc6ce83d6c6f03ab55052271acf7d8370690831350bfe3cf8b21
@@ -256,4 +271,4 @@ entries:
     urls:
     - https://github.com/pinax-network/helm-charts/releases/download/substreams-tier-2-0.0.2/substreams-tier-2-0.0.2.tgz
     version: 0.0.2
-generated: "2025-07-07T16:42:39.140677438Z"
+generated: "2025-07-14T21:12:55.195239798Z"
