@@ -50,6 +50,21 @@ entries:
   - annotations:
       lookupName: ghcr.io/streamingfast/firehose-core
     apiVersion: v2
+    appVersion: v1.10.2
+    created: "2025-08-06T20:11:58.574541487Z"
+    description: A Helm chart for Kubernetes
+    digest: 05a8f513861c3dd44e04069e89d1bb6fc7a4b9d6f6f4b2dbc164b9ab2c4d95da
+    keywords:
+    - firehose
+    - substreams
+    name: firehose-core
+    type: application
+    urls:
+    - https://github.com/pinax-network/helm-charts/releases/download/firehose-core-0.1.1/firehose-core-0.1.1.tgz
+    version: 0.1.1
+  - annotations:
+      lookupName: ghcr.io/streamingfast/firehose-core
+    apiVersion: v2
     appVersion: v1.10.1
     created: "2025-07-14T22:17:53.514558942Z"
     description: A Helm chart for Kubernetes
@@ -362,4 +377,4 @@ entries:
     urls:
     - https://github.com/pinax-network/helm-charts/releases/download/substreams-tier-2-0.0.2/substreams-tier-2-0.0.2.tgz
     version: 0.0.2
-generated: "2025-08-06T20:11:32.0927184Z"
+generated: "2025-08-06T20:11:58.574586894Z"
